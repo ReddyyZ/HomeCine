@@ -5,7 +5,7 @@ import { promisify } from "util";
 
 const rmAsync = promisify(fs.rm);
 
-type addMovieProps = {
+export type addMovieProps = {
   title: string;
   year?: number;
   overview?: string;
@@ -106,22 +106,30 @@ export async function deleteMovieById(id: number): Promise<defaultResult> {
   }
 }
 
-export async function updateMovieById(id: number, props: Partial<addMovieProps>) {
+export async function updateMovieById(id: number, props: Partial<addMovieProps>): Promise<defaultResult> {
   const movie = await Movie.findByPk(id);
 
   if (!movie) {
     console.log(`Movie with id ${id} not found`);
-    return;
+    return {
+      errorCode: 404,
+      error: "Movie not found"
+    };
   }
 
   try {
     await movie.update(props);
     console.log(`Movie ${movie.title} updated!`);
 
-    return true;
+    return {
+      success: true
+    };
   } catch (error) {
     console.error(`Error updating movie: ${error}`);
-    return false;
+    return {
+      errorCode: 500,
+      error: `Error updating movie: ${error}`
+    };
   }
 }
 
