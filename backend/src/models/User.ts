@@ -1,5 +1,6 @@
 import { Model, InferAttributes, InferCreationAttributes, Sequelize, DataTypes, CreationOptional } from "sequelize";
 import bcrypt from "bcrypt";
+import { sequelize } from "../db/sequilize";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<string>;
@@ -8,7 +9,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare password: string;
 };
 
-export default (sequelize: Sequelize) => User.init({
+User.init({
   id: {
     type: DataTypes.UUIDV4,
     primaryKey: true,
@@ -48,4 +49,4 @@ export default (sequelize: Sequelize) => User.init({
       user.password = hashedPassword;
     }
   }
-})
+});
