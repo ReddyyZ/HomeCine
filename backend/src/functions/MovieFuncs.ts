@@ -20,7 +20,7 @@ export async function addMovie(props: addMovieProps) {
   });
   if (movieExists) {
     console.log(`Movie ${props.title} already exists!`);
-    return;
+    return null;
   }
 
   try {
@@ -38,6 +38,7 @@ export async function addMovie(props: addMovieProps) {
     return movie;
   } catch (error) {
     console.error(`Error saving movie: ${error}`);
+    return null;
   }
 }
 
@@ -92,6 +93,19 @@ export async function findAllMovies() {
 
 export function findMovieById(movieId: number) {
   return Movie.findByPk(movieId);
+}
+
+export function movieExists(filePath: string): Promise<Movie | null> {
+  try {
+    return Movie.findOne({
+      where: {
+        filePath
+      }
+    });
+  } catch (error) {
+    console.error(`Error checking if movie exists: ${error}`);
+    return Promise.resolve(null);
+  }
 }
 
 type addEpisodeProps = {
