@@ -74,7 +74,6 @@ export async function deleteMovieByPath(filePath: string) {
 
 export async function deleteMovieById(id: number): Promise<defaultResult> {
   const movie = await Movie.findByPk(id);
-
   if (!movie) {
     console.log(`Movie with id ${id} not found`);
     return {
@@ -84,8 +83,15 @@ export async function deleteMovieById(id: number): Promise<defaultResult> {
   }
 
   try {
+    if (movie.isSeries){
+      deleteAllEpisodesFromMovieId(id);
+    }
+
     await movie.destroy();
-    await rmAsync(movie.filePath);
+    await rmAsync(movie.filePath, {
+      recursive: true,
+      force: true
+    });
 
     console.log(`Movie ${movie.title} deleted!`);
     return {
@@ -325,4 +331,12 @@ export async function getNumberOfSeasons(movieId: number) {
       seasons: 0
     };
   }
+}
+
+export function deleteAllEpisodesFromMovieId(movieId: number) {
+  return Episode.destroy({
+    where: {
+      movieId
+    }
+  })
 }
