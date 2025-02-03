@@ -1,10 +1,32 @@
 import { Request, Response } from "express";
-import { findAllEpisodesByMovieId, findAllEpisodesFromSeason, findAllMovies, findAllSeries, findMovieById, getNumberOfSeasons } from "../functions/MovieFuncs";
+import { deleteMovieById, findAllEpisodesByMovieId, findAllEpisodesFromSeason, findAllMovies, findAllSeries, findMovieById, getNumberOfSeasons } from "../functions/MovieFuncs";
 
 export async function getMovies(req: Request, res: Response) {
   const movies = await findAllMovies();
 
   res.json(movies);
+};
+
+export async function getMovie(req: Request, res: Response) {
+  const { movieId } = req.params;
+  if (!movieId) {
+    res.status(400).json({ error: "Missing movieId" });
+  };
+
+  const movie = await findMovieById(Number(movieId));
+
+  res.json(movie);
+};
+
+export async function deleteMovie(req: Request, res: Response) {
+  const { movieId } = req.params;
+  if (!movieId) {
+    res.status(400).json({ error: "Missing movieId" });
+  };
+
+  const result = await deleteMovieById(Number(movieId));
+
+  res.json(result);
 };
 
 export async function getSeries(req: Request, res: Response) {
@@ -45,14 +67,3 @@ export async function getAllEpisodesByMovieId(req: Request, res: Response) {
 
   res.json(episodes);
 };
-
-export async function getMovie(req: Request, res: Response) {
-  const { movieId } = req.params;
-  if (!movieId) {
-    res.status(400).json({ error: "Missing movieId" });
-  };
-
-  const movie = await findMovieById(Number(movieId));
-
-  res.json(movie);
-}

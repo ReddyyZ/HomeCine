@@ -1,5 +1,9 @@
 import { Sequelize, Op } from "sequelize";
 import { Episode, Movie } from "../models/Movie";
+import fs from "fs";
+import { promisify } from "util";
+
+const rmAsync = promisify(fs.rm);
 
 type addMovieProps = {
   title: string;
@@ -10,6 +14,12 @@ type addMovieProps = {
   isSeries: boolean;
   numberOfSeasons?: number;
 };
+
+type defaultResult = {
+  success?: boolean;
+  errorCode?: number;
+  error?: string;
+}
   
 export async function addMovie(props: addMovieProps) {
   // Check if movie already exists
@@ -61,6 +71,34 @@ export async function deleteMovieByPath(filePath: string) {
     console.error(`Error deleting movie: ${error}`);
   }
 };
+
+export async function deleteMovieById(id: number): Promise<defaultResult> {
+  const movie = await Movie.findByPk(id);
+
+  if (!movie) {
+    console.log(`Movie with id ${id} not found`);
+    return {
+      errorCode: 404,
+      error: "Movie not found"
+    };
+  }
+
+  try {
+    await movie.destroy();
+    await rmAsync(movie.filePath);
+
+    console.log(`Movie ${movie.title} deleted!`);
+    return {
+      success: true
+    }
+  } catch (error) {
+    console.error(`Error deleting movie: ${error}`);
+    return {
+      errorCode: 500,
+      error: `Error deleting movie: ${error}`
+    }
+  }
+}
 
 export async function updateMovieById(id: number, props: Partial<addMovieProps>) {
   const movie = await Movie.findByPk(id);
@@ -175,6 +213,34 @@ export async function deleteEpisodeByPath(filePath: string) {
     console.error(`Error deleting episode: ${error}`);
   }
 };
+
+export async function deleteEpisodeById(id: number): Promise<defaultResult> {
+  const episode = await Episode.findByPk(id);
+
+  if (!episode) {
+    console.log(`Episode with id ${id} not found`);
+    return {
+      errorCode: 404,
+      error: "Episode not found"
+    };
+  }
+
+  try {
+    await episode.destroy();
+    await rmAsync(episode.filePath);
+
+    console.log(`Episode ${episode.title} deleted!`);
+    return {
+      success: true
+    }
+  } catch (error) {
+    console.error(`Error deleting episode: ${error}`);
+    return {
+      errorCode: 500,
+      error: `Error deleting episode: ${error}`
+    }
+  }
+}
 
 export async function updateEpisodeById(id: number, props: Partial<addEpisodeProps>) {
   const episode = await Episode.findByPk(id);
