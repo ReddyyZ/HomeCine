@@ -1,5 +1,5 @@
 import { Sequelize, Op } from "sequelize";
-import { Episode, Movie } from "../model/Movie";
+import { Episode, Movie } from "../models/Movie";
 
 type addMovieProps = {
   title: string;
@@ -81,8 +81,17 @@ export async function updateMovieById(id: number, props: Partial<addMovieProps>)
 }
 
 export async function findAllMovies() {
-  const movies = await Movie.findAll();
-  return movies.map(movie => movie.toJSON());
+  try {
+    const movies = await Movie.findAll();
+    return movies.map(movie => movie.toJSON());
+  } catch (error) {
+    console.error(`Error finding movies: ${error}`);
+    return [];
+  }
+};
+
+export function findMovieById(movieId: number) {
+  return Movie.findByPk(movieId);
 }
 
 type addEpisodeProps = {
@@ -187,12 +196,13 @@ export async function findAllSeries() {
   return series.map(serie => serie.toJSON());
 };
 
-export function findAllEpisodesByMovieId(movieId: number) {
-  return Episode.findAll({
+export async function findAllEpisodesByMovieId(movieId: number) {
+  const episodes = await Episode.findAll({
     where: {
       movieId
     }
-  }).then(episodes => episodes.map(episode => episode.toJSON()));
+  });
+  return episodes.map(episode => episode.toJSON());
 };
 
 export async function findAllEpisodesFromSeason(movieId: number, season: number) {
@@ -220,10 +230,19 @@ export async function getNumberOfSeasons(movieId: number) {
         }
       }
     });
+    if (!episode) {
+      return {
+        seasons: 0
+      };
+    }
   
-    return episode.season;
+    return {
+      seasons: episode.season
+    };
   } catch (error) {
     console.error(`Error getting number of seasons: ${error}`);
-    return 0;
+    return {
+      seasons: 0
+    };
   }
 }
