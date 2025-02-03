@@ -23,9 +23,9 @@ const processMovie = async (filePath: string) => {
       title,
       filePath,
       isSeries: false,
-      overview: movieInfo.overview,
-      year: new Date(movieInfo.first_air_date).getUTCFullYear(),
-      posterUrl: posterUrl + movieInfo.poster_path,
+      overview: movieInfo?.overview,
+      year: movieInfo && new Date(movieInfo.first_air_date).getUTCFullYear(),
+      posterUrl: movieInfo && posterUrl + movieInfo.poster_path,
     });
   } catch (error) {
     console.error('Error adding movie:', error);
@@ -62,9 +62,9 @@ const processSerie = async (filePath: string) => {
         title: movieTitle,
         filePath: moviePath,
         isSeries: true,
-        overview: movieInfo.overview,
-        year: new Date(movieInfo.first_air_date).getUTCFullYear(),
-        posterUrl: posterUrl + movieInfo.poster_path,
+        overview: movieInfo && movieInfo.overview,
+        year: movieInfo && new Date(movieInfo.first_air_date).getUTCFullYear(),
+        posterUrl: movieInfo && posterUrl + movieInfo.poster_path,
       })
       
       if (!movie){
