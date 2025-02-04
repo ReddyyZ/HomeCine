@@ -2,7 +2,7 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import routes from "./routes";
-import './db/sequilize';
+import "./db/sequilize";
 import initializeWatcher from "@/src/services/fileWatcher";
 
 dotenv.config();
@@ -17,5 +17,5 @@ app.use(routes);
 initializeWatcher();
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`)
+  console.log(`Server running at http://localhost:${port}/`);
 });

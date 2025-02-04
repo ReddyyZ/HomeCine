@@ -19,14 +19,14 @@ type defaultResult = {
   success?: boolean;
   errorCode?: number;
   error?: string;
-}
-  
+};
+
 export async function addMovie(props: addMovieProps) {
   // Check if movie already exists
   const movieExists = await Movie.findOne({
     where: {
-      filePath: props.filePath
-    }
+      filePath: props.filePath,
+    },
   });
   if (movieExists) {
     console.log(`Movie ${props.title} already exists!`);
@@ -41,7 +41,7 @@ export async function addMovie(props: addMovieProps) {
       posterUrl: props.posterUrl,
       filePath: props.filePath,
       isSeries: props.isSeries,
-      numberOfSeasons: props.numberOfSeasons
+      numberOfSeasons: props.numberOfSeasons,
     });
 
     console.log(`Movie ${props.title} saved! ${movie.id}`);
@@ -55,10 +55,10 @@ export async function addMovie(props: addMovieProps) {
 export async function deleteMovieByPath(filePath: string) {
   const movie = await Movie.findOne({
     where: {
-      filePath
-    }
+      filePath,
+    },
   });
-  
+
   if (!movie) {
     console.log(`Movie with path ${filePath} not found`);
     return;
@@ -70,7 +70,7 @@ export async function deleteMovieByPath(filePath: string) {
   } catch (error) {
     console.error(`Error deleting movie: ${error}`);
   }
-};
+}
 
 export async function deleteMovieById(id: number): Promise<defaultResult> {
   const movie = await Movie.findByPk(id);
@@ -78,42 +78,45 @@ export async function deleteMovieById(id: number): Promise<defaultResult> {
     console.log(`Movie with id ${id} not found`);
     return {
       errorCode: 404,
-      error: "Movie not found"
+      error: "Movie not found",
     };
   }
 
   try {
-    if (movie.isSeries){
+    if (movie.isSeries) {
       deleteAllEpisodesFromMovieId(id);
     }
 
     await movie.destroy();
     await rmAsync(movie.filePath, {
       recursive: true,
-      force: true
+      force: true,
     });
 
     console.log(`Movie ${movie.title} deleted!`);
     return {
-      success: true
-    }
+      success: true,
+    };
   } catch (error) {
     console.error(`Error deleting movie: ${error}`);
     return {
       errorCode: 500,
-      error: `Error deleting movie: ${error}`
-    }
+      error: `Error deleting movie: ${error}`,
+    };
   }
 }
 
-export async function updateMovieById(id: number, props: Partial<addMovieProps>): Promise<defaultResult> {
+export async function updateMovieById(
+  id: number,
+  props: Partial<addMovieProps>,
+): Promise<defaultResult> {
   const movie = await Movie.findByPk(id);
 
   if (!movie) {
     console.log(`Movie with id ${id} not found`);
     return {
       errorCode: 404,
-      error: "Movie not found"
+      error: "Movie not found",
     };
   }
 
@@ -122,13 +125,13 @@ export async function updateMovieById(id: number, props: Partial<addMovieProps>)
     console.log(`Movie ${movie.title} updated!`);
 
     return {
-      success: true
+      success: true,
     };
   } catch (error) {
     console.error(`Error updating movie: ${error}`);
     return {
       errorCode: 500,
-      error: `Error updating movie: ${error}`
+      error: `Error updating movie: ${error}`,
     };
   }
 }
@@ -136,12 +139,12 @@ export async function updateMovieById(id: number, props: Partial<addMovieProps>)
 export async function findAllMovies() {
   try {
     const movies = await Movie.findAll();
-    return movies.map(movie => movie.toJSON());
+    return movies.map((movie) => movie.toJSON());
   } catch (error) {
     console.error(`Error finding movies: ${error}`);
     return [];
   }
-};
+}
 
 export function findMovieById(movieId: number) {
   return Movie.findByPk(movieId);
@@ -151,8 +154,8 @@ export function movieExists(filePath: string): Promise<Movie | null> {
   try {
     return Movie.findOne({
       where: {
-        filePath
-      }
+        filePath,
+      },
     });
   } catch (error) {
     console.error(`Error checking if movie exists: ${error}`);
@@ -174,8 +177,8 @@ export async function addEpisode(params: addEpisodeProps) {
   // Check if episode already exists
   const episodeExists = await Episode.findOne({
     where: {
-      filePath: params.filePath
-    }
+      filePath: params.filePath,
+    },
   });
   if (episodeExists) {
     console.log(`Episode ${params.title} already exists!`);
@@ -188,21 +191,21 @@ export async function addEpisode(params: addEpisodeProps) {
       filePath: params.filePath,
       movieId: params.movieId,
       season: params.season,
-      episodeNumber: params.episodeNumber
+      episodeNumber: params.episodeNumber,
     });
-  
+
     console.log(`Episode ${params.title} saved!`);
     return episode;
   } catch (error) {
     console.error(`Error saving episode: ${error}`);
   }
-};
+}
 
 export async function deleteEpisodeByPath(filePath: string) {
   const episode = await Episode.findOne({
     where: {
-      filePath
-    }
+      filePath,
+    },
   });
 
   if (!episode) {
@@ -210,11 +213,10 @@ export async function deleteEpisodeByPath(filePath: string) {
     return;
   }
 
-  
   try {
     await episode.destroy();
     console.log(`Episode ${episode.title} deleted!`);
-    
+
     const episodeList = await findAllEpisodesByMovieId(episode.movieId);
     if (episodeList.length === 0) {
       const movie = await Movie.findByPk(episode.movieId);
@@ -222,11 +224,11 @@ export async function deleteEpisodeByPath(filePath: string) {
         await movie.destroy();
         console.log(`Movie ${movie.title} deleted!`);
       }
-    };
+    }
   } catch (error) {
     console.error(`Error deleting episode: ${error}`);
   }
-};
+}
 
 export async function deleteEpisodeById(id: number): Promise<defaultResult> {
   const episode = await Episode.findByPk(id);
@@ -235,7 +237,7 @@ export async function deleteEpisodeById(id: number): Promise<defaultResult> {
     console.log(`Episode with id ${id} not found`);
     return {
       errorCode: 404,
-      error: "Episode not found"
+      error: "Episode not found",
     };
   }
 
@@ -245,18 +247,21 @@ export async function deleteEpisodeById(id: number): Promise<defaultResult> {
 
     console.log(`Episode ${episode.title} deleted!`);
     return {
-      success: true
-    }
+      success: true,
+    };
   } catch (error) {
     console.error(`Error deleting episode: ${error}`);
     return {
       errorCode: 500,
-      error: `Error deleting episode: ${error}`
-    }
+      error: `Error deleting episode: ${error}`,
+    };
   }
 }
 
-export async function updateEpisodeById(id: number, props: Partial<addEpisodeProps>) {
+export async function updateEpisodeById(
+  id: number,
+  props: Partial<addEpisodeProps>,
+) {
   const episode = await Episode.findByPk(id);
 
   if (!episode) {
@@ -272,47 +277,49 @@ export async function updateEpisodeById(id: number, props: Partial<addEpisodePro
   }
 }
 
-
 export function findEpisodeByPath(filePath: string) {
   return Episode.findOne({
     where: {
-      filePath
-    }
+      filePath,
+    },
   });
-};
+}
 
 export async function findAllSeries() {
   const series = await Movie.findAll({
     where: {
-      isSeries: true
-    }
+      isSeries: true,
+    },
   });
-  return series.map(serie => serie.toJSON());
-};
+  return series.map((serie) => serie.toJSON());
+}
 
 export async function findAllEpisodesByMovieId(movieId: number) {
   const episodes = await Episode.findAll({
     where: {
-      movieId
-    }
+      movieId,
+    },
   });
-  return episodes.map(episode => episode.toJSON());
-};
+  return episodes.map((episode) => episode.toJSON());
+}
 
-export async function findAllEpisodesFromSeason(movieId: number, season: number) {
+export async function findAllEpisodesFromSeason(
+  movieId: number,
+  season: number,
+) {
   try {
     const episodes = await Episode.findAll({
       where: {
         movieId,
-        season
-      }
+        season,
+      },
     });
-    return episodes.map(episode => episode.toJSON());
+    return episodes.map((episode) => episode.toJSON());
   } catch (error) {
     console.error(`Error finding episodes: ${error}`);
     return [];
   }
-};
+}
 
 export async function getNumberOfSeasons(movieId: number) {
   try {
@@ -320,23 +327,25 @@ export async function getNumberOfSeasons(movieId: number) {
       where: {
         movieId,
         season: {
-          [Op.eq]: Sequelize.literal(`(SELECT MAX(season) FROM episodes WHERE movieId = ${movieId})`)
-        }
-      }
+          [Op.eq]: Sequelize.literal(
+            `(SELECT MAX(season) FROM episodes WHERE movieId = ${movieId})`,
+          ),
+        },
+      },
     });
     if (!episode) {
       return {
-        seasons: 0
+        seasons: 0,
       };
     }
-  
+
     return {
-      seasons: episode.season
+      seasons: episode.season,
     };
   } catch (error) {
     console.error(`Error getting number of seasons: ${error}`);
     return {
-      seasons: 0
+      seasons: 0,
     };
   }
 }
@@ -344,7 +353,7 @@ export async function getNumberOfSeasons(movieId: number) {
 export function deleteAllEpisodesFromMovieId(movieId: number) {
   return Episode.destroy({
     where: {
-      movieId
-    }
-  })
+      movieId,
+    },
+  });
 }
