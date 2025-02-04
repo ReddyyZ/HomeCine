@@ -169,6 +169,7 @@ type addEpisodeProps = {
   movieId: number;
   season: number;
   episodeNumber: number;
+  posterUrl?: string;
 };
 
 // Series functions
@@ -192,6 +193,7 @@ export async function addEpisode(params: addEpisodeProps) {
       movieId: params.movieId,
       season: params.season,
       episodeNumber: params.episodeNumber,
+      posterUrl: params.posterUrl,
     });
 
     console.log(`Episode ${params.title} saved!`);
@@ -281,6 +283,24 @@ export function findEpisodeByPath(filePath: string) {
   return Episode.findOne({
     where: {
       filePath,
+    },
+  });
+}
+
+export function findEpisodeById(id: number) {
+  return Episode.findByPk(id);
+}
+
+export function findEpisodeFromSeason(
+  movieId: number,
+  season: number,
+  episodeNumber: number,
+) {
+  return Episode.findOne({
+    where: {
+      movieId,
+      season,
+      episodeNumber,
     },
   });
 }
