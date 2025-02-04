@@ -9,7 +9,7 @@
     "start": "node dist/index.js",
     "dev": "nodemon",
     "lint": "eslint && prettier --write --ignore-unknown",
-    "prepare": "husky"
+    "prepare": "cd .. && husky backend/.husky"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
