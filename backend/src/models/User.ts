@@ -9,6 +9,18 @@ import { sequelize } from "../db/sequilize";
 import { hashPassword } from "../services/auth";
 import { v4 as UUIDV4 } from "uuid";
 
+type episodeProgress = {
+  progress: number;
+  watched: boolean;
+};
+
+type movieProgress = {
+  progress?: number;
+  isSeries: boolean;
+  episodes?: Record<string, episodeProgress>;
+  watched: boolean;
+};
+
 export default class User extends Model<
   InferAttributes<User>,
   InferCreationAttributes<User>
@@ -17,6 +29,7 @@ export default class User extends Model<
   declare name: string;
   declare email: string;
   declare password: string;
+  declare watchedMovies?: Record<string, movieProgress>;
 }
 
 User.init(
@@ -34,8 +47,8 @@ User.init(
           args: [2],
         },
         max: {
-          msg: "Name must be at most 50 characters long",
-          args: [50],
+          msg: "Name must be at most 100 characters long",
+          args: [100],
         },
       },
     },
@@ -50,6 +63,9 @@ User.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    watchedMovies: {
+      type: DataTypes.JSON,
     },
   },
   {
