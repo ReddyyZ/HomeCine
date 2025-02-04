@@ -26,6 +26,9 @@ export function verifyUser(token: string): { id: string } {
   if (!process.env.JWT_PRIVATE_KEY) {
     throw new Error("JWT private key is not defined");
   }
+  if (!token) {
+    return { id: "" };
+  }
 
   return jwt.verify(token, process.env.JWT_PRIVATE_KEY) as { id: string };
 }
