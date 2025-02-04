@@ -5,10 +5,14 @@ import {
   DataTypes,
   CreationOptional,
 } from "sequelize";
-import bcrypt from "bcrypt";
 import { sequelize } from "../db/sequilize";
+import { hashPassword } from "../services/auth";
+import { v4 as UUIDV4 } from "uuid";
 
-class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+export default class User extends Model<
+  InferAttributes<User>,
+  InferCreationAttributes<User>
+> {
   declare id: CreationOptional<string>;
   declare name: string;
   declare email: string;
@@ -53,8 +57,10 @@ User.init(
     sequelize,
     hooks: {
       beforeCreate: async (user: User) => {
-        const hashedPassword = await bcrypt.hash(user.password, 2);
+        const hashedPassword = await hashPassword(user.password);
+        const userId = UUIDV4();
         user.password = hashedPassword;
+        user.id = userId;
       },
     },
   },
