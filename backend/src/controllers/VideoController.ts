@@ -7,10 +7,11 @@ import {
 import { streamVideo } from "../functions/VideoFuncs";
 import { getUserByToken, updateUser } from "../functions/UserFuncs";
 import { getVideoDuration } from "../services/ffmpeg";
+import { sequelize } from "@src/db/sequilize";
 
 export async function watchMovie(req: Request, res: Response) {
   const { movieId } = req.params;
-  const token = req.headers.authorization;
+  const token = String(req.query.token);
 
   if (!movieId) {
     res.status(400).json({ error: "Missing movieId" });
@@ -67,7 +68,8 @@ export async function watchEpisode(req: Request, res: Response) {
 }
 
 export async function getProgress(req: Request, res: Response) {
-  const { movieId, episodeId } = req.body;
+  const movieId = req.query.movieId ? String(req.query.movieId) : "";
+  const episodeId = req.query.episodeId ? String(req.query.episodeId) : "";
   const token = req.headers.authorization;
 
   if (!movieId) {
@@ -94,7 +96,7 @@ export async function getProgress(req: Request, res: Response) {
     return;
   }
 
-  if (episodeId) {
+  if (episodeId.length > 0) {
     if (!episodes) {
       res.json({ progress: 0, watched: false });
       return;
@@ -117,8 +119,11 @@ export async function updateProgress(req: Request, res: Response) {
   const { movieId, episodeId, progress } = req.body;
   const token = req.headers.authorization;
 
+  console.log(movieId, progress, token);
+
   if (!movieId || !progress) {
     res.status(400).json({ error: "Missing movieId or progress" });
+    console.log("erro");
     return;
   }
   if (!token) {
