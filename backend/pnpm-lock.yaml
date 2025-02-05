@@ -25,6 +25,12 @@ importers:
       express:
         specifier: ^4.21.2
         version: 4.21.2
+      ffprobe-static:
+        specifier: ^3.1.0
+        version: 3.1.0
+      fluent-ffmpeg:
+        specifier: ^2.1.3
+        version: 2.1.3
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -47,6 +53,12 @@ importers:
       "@types/express":
         specifier: ^5.0.0
         version: 5.0.0
+      "@types/ffprobe-static":
+        specifier: ^2.0.3
+        version: 2.0.3
+      "@types/fluent-ffmpeg":
+        specifier: ^2.1.27
+        version: 2.1.27
       "@types/jsonwebtoken":
         specifier: ^9.0.8
         version: 9.0.8
@@ -358,6 +370,18 @@ packages:
         integrity: sha512-DvZriSMehGHL1ZNLzi6MidnsDhUZM/x2pRdDIKdwbUNqqwHxMlRdkxtn6/EPKyqKpHqTl/4nRZsRNLpZxZRpPQ==,
       }
 
+  "@types/ffprobe-static@2.0.3":
+    resolution:
+      {
+        integrity: sha512-86Q8dIzhjknxA6935ZcVLkVU3t6bP+F08mdriWZk2+3UqjxIbT3QEADjbO5Yq8826cVs/aZBREVZ7jUoSTgHiw==,
+      }
+
+  "@types/fluent-ffmpeg@2.1.27":
+    resolution:
+      {
+        integrity: sha512-QiDWjihpUhriISNoBi2hJBRUUmoj/BMTYcfz+F+ZM9hHWBYABFAE6hjP/TbCZC0GWwlpa3FzvHH9RzFeRusZ7A==,
+      }
+
   "@types/http-errors@2.0.4":
     resolution:
       {
@@ -662,6 +686,12 @@ packages:
     resolution:
       {
         integrity: sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==,
+      }
+
+  async@0.2.10:
+    resolution:
+      {
+        integrity: sha512-eAkdoKxU6/LkKDBzLpT+t6Ff5EtfSF4wx1WfJiPEEV7WNLnDaRXk0oVysiEPm262roaachGexwUv94WhSgN5TQ==,
       }
 
   asynckit@0.4.0:
@@ -1299,6 +1329,12 @@ packages:
         integrity: sha512-7SFSRCNjBQIZH/xZR3iy5iQYR8aGBE0h3VG6/cwlbrpdciNYBMotQav8c1XI3HjHH+NikUpP53nPdlZSdWmFzA==,
       }
 
+  ffprobe-static@3.1.0:
+    resolution:
+      {
+        integrity: sha512-Dvpa9uhVMOYivhHKWLGDoa512J751qN1WZAIO+Xw4L/mrUSPxS4DApzSUDbCFE/LUq2+xYnznEahTd63AqBSpA==,
+      }
+
   file-entry-cache@8.0.0:
     resolution:
       {
@@ -1345,6 +1381,13 @@ packages:
       {
         integrity: sha512-AiwGJM8YcNOaobumgtng+6NHuOqC3A7MixFeDafM3X9cIUM+xUXoS5Vfgf+OihAYe20fxqNM9yPBXJzRtZ/4eA==,
       }
+
+  fluent-ffmpeg@2.1.3:
+    resolution:
+      {
+        integrity: sha512-Be3narBNt2s6bsaqP6Jzq91heDgOEaDCJAXcE3qcma/EJBSy5FB4cvO31XBInuAuKBx8Kptf8dkhjK0IOru39Q==,
+      }
+    engines: { node: ">=18" }
 
   follow-redirects@1.15.9:
     resolution:
@@ -3122,6 +3165,13 @@ packages:
         integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==,
       }
 
+  which@1.3.1:
+    resolution:
+      {
+        integrity: sha512-HxJdYWq1MTIQbJ3nw0cqssHoTNU267KlrDuGZ1WYlxDStUtKUhOaJmh112/TZmHxxUfuJqPXSOm7tDyas0OSIQ==,
+      }
+    hasBin: true
+
   which@2.0.2:
     resolution:
       {
@@ -3355,6 +3405,12 @@ snapshots:
       "@types/qs": 6.9.18
       "@types/serve-static": 1.15.7
 
+  "@types/ffprobe-static@2.0.3": {}
+
+  "@types/fluent-ffmpeg@2.1.27":
+    dependencies:
+      "@types/node": 22.13.0
+
   "@types/http-errors@2.0.4": {}
 
   "@types/json-schema@7.0.15": {}
@@ -3559,6 +3615,8 @@ snapshots:
   argparse@2.0.1: {}
 
   array-flatten@1.1.1: {}
+
+  async@0.2.10: {}
 
   asynckit@0.4.0: {}
 
@@ -3976,6 +4034,8 @@ snapshots:
     dependencies:
       reusify: 1.0.4
 
+  ffprobe-static@3.1.0: {}
+
   file-entry-cache@8.0.0:
     dependencies:
       flat-cache: 4.0.1
@@ -4009,6 +4069,11 @@ snapshots:
       keyv: 4.5.4
 
   flatted@3.3.2: {}
+
+  fluent-ffmpeg@2.1.3:
+    dependencies:
+      async: 0.2.10
+      which: 1.3.1
 
   follow-redirects@1.15.9: {}
 
@@ -5047,6 +5112,10 @@ snapshots:
     dependencies:
       tr46: 0.0.3
       webidl-conversions: 3.0.1
+
+  which@1.3.1:
+    dependencies:
+      isexe: 2.0.0
 
   which@2.0.2:
     dependencies:
