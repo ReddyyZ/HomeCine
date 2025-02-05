@@ -62,7 +62,9 @@ export async function authenticate(
   res: Response,
   next: NextFunction,
 ) {
-  const token = req.headers.authorization;
+  const token = req.headers.authorization
+    ? req.headers.authorization
+    : String(req.query.token);
 
   if (!token) {
     res.status(401).json({ error: "Missing token" });

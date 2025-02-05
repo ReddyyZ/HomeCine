@@ -15,7 +15,7 @@ export async function getUserByToken(token: string) {
     return;
   }
 
-  return getUserById(id);
+  return User.findByPk(id);
 }
 
 export async function updateUser(id: string, data: Partial<User>) {
