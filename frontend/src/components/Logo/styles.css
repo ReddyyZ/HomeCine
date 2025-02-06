@@ -1,0 +1,7 @@
+#logo-container {
+  font-family: "Orbitron", "Inter", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
