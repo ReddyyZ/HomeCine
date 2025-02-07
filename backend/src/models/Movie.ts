@@ -64,6 +64,7 @@ Movie.init(
     filePath: {
       type: DataTypes.TEXT,
       allowNull: false,
+      unique: true,
     },
     isSeries: {
       type: DataTypes.BOOLEAN,
@@ -89,6 +90,7 @@ export class Episode extends Model<
   declare episodeNumber: number;
   declare filePath: string;
   declare movieId: number;
+  declare posterUrl: CreationOptional<string>;
 }
 
 Episode.init(
@@ -116,6 +118,9 @@ Episode.init(
       type: DataTypes.TEXT,
       allowNull: false,
       unique: true,
+    },
+    posterUrl: {
+      type: DataTypes.TEXT,
     },
     season: {
       type: DataTypes.NUMBER,
