@@ -12,8 +12,6 @@ export default function Input(
     <input
       style={{
         backgroundColor: colors.cardBg,
-        borderColor: colors.border,
-        borderWidth: 1,
         color: colors.text,
       }}
       className="input"
