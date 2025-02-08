@@ -3,13 +3,13 @@ import { login, loginProps } from "../services/apiClient";
 
 interface ProviderProps {
   user: string | null;
-  login(data: loginProps): void;
+  login(data: loginProps): Promise<void>;
   logout(): void;
 }
 
 const AuthContext = createContext<ProviderProps>({
   user: null,
-  login: () => {},
+  login: async () => {},
   logout: () => {},
 });
 
