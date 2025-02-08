@@ -1,30 +1,31 @@
 import React, { useContext, createContext } from "react";
-import { login, loginProps } from "../services/apiClient";
-
+import { login, LoginProps } from "../services/apiClient";
+import { AxiosResponse } from "axios";
 interface ProviderProps {
   user: string | null;
-  login(data: loginProps): Promise<void>;
+  login(data: LoginProps): Promise<AxiosResponse | undefined>;
   logout(): void;
 }
 
-const AuthContext = createContext<ProviderProps>({
-  user: null,
-  login: async () => {},
-  logout: () => {},
-});
+const AuthContext = createContext<ProviderProps>({} as ProviderProps);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const user = localStorage.getItem("user");
 
-  const loginFunc = async (data: loginProps) => {
-    const result = await login(data);
-    if (!result.data) {
+  const loginFunc = async (data: LoginProps) => {
+    try {
+      const result = await login(data);
+      if (!result) {
+        return;
+      }
+
+      if (result.data.success) {
+        localStorage.setItem("user", result.data.user);
+      }
+
+      return result;
+    } catch (error) {
       return;
-    }
-    if (result.data.success) {
-      localStorage.setItem("user", result.data.user);
-    } else {
-      console.log(result.data.error);
     }
   };
 
