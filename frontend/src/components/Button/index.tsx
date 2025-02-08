@@ -1,12 +1,12 @@
-import { ClassAttributes, InputHTMLAttributes } from "react";
+import { ClassAttributes, ButtonHTMLAttributes } from "react";
 import { JSX } from "react/jsx-runtime";
 import "./styles.css";
 import colors from "../../constants/colors";
 
 export default function Button(
   props: JSX.IntrinsicAttributes &
-    ClassAttributes<HTMLInputElement> &
-    InputHTMLAttributes<HTMLInputElement>,
+    ClassAttributes<HTMLButtonElement> &
+    ButtonHTMLAttributes<HTMLButtonElement>,
 ) {
   return (
     <button
