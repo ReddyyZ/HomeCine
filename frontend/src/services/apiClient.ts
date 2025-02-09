@@ -1,4 +1,3 @@
-import { AxiosError, AxiosResponse } from "axios";
 import apiClient from "./axios";
 
 export type LoginProps = {
@@ -6,7 +5,7 @@ export type LoginProps = {
   password: string;
 };
 
-export type registerProps = {
+export type RegisterProps = {
   name: string;
   email: string;
   password: string;
@@ -14,4 +13,8 @@ export type registerProps = {
 
 export function login(data: LoginProps) {
   return apiClient.post("/login", data);
+}
+
+export function register(data: RegisterProps) {
+  return apiClient.post("/register", data);
 }

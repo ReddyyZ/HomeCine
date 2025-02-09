@@ -1,9 +1,15 @@
 import React, { useContext, createContext } from "react";
-import { login, LoginProps } from "../services/apiClient";
+import {
+  login,
+  LoginProps,
+  register,
+  RegisterProps,
+} from "../services/apiClient";
 import { AxiosResponse } from "axios";
 interface ProviderProps {
   user: string | null;
   login(data: LoginProps): Promise<AxiosResponse | undefined>;
+  register(data: RegisterProps): Promise<AxiosResponse | undefined>;
   logout(): void;
 }
 
@@ -29,6 +35,23 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const registerFunc = async (data: RegisterProps) => {
+    try {
+      const result = await register(data);
+      if (!result) {
+        return;
+      }
+
+      if (result.data.success) {
+        localStorage.setItem("user", result.data.user);
+      }
+
+      return result;
+    } catch (error) {
+      return;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem("user");
   };
@@ -36,6 +59,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const value = {
     user,
     login: loginFunc,
+    register: registerFunc,
     logout,
   };
 
