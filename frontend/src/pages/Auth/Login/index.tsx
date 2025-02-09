@@ -5,7 +5,7 @@ import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import colors from "../../../constants/colors";
 import { useAuth } from "../../../contexts/AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Alert from "../../../components/Alert";
 import LoadingIndicator from "../../../components/LoadingIndicator";
 
@@ -75,10 +75,22 @@ const Login: React.FC = () => {
         style={{
           backgroundColor: colors.secondaryBg,
         }}
-        className="pl-8 pr-8 pt-[52px] pb-[52px] rounded-sm"
+        className="pl-8 pr-8 pt-[52px] pb-[52px] rounded-sm relative"
       >
         {loading && (
-          <div className="flex justify-center items-center mb-2">
+          <div
+            className="flex justify-center items-center rounded-sm mb-2"
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backdropFilter: "blur(5px)",
+              width: "100%",
+              height: "100%",
+            }}
+          >
             <LoadingIndicator />
           </div>
         )}
@@ -119,7 +131,9 @@ const Login: React.FC = () => {
 
         <p className="text-center mt-6">
           Don't have an account?{" "}
-          <a style={{ color: colors.secondary }}>Sign up</a>
+          <Link style={{ color: colors.secondary }} to="/register">
+            Sign up
+          </Link>
         </p>
       </form>
     </div>
