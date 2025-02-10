@@ -5,7 +5,7 @@ import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import colors from "../../../constants/colors";
 import { useAuth } from "../../../contexts/AuthProvider";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Alert from "../../../components/Alert";
 import LoadingIndicator from "../../../components/LoadingIndicator";
 
@@ -17,7 +17,6 @@ type Result = {
 const Login: React.FC = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const navigate = useNavigate();
   const [result, setResult] = React.useState({} as Result);
   const [loading, setLoading] = React.useState(false);
 
@@ -55,7 +54,6 @@ const Login: React.FC = () => {
     }
 
     setLoading(false);
-    // navigate("/");
   };
 
   return (
@@ -107,9 +105,8 @@ const Login: React.FC = () => {
               placeholder="Email"
               type="email"
               id="email"
-              onChange={(e) => {
-                setEmail(String(e.target.value));
-              }}
+              value={email}
+              onChangeText={setEmail}
             />
           </div>
           <div className="w-full">
@@ -120,9 +117,8 @@ const Login: React.FC = () => {
               placeholder="Password"
               type="password"
               id="password"
-              onChange={(e) => {
-                setPassword(String(e.target.value));
-              }}
+              value={password}
+              onChangeText={setPassword}
             />
           </div>
         </div>
