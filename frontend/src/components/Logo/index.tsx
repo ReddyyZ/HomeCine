@@ -44,21 +44,23 @@ export default function Logo({ size }: LogoProps) {
       }}
     >
       Home
-      <div className="p-1.5">
-        <CinemaCamera
-          fill={colors.primary}
-          height={
-            size === "large"
-              ? "50"
-              : size === "medium"
-                ? "40"
-                : size === "small"
-                  ? "30"
-                  : "32px"
-          }
-        />
+      <div className="flex flex-wrap justify-center">
+        <div className="p-1.5">
+          <CinemaCamera
+            fill={colors.primary}
+            height={
+              size === "large"
+                ? "50"
+                : size === "medium"
+                  ? "40"
+                  : size === "small"
+                    ? "30"
+                    : "40"
+            }
+          />
+        </div>
+        Cine
       </div>
-      Cine
     </h1>
   );
 }
