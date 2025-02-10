@@ -2,7 +2,7 @@ body {
   background-color: #121212;
 }
 
-#root {
+.loginDiv {
   display: flex;
   justify-content: center;
   align-items: center;
