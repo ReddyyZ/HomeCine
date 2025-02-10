@@ -8,6 +8,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   value: string;
   onChangeText: (value: string) => void;
   type?: "text" | "password" | "email" | "search";
+  onSearch?: (value: string) => void;
 }
 
 interface PasswordInputIcon extends IconBaseProps {
@@ -31,6 +32,7 @@ export default function Input({
   type,
   onChangeText,
   value,
+  onSearch,
   ...props
 }: InputProps) {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
@@ -41,9 +43,18 @@ export default function Input({
       {...props}
     />
   );
+  const SearchIcon = (props: IconBaseProps) => (
+    <button
+      onClick={() => onSearch && onSearch(value)}
+      className={value.length ? "cursor-pointer" : ""}
+    >
+      <IoSearch {...props} />
+    </button>
+  );
+
   const Icon =
     type === "search"
-      ? IoSearch
+      ? SearchIcon
       : type === "password"
         ? value.length
           ? PasswordIcon
