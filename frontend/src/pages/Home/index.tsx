@@ -11,7 +11,7 @@ import List from "../../components/List";
 
 function MovieCard(movie: Movie) {
   return (
-    <div className="movieCard h-80 w-56" key={movie.id}>
+    <div className="movieCard fadein h-80 w-56" key={movie.id}>
       <img src={movie.posterUrl} alt={movie.title} />
       <div className="movieHover">
         <IoPlayCircle size={36} color={colors.text} />
@@ -27,53 +27,39 @@ function removeAccents(str: string) {
 export default function Home() {
   const [search, setSearch] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
-  // const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
+  const [allMovies, setAllMovies] = useState<Movie[]>([]); // Estado para armazenar todos os filmes
   const moviesWrapperRef = useRef<HTMLDivElement>(null);
   const auth = useAuth();
 
-  const searchMovies = async () => {
+  const loadMovies = async () => {
     if (!auth.user) return auth.logout();
-    if (search) {
-      moviesWrapperRef.current?.scrollIntoView({
-        behavior: "smooth",
-      });
-    }
 
     const result = await getMovies(auth.user);
     if (!result) return;
     if (result.data.error) return alert(result.data.error);
+
     const moviesResult = result.data as Movie[];
-    setMovies(
-      moviesResult.filter((movie) =>
-        removeAccents(movie.title)
-          .toLowerCase()
-          .includes(removeAccents(search).toLowerCase()),
-      ),
-    );
-    // setMovies(result.data as Movie[]);
-    // setFilteredMovies(result.data as Movie[]);
 
-    setTimeout(() => {
-      const movieCards = document.querySelectorAll(".movieCard");
-      movieCards.forEach((card) => {
-        setTimeout(() => card.classList.add("fadein"), 50);
-      });
-    }, 200);
-
-    console.log("Movies loaded!");
+    setAllMovies(moviesResult); // Armazena todos os filmes
+    setMovies(moviesResult); // Inicialmente, exibe todos os filmes
   };
 
-  // const showMovies = (search: string) => {
-  //   moviesWrapperRef.current?.scrollIntoView({
-  //     behavior: "smooth",
-  //   })
-  //   setFilteredMovies(
-  //     movies.filter((movie) => removeAccents(movie.title).toLowerCase().includes(removeAccents(search).toLowerCase()))
-  //   );
-  // }
+  const showMovies = (searchInput: string) => {
+    moviesWrapperRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+
+    const filtered = allMovies.filter((movie) =>
+      removeAccents(movie.title)
+        .toLowerCase()
+        .includes(removeAccents(searchInput).toLowerCase()),
+    );
+
+    setMovies(filtered);
+  };
 
   useEffect(() => {
-    searchMovies();
+    loadMovies();
   }, []);
 
   return (
@@ -88,8 +74,7 @@ export default function Home() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              searchMovies();
-              // showMovies(search);
+              showMovies(search);
             }}
           >
             <Input
