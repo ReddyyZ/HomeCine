@@ -51,10 +51,10 @@ const Login: React.FC = () => {
         success: true,
         message: "Logged in successfully, redirecting...",
       });
+      window.location.reload();
     }
 
     setLoading(false);
-    window.location.reload();
   };
 
   return (
@@ -77,9 +77,10 @@ const Login: React.FC = () => {
           }}
           className="pl-8 pr-8 pt-[52px] pb-[52px] rounded-sm relative"
         >
+          <input type="submit" hidden />
           {loading && (
             <div
-              className="flex justify-center items-center rounded-sm mb-2"
+              className="flex justify-center items-center rounded-sm mb-2 appear-animation"
               style={{
                 position: "absolute",
                 top: "50%",
