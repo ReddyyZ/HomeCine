@@ -18,3 +18,11 @@ export function login(data: LoginProps) {
 export function register(data: RegisterProps) {
   return apiClient.post("/register", data);
 }
+
+export function getMovies(user: string) {
+  return apiClient.get("/movies", {
+    headers: {
+      Authorization: user,
+    },
+  });
+}
