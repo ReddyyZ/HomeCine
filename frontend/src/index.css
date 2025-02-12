@@ -5,6 +5,65 @@
   src: local("Orbitron-Variable"), url("./assets/fonts/Orbitron-Variable.ttf");
 }
 
+@layer components {
+  @keyframes appear {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .appear-animation {
+    animation: appear 0.2s;
+  }
+
+  .bg-primary {
+    background-color: #e50914;
+  }
+
+  .bg-secondary {
+    background-color: #ffa726;
+  }
+
+  .bg-primaryBg {
+    background-color: #121212;
+  }
+
+  .bg-secondaryBg {
+    background-color: #1e1e1e;
+  }
+
+  .bg-cardBg {
+    background-color: #252525;
+  }
+
+  .text-primary {
+    color: #e50914;
+  }
+
+  .text-secondary {
+    color: #ffa726;
+  }
+
+  .text-text {
+    color: #e0e0e0;
+  }
+
+  .text-mutedText {
+    color: #b0b0b0;
+  }
+
+  .border-mutedText {
+    border-color: #b0b0b0;
+  }
+
+  .border-borderColor {
+    border-color: #3a3a3a;
+  }
+}
+
 * {
   color: #e0e0e0;
 }
