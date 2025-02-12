@@ -75,6 +75,9 @@ export default function Home() {
     setSearch("");
     showMovies("");
     window.scrollTo({ top: 0, behavior: "smooth" });
+
+    const searchElement = document.getElementById("search") as HTMLInputElement;
+    searchElement.value = "";
   };
 
   useEffect(() => {
