@@ -27,6 +27,7 @@ function removeAccents(str: string) {
 
 export default function Home() {
   const [search, setSearch] = useState("");
+  const [querySearched, setQuerySearched] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [allMovies, setAllMovies] = useState<Movie[]>([]); // Estado para armazenar todos os filmes
   const [loading, setLoading] = useState(false);
@@ -67,6 +68,7 @@ export default function Home() {
     );
 
     setMovies(filtered);
+    setQuerySearched(searchInput);
   };
 
   useEffect(() => {
@@ -117,6 +119,14 @@ export default function Home() {
           </div>
         )}
         <div className="bg-secondaryBg mx-auto max-w-7xl rounded-lg p-6">
+          {
+            // Exibe a mensagem de erro caso não encontre nenhum filme
+            querySearched && (
+              <p className="mb-6 text-lg">
+                Showing results for: <strong>"{querySearched}"</strong>
+              </p>
+            )
+          }
           <h2 className="mb-4 text-2xl">Movies</h2>
           <List type="movies">
             {movies.filter((movie) => !movie.isSeries).map(MovieCard)}
