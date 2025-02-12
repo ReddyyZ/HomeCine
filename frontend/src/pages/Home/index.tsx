@@ -4,7 +4,7 @@ import Logo from "../../components/Logo";
 import { Movie } from "../types/movies";
 import { useAuth } from "../../contexts/AuthProvider";
 import { getMovies } from "../../services/apiClient";
-import { IoPlayCircle } from "react-icons/io5";
+import { IoPlayCircle, IoArrowBack } from "react-icons/io5";
 import "./styles.css";
 import colors from "../../constants/colors";
 import List from "../../components/List";
@@ -71,6 +71,12 @@ export default function Home() {
     setQuerySearched(searchInput);
   };
 
+  const clearSearch = () => {
+    setSearch("");
+    showMovies("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   useEffect(() => {
     loadMovies();
   }, []);
@@ -122,9 +128,17 @@ export default function Home() {
           {
             // Exibe a mensagem de erro caso não encontre nenhum filme
             querySearched && (
-              <p className="mb-6 text-lg">
-                Showing results for: <strong>"{querySearched}"</strong>
-              </p>
+              <div className="mb-6 flex items-center gap-3">
+                <button
+                  onClick={clearSearch}
+                  className="cursor-pointer p-1 transition-opacity duration-150 hover:opacity-70"
+                >
+                  <IoArrowBack size={24} color={colors.text} />
+                </button>
+                <p className="text-lg">
+                  Showing results for: <strong>"{querySearched}"</strong>
+                </p>
+              </div>
             )
           }
           <h2 className="mb-4 text-2xl">Movies</h2>
