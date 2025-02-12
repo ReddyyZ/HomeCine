@@ -35,9 +35,6 @@ importers:
       "@eslint/js":
         specifier: ^9.19.0
         version: 9.19.0
-      "@types/axios":
-        specifier: ^0.14.4
-        version: 0.14.4
       "@types/react":
         specifier: ^19.0.8
         version: 19.0.8
@@ -68,6 +65,9 @@ importers:
       prettier:
         specifier: 3.4.2
         version: 3.4.2
+      prettier-plugin-tailwindcss:
+        specifier: ^0.6.11
+        version: 0.6.11(prettier@3.4.2)
       typescript:
         specifier: ~5.7.2
         version: 5.7.3
@@ -862,13 +862,6 @@ packages:
       }
     peerDependencies:
       vite: ^5.2.0 || ^6
-
-  "@types/axios@0.14.4":
-    resolution:
-      {
-        integrity: sha512-9JgOaunvQdsQ/qW2OPmE5+hCeUB52lQSolecrFrthct55QekhmXEwT203s20RL+UHtCQc15y3VXpby9E7Kkh/g==,
-      }
-    deprecated: This is a stub types definition. axios provides its own type definitions, so you do not need this installed.
 
   "@types/babel__core@7.20.5":
     resolution:
@@ -2055,6 +2048,64 @@ packages:
       }
     engines: { node: ">= 0.8.0" }
 
+  prettier-plugin-tailwindcss@0.6.11:
+    resolution:
+      {
+        integrity: sha512-YxaYSIvZPAqhrrEpRtonnrXdghZg1irNg4qrjboCXrpybLWVs55cW2N3juhspVJiO0JBvYJT8SYsJpc8OQSnsA==,
+      }
+    engines: { node: ">=14.21.3" }
+    peerDependencies:
+      "@ianvs/prettier-plugin-sort-imports": "*"
+      "@prettier/plugin-pug": "*"
+      "@shopify/prettier-plugin-liquid": "*"
+      "@trivago/prettier-plugin-sort-imports": "*"
+      "@zackad/prettier-plugin-twig": "*"
+      prettier: ^3.0
+      prettier-plugin-astro: "*"
+      prettier-plugin-css-order: "*"
+      prettier-plugin-import-sort: "*"
+      prettier-plugin-jsdoc: "*"
+      prettier-plugin-marko: "*"
+      prettier-plugin-multiline-arrays: "*"
+      prettier-plugin-organize-attributes: "*"
+      prettier-plugin-organize-imports: "*"
+      prettier-plugin-sort-imports: "*"
+      prettier-plugin-style-order: "*"
+      prettier-plugin-svelte: "*"
+    peerDependenciesMeta:
+      "@ianvs/prettier-plugin-sort-imports":
+        optional: true
+      "@prettier/plugin-pug":
+        optional: true
+      "@shopify/prettier-plugin-liquid":
+        optional: true
+      "@trivago/prettier-plugin-sort-imports":
+        optional: true
+      "@zackad/prettier-plugin-twig":
+        optional: true
+      prettier-plugin-astro:
+        optional: true
+      prettier-plugin-css-order:
+        optional: true
+      prettier-plugin-import-sort:
+        optional: true
+      prettier-plugin-jsdoc:
+        optional: true
+      prettier-plugin-marko:
+        optional: true
+      prettier-plugin-multiline-arrays:
+        optional: true
+      prettier-plugin-organize-attributes:
+        optional: true
+      prettier-plugin-organize-imports:
+        optional: true
+      prettier-plugin-sort-imports:
+        optional: true
+      prettier-plugin-style-order:
+        optional: true
+      prettier-plugin-svelte:
+        optional: true
+
   prettier@3.4.2:
     resolution:
       {
@@ -2841,12 +2892,6 @@ snapshots:
       tailwindcss: 4.0.3
       vite: 6.1.0(jiti@2.4.2)(lightningcss@1.29.1)(yaml@2.7.0)
 
-  "@types/axios@0.14.4":
-    dependencies:
-      axios: 1.7.9
-    transitivePeerDependencies:
-      - debug
-
   "@types/babel__core@7.20.5":
     dependencies:
       "@babel/parser": 7.26.7
@@ -3531,6 +3576,10 @@ snapshots:
       source-map-js: 1.2.1
 
   prelude-ls@1.2.1: {}
+
+  prettier-plugin-tailwindcss@0.6.11(prettier@3.4.2):
+    dependencies:
+      prettier: 3.4.2
 
   prettier@3.4.2: {}
 
