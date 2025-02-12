@@ -87,8 +87,8 @@ export default function Input({
         onChange={(e) => onChangeText(e.target.value)}
         {...props}
       />
-      <div className="flex items-center justify-center p-2">
-        {Icon && (
+      {Icon && (
+        <div className="flex items-center justify-center p-2">
           <Icon
             size={24}
             fill={colors.text}
@@ -97,8 +97,8 @@ export default function Input({
               transition: "opacity 0.2s",
             }}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
