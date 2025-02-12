@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Input from "../../components/Input";
 import Logo from "../../components/Logo";
 import { Movie } from "../types/movies";
@@ -7,12 +7,11 @@ import { getMovies } from "../../services/apiClient";
 import { IoPlayCircle } from "react-icons/io5";
 import "./styles.css";
 import colors from "../../constants/colors";
-import DraggableList from "../../DraggableList";
 import List from "../../components/List";
 
 function MovieCard(movie: Movie) {
   return (
-    <div className="h-80 w-56 movieCard">
+    <div className="movieCard h-80 w-56" key={movie.id}>
       <img src={movie.posterUrl} alt={movie.title} />
       <div className="movieHover">
         <IoPlayCircle size={36} color={colors.text} />
@@ -21,18 +20,38 @@ function MovieCard(movie: Movie) {
   );
 }
 
+function removeAccents(str: string) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 export default function Home() {
   const [search, setSearch] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
+  // const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
+  const moviesWrapperRef = useRef<HTMLDivElement>(null);
   const auth = useAuth();
 
   const searchMovies = async () => {
     if (!auth.user) return auth.logout();
+    if (search) {
+      moviesWrapperRef.current?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
 
     const result = await getMovies(auth.user);
     if (!result) return;
     if (result.data.error) return alert(result.data.error);
-    setMovies(result.data);
+    const moviesResult = result.data as Movie[];
+    setMovies(
+      moviesResult.filter((movie) =>
+        removeAccents(movie.title)
+          .toLowerCase()
+          .includes(removeAccents(search).toLowerCase()),
+      ),
+    );
+    // setMovies(result.data as Movie[]);
+    // setFilteredMovies(result.data as Movie[]);
 
     setTimeout(() => {
       const movieCards = document.querySelectorAll(".movieCard");
@@ -40,39 +59,57 @@ export default function Home() {
         setTimeout(() => card.classList.add("fadein"), 50);
       });
     }, 200);
-    console.log(result.data);
+
+    console.log("Movies loaded!");
   };
+
+  // const showMovies = (search: string) => {
+  //   moviesWrapperRef.current?.scrollIntoView({
+  //     behavior: "smooth",
+  //   })
+  //   setFilteredMovies(
+  //     movies.filter((movie) => removeAccents(movie.title).toLowerCase().includes(removeAccents(search).toLowerCase()))
+  //   );
+  // }
 
   useEffect(() => {
     searchMovies();
   }, []);
 
   return (
-    <div className="h-screen w-full flex flex-col">
-      <div className="min-h-96 w-full flex flex-col justify-center items-center p-6 ">
-        <div className="max-w-lg w-full">
+    <div className="flex h-screen w-full flex-col">
+      <div className="flex min-h-96 w-full flex-col items-center justify-center p-6">
+        <div className="w-full max-w-lg">
           <Logo size="large" />
-          <p className="font-[Orbitron] text-center text-xl mb-6">
+          <p className="mb-6 text-center font-[Orbitron] text-xl">
             Your home, your cinema!
           </p>
 
-          <Input
-            placeholder="Search for movies"
-            id="search"
-            type="search"
-            value={search}
-            onChangeText={setSearch}
-          />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              searchMovies();
+              // showMovies(search);
+            }}
+          >
+            <Input
+              placeholder="Search for movies"
+              id="search"
+              type="search"
+              value={search}
+              onChangeText={setSearch}
+            />
+          </form>
         </div>
       </div>
-      <div className="py-4 px-6">
-        <div className="max-w-7xl mx-auto bg-secondaryBg p-6 rounded-lg">
-          <h2 className="text-2xl mb-4">Movies</h2>
+      <div className="px-6 py-4" ref={moviesWrapperRef}>
+        <div className="bg-secondaryBg mx-auto max-w-7xl rounded-lg p-6">
+          <h2 className="mb-4 text-2xl">Movies</h2>
           <List type="movies">
             {movies.filter((movie) => !movie.isSeries).map(MovieCard)}
           </List>
 
-          <h2 className="text-2xl mt-6 mb-4">Series</h2>
+          <h2 className="mt-6 mb-4 text-2xl">Series</h2>
           <List type="series">
             {movies.filter((movie) => movie.isSeries).map(MovieCard)}
           </List>

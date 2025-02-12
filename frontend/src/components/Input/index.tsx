@@ -47,6 +47,7 @@ export default function Input({
     <button
       onClick={() => onSearch && onSearch(value)}
       className={value.length ? "cursor-pointer" : ""}
+      type="submit"
     >
       <IoSearch {...props} />
     </button>
