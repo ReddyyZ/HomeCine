@@ -8,6 +8,7 @@ import { IoPlayCircle } from "react-icons/io5";
 import "./styles.css";
 import colors from "../../constants/colors";
 import List from "../../components/List";
+import LoadingIndicator from "../../components/LoadingIndicator";
 
 function MovieCard(movie: Movie) {
   return (
@@ -28,20 +29,30 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [allMovies, setAllMovies] = useState<Movie[]>([]); // Estado para armazenar todos os filmes
+  const [loading, setLoading] = useState(false);
   const moviesWrapperRef = useRef<HTMLDivElement>(null);
   const auth = useAuth();
 
   const loadMovies = async () => {
     if (!auth.user) return auth.logout();
+    if (loading) return;
 
-    const result = await getMovies(auth.user);
-    if (!result) return;
-    if (result.data.error) return alert(result.data.error);
+    setLoading(true);
 
-    const moviesResult = result.data as Movie[];
+    try {
+      const result = await getMovies(auth.user);
+      if (!result) return;
+      if (result.data.error) return alert(result.data.error);
 
-    setAllMovies(moviesResult); // Armazena todos os filmes
-    setMovies(moviesResult); // Inicialmente, exibe todos os filmes
+      const moviesResult = result.data as Movie[];
+
+      setAllMovies(moviesResult); // Armazena todos os filmes
+      setMovies(moviesResult); // Inicialmente, exibe todos os filmes
+    } catch (err) {
+      console.error(err);
+    }
+
+    setLoading(false);
   };
 
   const showMovies = (searchInput: string) => {
@@ -87,7 +98,24 @@ export default function Home() {
           </form>
         </div>
       </div>
-      <div className="px-6 py-4" ref={moviesWrapperRef}>
+      <div className="relative px-6 py-4" ref={moviesWrapperRef}>
+        {loading && (
+          <div
+            className="appear-animation z-20 mb-2 flex items-center justify-center rounded-sm"
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backdropFilter: "blur(5px)",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <LoadingIndicator size="large" />
+          </div>
+        )}
         <div className="bg-secondaryBg mx-auto max-w-7xl rounded-lg p-6">
           <h2 className="mb-4 text-2xl">Movies</h2>
           <List type="movies">
