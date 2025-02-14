@@ -15,6 +15,7 @@ import DropdownMenu from "../../components/DropdownMenu";
 import Image from "../../components/Image";
 import List from "../../components/List";
 import Button from "../../components/Button";
+import LoadingView from "../../components/LoadingView";
 
 const EpisodeItem = (episode: Episode) => {
   return (
@@ -47,6 +48,7 @@ export default function MoviePage() {
   const [movieDetails, setMovieDetails] = useState<Movie>({} as Movie);
   const [currentSeason, setCurrentSeason] = useState(1);
   const [episodeList, setEpisodeList] = useState<Episode[]>([] as Episode[]);
+  const [loading, setLoading] = useState(false);
 
   if (!movieId) {
     return navigate("/");
@@ -56,6 +58,11 @@ export default function MoviePage() {
     if (!auth.user) {
       return auth.logout();
     }
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const movie = await getMovie(auth.user, movieId);
@@ -83,6 +90,8 @@ export default function MoviePage() {
     } catch (error) {
       console.error(error);
     }
+
+    setLoading(false);
   };
 
   const fetchEpisodes = async () => {
@@ -152,7 +161,8 @@ export default function MoviePage() {
 
   return (
     <div className="min-h-screen bg-[#121212] p-8 text-[#E0E0E0]">
-      <div className="mx-auto max-w-7xl">
+      <div className="fadein relative mx-auto max-w-7xl">
+        {loading && <LoadingView />}
         {/* Hero Section */}
         <div className="relative mb-8 h-96">
           <Link
