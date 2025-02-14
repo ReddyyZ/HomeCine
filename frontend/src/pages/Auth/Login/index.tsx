@@ -7,7 +7,7 @@ import colors from "../../../constants/colors";
 import { useAuth } from "../../../contexts/AuthProvider";
 import { Link } from "react-router-dom";
 import Alert from "../../../components/Alert";
-import LoadingIndicator from "../../../components/LoadingIndicator";
+import LoadingView from "../../../components/LoadingView";
 
 type Result = {
   success: boolean;
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="loginDiv">
-      <div className="max-w-lg w-96">
+      <div className="relative w-96 max-w-lg">
         {result.message && (
           <Alert
             type={result.success ? "success" : "error"}
@@ -70,37 +70,21 @@ const Login: React.FC = () => {
             {result.message}
           </Alert>
         )}
+        {loading && <LoadingView />}
         <form
           onSubmit={login}
           style={{
             backgroundColor: colors.secondaryBg,
           }}
-          className="pl-8 pr-8 pt-[52px] pb-[52px] rounded-sm relative"
+          className="rounded-sm pt-[52px] pr-8 pb-[52px] pl-8"
         >
           <input type="submit" hidden />
-          {loading && (
-            <div
-              className="flex justify-center items-center rounded-sm mb-2 appear-animation"
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                backgroundColor: "rgba(0, 0, 0, 0.2)",
-                backdropFilter: "blur(5px)",
-                width: "100%",
-                height: "100%",
-              }}
-            >
-              <LoadingIndicator />
-            </div>
-          )}
           <Logo size="medium" />
-          <p className="text-2xl font-bold mb-2 mt-8">Welcome Back</p>
+          <p className="mt-8 mb-2 text-2xl font-bold">Welcome Back</p>
           <p>Sign in to continue to HomeCine</p>
 
           <div className="mt-6 mb-6">
-            <div className="w-full mb-4">
+            <div className="mb-4 w-full">
               <label htmlFor="email" className="mb-2">
                 Email
               </label>
@@ -128,7 +112,7 @@ const Login: React.FC = () => {
 
           <Button type="submit">Sign In</Button>
 
-          <p className="text-center mt-6">
+          <p className="mt-6 text-center">
             Don't have an account?{" "}
             <Link style={{ color: colors.secondary }} to="/register">
               Sign up

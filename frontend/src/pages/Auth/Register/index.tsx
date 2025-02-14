@@ -7,7 +7,7 @@ import colors from "../../../constants/colors";
 import { useAuth } from "../../../contexts/AuthProvider";
 import { Link } from "react-router-dom";
 import Alert from "../../../components/Alert";
-import LoadingIndicator from "../../../components/LoadingIndicator";
+import LoadingView from "../../../components/LoadingView";
 
 type Result = {
   success: boolean;
@@ -61,7 +61,7 @@ const Register: React.FC = () => {
 
   return (
     <div className="loginDiv">
-      <div className="max-w-lg">
+      <div className="relative max-w-lg">
         {result.message && (
           <Alert
             type={result.success ? "success" : "error"}
@@ -72,6 +72,7 @@ const Register: React.FC = () => {
             {result.message}
           </Alert>
         )}
+        {loading && <LoadingView />}
         <form
           onSubmit={login}
           style={{
@@ -80,23 +81,6 @@ const Register: React.FC = () => {
           className="relative rounded-sm pt-[52px] pr-8 pb-[52px] pl-8"
         >
           <input type="submit" hidden />
-          {loading && (
-            <div
-              className="appear-animation mb-2 flex items-center justify-center rounded-sm"
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                backgroundColor: "rgba(0, 0, 0, 0.2)",
-                backdropFilter: "blur(5px)",
-                width: "100%",
-                height: "100%",
-              }}
-            >
-              <LoadingIndicator />
-            </div>
-          )}
           <Logo size="medium" />
           <p className="mt-8 mb-2 text-2xl font-bold">Sign Up</p>
           <p>Create an account to start enjoying HomeCine</p>
