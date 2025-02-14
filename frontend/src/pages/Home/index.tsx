@@ -10,6 +10,7 @@ import colors from "../../constants/colors";
 import List from "../../components/List";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { Link } from "react-router-dom";
+import Image from "../../components/Image";
 
 function MovieCard(movie: Movie) {
   return (
@@ -18,10 +19,14 @@ function MovieCard(movie: Movie) {
         window.scrollTo(0, 0);
       }}
       to={`/movie/${movie.id}`}
-      className="movieCard fadein h-80 w-56"
+      className="movieCard fadein h-80 w-56 flex-none"
       key={movie.id}
     >
-      <img src={movie.posterUrl} alt={movie.title} />
+      <Image
+        src={movie.posterUrl}
+        alt={movie.title}
+        className="h-full w-full"
+      />
       <div className="movieHover">
         <IoPlayCircle size={36} color={colors.text} />
       </div>

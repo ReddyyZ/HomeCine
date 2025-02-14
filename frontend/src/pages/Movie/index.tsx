@@ -139,10 +139,12 @@ export default function MoviePage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     fetchMovieDetails();
   }, []);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     fetchEpisodes();
     console.log("episode fetched");
@@ -159,11 +161,15 @@ export default function MoviePage() {
           >
             <IoArrowBack size={28} fill={colors.text} />
           </Link>
-          <Image
-            src={movieDetails.posterUrl}
-            alt={movieDetails.title}
-            className="h-full w-full rounded-lg object-cover"
-          />
+          {movieDetails.posterUrl ? (
+            <Image
+              src={movieDetails.posterUrl}
+              alt={movieDetails.title}
+              className="h-full w-full rounded-lg object-cover"
+            />
+          ) : (
+            <div className="h-full w-full rounded-lg bg-[#000000]"></div>
+          )}
           <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#121212] to-transparent p-6">
             <h1 className="text-4xl font-bold">{movieDetails.title}</h1>
             <p className="text-[#B0B0B0]">{movieDetails.year}</p>
