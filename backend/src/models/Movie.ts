@@ -20,6 +20,8 @@ export class Movie extends Model<
   declare filePath: string;
   declare isSeries: boolean;
   declare numberOfSeasons: CreationOptional<number>;
+  declare genres: string;
+  declare originalName: CreationOptional<string>;
 }
 
 Movie.init(
@@ -77,6 +79,12 @@ Movie.init(
     numberOfSeasons: {
       type: DataTypes.NUMBER,
     },
+    genres: {
+      type: DataTypes.JSON,
+    },
+    originalName: {
+      type: DataTypes.STRING
+    }
   },
   {
     tableName: "movies",

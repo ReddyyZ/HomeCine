@@ -3,6 +3,7 @@ import { Episode, Movie } from "../models/Movie";
 import fs from "fs";
 import { promisify } from "util";
 import { getVideoDuration } from "../services/ffmpeg";
+import { GenreList } from "../constants";
 
 const rmAsync = promisify(fs.rm);
 
@@ -14,6 +15,8 @@ export type addMovieProps = {
   filePath: string;
   isSeries: boolean;
   numberOfSeasons?: number;
+  genreIds: number[];
+  originalName?: string;
 };
 
 type defaultResult = {
@@ -36,6 +39,17 @@ export async function addMovie(props: addMovieProps) {
 
   
   try {
+    const genres: string[] = [];
+
+    if (props.genreIds) {
+      props.genreIds.forEach((genreId: number) => {
+        const genre = GenreList.find((genre) => genre.id === genreId);
+        if (genre) {
+          genres.push(genre.name);
+        }
+      });
+    }
+
     const movie = await Movie.create({
       title: props.title,
       year: props.year,
@@ -45,6 +59,7 @@ export async function addMovie(props: addMovieProps) {
       isSeries: props.isSeries,
       numberOfSeasons: props.numberOfSeasons,
       videoDuration: !props.isSeries ? await getVideoDuration(props.filePath) : undefined,
+      genres: JSON.stringify(genres),
     });
 
     console.log(`Movie ${props.title} saved! ${movie.id}`);
