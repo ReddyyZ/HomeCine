@@ -42,14 +42,14 @@ export default function List({ children, type, style }: ListProps) {
         <div className="list noselect" ref={listRef} style={style}>
           <button
             onClick={scrollToLeft}
-            className="listBtn listBtnLeft absolute top-0 left-0 z-10 flex h-[100%] items-center justify-center rounded-l-sm"
+            className="listBtn listBtnLeft absolute top-0 left-0 z-10 flex h-[100%] items-center justify-center"
           >
             <IoChevronBack size={36} fill="#E0E0E0" />
           </button>
           {children}
           <button
             onClick={scrollToRight}
-            className="listBtn listBtnRight absolute right-0 z-10 flex h-[100%] items-center justify-center rounded-r-sm"
+            className="listBtn listBtnRight absolute right-0 z-10 flex h-[100%] items-center justify-center"
           >
             <IoChevronForward size={36} fill="#E0E0E0" />
           </button>

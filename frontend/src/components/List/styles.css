@@ -4,10 +4,17 @@
   padding-inline: 8px;
   gap: 16px;
 
-  overflow-x: hidden;
+  overflow-x: auto;
   overscroll-behavior-inline: contain;
   scroll-snap-type: inline mandatory;
   scroll-behavior: smooth;
+
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.list::-webkit-scrollbar {
+  display: none;
 }
 
 .list div {
