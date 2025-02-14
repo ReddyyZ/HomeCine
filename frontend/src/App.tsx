@@ -5,6 +5,7 @@ import Register from "./pages/Auth/Register";
 import { useAuth } from "./contexts/AuthProvider";
 import Home from "./pages/Home";
 import { jwtDecode } from "jwt-decode";
+import MoviePage from "./pages/Movie";
 
 function AuthRoutes() {
   return (
@@ -36,6 +37,7 @@ function App() {
   ) : (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/movie/:movieId" element={<MoviePage />} />
     </Routes>
   );
 }
