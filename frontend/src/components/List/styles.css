@@ -1,7 +1,6 @@
 .list {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
+  /* flex-wrap: nowrap; */
   padding-inline: 8px;
   gap: 16px;
 
@@ -9,6 +8,10 @@
   overscroll-behavior-inline: contain;
   scroll-snap-type: inline mandatory;
   scroll-behavior: smooth;
+}
+
+.list div {
+  flex: none;
 }
 
 .listBtn {
