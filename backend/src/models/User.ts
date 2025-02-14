@@ -18,6 +18,7 @@ type movieProgress = {
   progress?: number;
   isSeries: boolean;
   episodes?: Record<string, episodeProgress>;
+  lastEpisodeWatched?: string;
   watched: boolean;
 };
 

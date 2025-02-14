@@ -70,7 +70,7 @@ export async function watchEpisode(req: Request, res: Response) {
 export async function getProgress(req: Request, res: Response) {
   const movieId = req.query.movieId ? String(req.query.movieId) : "";
   const episodeId = req.query.episodeId ? String(req.query.episodeId) : "";
-  const token = req.headers.authorization;
+  const token = String(req.query.token);
 
   if (!movieId) {
     res.status(400).json({ error: "Missing movieId" });
@@ -109,7 +109,6 @@ export async function getProgress(req: Request, res: Response) {
     }
 
     res.json(episode);
-    return;
   } else {
     res.json(movie);
   }
@@ -118,8 +117,6 @@ export async function getProgress(req: Request, res: Response) {
 export async function updateProgress(req: Request, res: Response) {
   const { movieId, episodeId, progress } = req.body;
   const token = req.headers.authorization;
-
-  console.log(movieId, progress, token);
 
   if (!movieId || !progress) {
     res.status(400).json({ error: "Missing movieId or progress" });
@@ -153,34 +150,38 @@ export async function updateProgress(req: Request, res: Response) {
       return;
     }
 
-    const videoDuration = await getVideoDuration(episode.filePath);
-    const watched = progress >= videoDuration * 0.95;
-
-    if (watchedMovies.hasOwnProperty(movieId)) {
-      if (watchedMovies[movieId].episodes) {
-        watchedMovies[movieId].episodes[episodeId] = {
-          progress,
-          watched,
-        };
-      } else {
-        watchedMovies[movieId].episodes = {
-          [episodeId]: {
-            progress,
-            watched,
-          },
-        };
-      }
-    } else {
-      watchedMovies[movieId] = {
-        isSeries: true,
-        episodes: {
-          [episodeId]: {
-            progress,
-            watched,
-          },
-        },
-        watched: false,
-      };
+    try {
+        const videoDuration = await getVideoDuration(episode.filePath);
+        const watched = progress >= videoDuration * 0.95;
+    
+        if (watchedMovies.hasOwnProperty(movieId)) {
+          watchedMovies[movieId] = {
+            ...watchedMovies[movieId],
+            lastEpisodeWatched: episodeId,
+            episodes: {
+              ...watchedMovies[movieId].episodes,
+              [episodeId]: {
+                progress,
+                watched,
+              }
+            }
+          };
+        } else {
+          watchedMovies[movieId] = {
+            isSeries: true,
+            episodes: {
+              [episodeId]: {
+                progress,
+                watched,
+              },
+            },
+            watched: false,
+            lastEpisodeWatched: episodeId,
+          };
+        }
+    } catch (error) {
+      res.status(500).json({ error: "Failed to save progress: " + error });
+      return;
     }
   } else {
     if (movie.isSeries) {
@@ -190,16 +191,21 @@ export async function updateProgress(req: Request, res: Response) {
       return;
     }
     // Save progress for movie
-    const videoDuration = await getVideoDuration(movie.filePath);
-    const watched = progress >= videoDuration * 0.95;
-
-    console.log(`videoDuration: ${videoDuration} - watched: ${watched}`);
-
-    watchedMovies[movieId] = {
-      progress,
-      watched,
-      isSeries: false,
-    };
+    try {
+      const videoDuration = await getVideoDuration(movie.filePath);
+      const watched = progress >= videoDuration * 0.95;
+  
+      console.log(`videoDuration: ${videoDuration} - watched: ${watched}`);
+  
+      watchedMovies[movieId] = {
+        progress,
+        watched,
+        isSeries: false,
+      };
+    } catch (error) {
+      res.status(500).json({ error: "Failed to save progress: " + error });
+      return;
+    }
   }
 
   try {

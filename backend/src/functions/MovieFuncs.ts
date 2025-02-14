@@ -212,6 +212,7 @@ export async function addEpisode(params: addEpisodeProps) {
       season: params.season,
       episodeNumber: params.episodeNumber,
       posterUrl: params.posterUrl,
+      videoDuration: await getVideoDuration(params.filePath),
     });
 
     console.log(`Episode ${params.title} saved!`);
