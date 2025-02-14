@@ -10,11 +10,12 @@ export default function Button(
 ) {
   return (
     <button
-      className="button"
+      {...props}
+      className={"button" + `${props.className ? ` ${props.className}` : ""}`}
       style={{
+        ...props.style,
         backgroundColor: colors.primary,
       }}
-      {...props}
     >
       {props.children}
     </button>

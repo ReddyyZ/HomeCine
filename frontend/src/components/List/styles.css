@@ -1,6 +1,8 @@
 .list {
   display: grid;
   grid-auto-flow: column;
+  grid-template-columns: auto 1fr auto;
+  padding-inline: 8px;
   gap: 16px;
 
   overflow-x: hidden;

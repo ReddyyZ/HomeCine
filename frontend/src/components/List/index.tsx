@@ -6,9 +6,10 @@ import { useRef } from "react";
 type ListProps = {
   type: "movies" | "series" | "search";
   children: React.ReactNode;
+  style?: React.CSSProperties;
 };
 
-export default function List({ children, type }: ListProps) {
+export default function List({ children, type, style }: ListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
   const scrollToLeft = () => {
@@ -38,17 +39,17 @@ export default function List({ children, type }: ListProps) {
   if (Array.isArray(children) && children.length) {
     return (
       <div className="relative">
-        <div className="list noselect" ref={listRef}>
+        <div className="list noselect" ref={listRef} style={style}>
           <button
             onClick={scrollToLeft}
-            className="listBtn listBtnLeft absolute z-10 top-1/2 left-0 transform -translate-y-1/2 h-[100%] flex items-center justify-center"
+            className="listBtn listBtnLeft absolute top-0 left-0 z-10 flex h-[100%] items-center justify-center rounded-l-sm"
           >
             <IoChevronBack size={36} fill="#E0E0E0" />
           </button>
           {children}
           <button
             onClick={scrollToRight}
-            className="listBtn listBtnRight absolute z-10 top-1/2 right-0 transform -translate-y-1/2 h-[100%] flex items-center justify-center"
+            className="listBtn listBtnRight absolute right-0 z-10 flex h-[100%] items-center justify-center rounded-r-sm"
           >
             <IoChevronForward size={36} fill="#E0E0E0" />
           </button>
@@ -57,15 +58,15 @@ export default function List({ children, type }: ListProps) {
     );
   } else {
     return (
-      <div className="flex flex-col items-center text-[#E0E0E0] p-8 text-center">
+      <div className="flex flex-col items-center p-8 text-center text-[#E0E0E0]">
         {/* Illustration */}
         <PiPopcorn size={48} fill="#FFA726" />
 
         {/* Main Message */}
-        <h1 className="text-2xl font-bold mb-2">{emptyMessages[type].main}</h1>
+        <h1 className="mb-2 text-2xl font-bold">{emptyMessages[type].main}</h1>
 
         {/* Subtext */}
-        <p className="text-[#B0B0B0] text-center mb-6">
+        <p className="mb-6 text-center text-[#B0B0B0]">
           {emptyMessages[type].sub}
         </p>
       </div>
