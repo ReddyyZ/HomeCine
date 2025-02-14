@@ -42,7 +42,7 @@ export default function DropdownMenu({
 
       {isOpen && (
         <div
-          className={`bg-cardBg absolute z-30 w-[100%] rounded-lg shadow-lg ${isOpen ? "" : "hidden"}`}
+          className={`bg-cardBg absolute z-30 w-[100%] shadow-lg ${isOpen ? "" : "hidden"}`}
           style={itemsContainerStyle}
         >
           {isOpen &&
