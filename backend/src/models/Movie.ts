@@ -15,6 +15,7 @@ export class Movie extends Model<
   declare year: CreationOptional<number>;
   declare overview: CreationOptional<string>;
   declare posterUrl: CreationOptional<string>;
+  declare videoDuration: CreationOptional<number>;
   declare title: string;
   declare filePath: string;
   declare isSeries: boolean;
@@ -46,6 +47,9 @@ Movie.init(
     },
     posterUrl: {
       type: DataTypes.TEXT,
+    },
+    videoDuration: {
+      type: DataTypes.NUMBER
     },
     title: {
       type: DataTypes.TEXT,
@@ -91,6 +95,7 @@ export class Episode extends Model<
   declare filePath: string;
   declare movieId: number;
   declare posterUrl: CreationOptional<string>;
+  declare videoDuration: CreationOptional<number>;
 }
 
 Episode.init(
@@ -121,6 +126,9 @@ Episode.init(
     },
     posterUrl: {
       type: DataTypes.TEXT,
+    },
+    videoDuration: {
+      type: DataTypes.NUMBER
     },
     season: {
       type: DataTypes.NUMBER,

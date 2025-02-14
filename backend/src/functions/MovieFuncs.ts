@@ -2,6 +2,7 @@ import { Sequelize, Op } from "sequelize";
 import { Episode, Movie } from "../models/Movie";
 import fs from "fs";
 import { promisify } from "util";
+import { getVideoDuration } from "../services/ffmpeg";
 
 const rmAsync = promisify(fs.rm);
 
@@ -33,6 +34,7 @@ export async function addMovie(props: addMovieProps) {
     return null;
   }
 
+  
   try {
     const movie = await Movie.create({
       title: props.title,
@@ -42,6 +44,7 @@ export async function addMovie(props: addMovieProps) {
       filePath: props.filePath,
       isSeries: props.isSeries,
       numberOfSeasons: props.numberOfSeasons,
+      videoDuration: !props.isSeries ? await getVideoDuration(props.filePath) : undefined,
     });
 
     console.log(`Movie ${props.title} saved! ${movie.id}`);
