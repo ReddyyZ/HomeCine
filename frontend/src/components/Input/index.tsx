@@ -14,6 +14,11 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 interface PasswordInputIcon extends IconBaseProps {
   visible: boolean;
   setVisible: (visible: boolean) => void;
+  disabled?: boolean;
+}
+
+interface SearchIconProps extends IconBaseProps {
+  disabled?: boolean;
 }
 
 const PasswordInputIcon = ({
@@ -22,7 +27,7 @@ const PasswordInputIcon = ({
   ...props
 }: PasswordInputIcon) => {
   return (
-    <button onClick={() => setVisible(!visible)}>
+    <button disabled={props.disabled} onClick={() => setVisible(!visible)}>
       {visible ? <IoEye {...props} /> : <IoEyeOff {...props} />}
     </button>
   );
@@ -43,8 +48,9 @@ export default function Input({
       {...props}
     />
   );
-  const SearchIcon = (props: IconBaseProps) => (
+  const SearchIcon = (props: SearchIconProps) => (
     <button
+      disabled={props.disabled}
       onClick={() => onSearch && onSearch(value)}
       className={value.length ? "cursor-pointer" : ""}
       type="submit"
@@ -97,6 +103,7 @@ export default function Input({
               opacity: value.length ? 1 : 0.6,
               transition: "opacity 0.2s",
             }}
+            disabled={!value.length}
           />
         </div>
       )}
