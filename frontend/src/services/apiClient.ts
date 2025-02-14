@@ -58,3 +58,22 @@ export function getEpisodesFromSeason(
 export function getMovieProgress(user: string, movieId: string) {
   return apiClient.get(`/progress?movieId=${movieId}&token=${user}`);
 }
+
+export function updateMovieProgress(
+  user: string,
+  movieId: string,
+  progress: number,
+) {
+  return apiClient.post(
+    "/progress",
+    {
+      movieId,
+      progress,
+    },
+    {
+      headers: {
+        Authorization: user,
+      },
+    },
+  );
+}
