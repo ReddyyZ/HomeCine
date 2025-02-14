@@ -5,7 +5,7 @@ export default function Image({
   src,
   ...props
 }: React.ImgHTMLAttributes<HTMLImageElement>) {
-  const [source, setSource] = useState(src ? src : DefaultImage);
+  const [source, setSource] = useState(String(src));
   const [errored, setErrored] = useState(false);
 
   const onError = () => {
