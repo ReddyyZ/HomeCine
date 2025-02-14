@@ -52,7 +52,8 @@ const Register: React.FC = () => {
         success: true,
         message: "Account created successfully, redirecting...",
       });
-      window.location.reload();
+
+      window.location.href = "/";
     }
 
     setLoading(false);
@@ -76,12 +77,12 @@ const Register: React.FC = () => {
           style={{
             backgroundColor: colors.secondaryBg,
           }}
-          className="pl-8 pr-8 pt-[52px] pb-[52px] rounded-sm relative"
+          className="relative rounded-sm pt-[52px] pr-8 pb-[52px] pl-8"
         >
           <input type="submit" hidden />
           {loading && (
             <div
-              className="flex justify-center items-center rounded-sm mb-2 appear-animation"
+              className="appear-animation mb-2 flex items-center justify-center rounded-sm"
               style={{
                 position: "absolute",
                 top: "50%",
@@ -97,11 +98,11 @@ const Register: React.FC = () => {
             </div>
           )}
           <Logo size="medium" />
-          <p className="text-2xl font-bold mb-2 mt-8">Sign Up</p>
+          <p className="mt-8 mb-2 text-2xl font-bold">Sign Up</p>
           <p>Create an account to start enjoying HomeCine</p>
 
           <div className="mt-6 mb-6">
-            <div className="w-full mb-4">
+            <div className="mb-4 w-full">
               <label htmlFor="email" className="mb-2">
                 Name
               </label>
@@ -113,7 +114,7 @@ const Register: React.FC = () => {
                 onChangeText={setName}
               />
             </div>
-            <div className="w-full mb-4">
+            <div className="mb-4 w-full">
               <label htmlFor="email" className="mb-2">
                 Email
               </label>
@@ -141,7 +142,7 @@ const Register: React.FC = () => {
 
           <Button type="submit">Sign Up</Button>
 
-          <p className="text-center mt-6">
+          <p className="mt-6 text-center">
             Already have an account?{" "}
             <Link style={{ color: colors.secondary }} to="/">
               Sign in
