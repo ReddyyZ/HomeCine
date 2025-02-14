@@ -26,3 +26,16 @@ export type Episode = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type episodeProgress = {
+  progress: number;
+  watched: boolean;
+};
+
+export type movieProgress = {
+  progress?: number;
+  isSeries: boolean;
+  episodes?: Record<string, episodeProgress>;
+  lastEpisodeWatched?: string;
+  watched: boolean;
+};

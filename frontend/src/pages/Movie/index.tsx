@@ -2,17 +2,43 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   getEpisodesFromSeason,
   getMovie,
+  getMovieProgress,
   getSeasonNumber,
 } from "../../services/apiClient";
 import { useAuth } from "../../contexts/AuthProvider";
 import { Episode, Movie } from "../types/movies";
 import { useEffect, useState } from "react";
-import { IoArrowBack } from "react-icons/io5";
+import { IoArrowBack, IoPlayCircle } from "react-icons/io5";
 import colors from "../../constants/colors";
 import { formatVideoDuration } from "../../utils";
 import DropdownMenu from "../../components/DropdownMenu";
 import Image from "../../components/Image";
 import List from "../../components/List";
+import Button from "../../components/Button";
+
+const EpisodeItem = (episode: Episode) => {
+  return (
+    <div key={episode.id} className="w-60">
+      <div className="relative">
+        <Image
+          src="/path/to/related-thumbnail.jpg"
+          alt="Related Movie"
+          className="aspect-video w-full rounded-lg object-cover"
+        />
+        <Link
+          to={`/movie/2/episode/${episode.id}/watch`}
+          className="absolute top-0 left-0 flex h-full w-full cursor-pointer items-center justify-center bg-[#00000067] opacity-0 transition-opacity duration-200 hover:opacity-100"
+        >
+          <IoPlayCircle size={36} color={colors.text} />
+        </Link>
+      </div>
+      <p className="mt-2">{episode.title}</p>
+      {episode.videoDuration && (
+        <p>{formatVideoDuration(episode.videoDuration)}</p>
+      )}
+    </div>
+  );
+};
 
 export default function MoviePage() {
   const { movieId } = useParams();
@@ -22,13 +48,13 @@ export default function MoviePage() {
   const [currentSeason, setCurrentSeason] = useState(1);
   const [episodeList, setEpisodeList] = useState<Episode[]>([] as Episode[]);
 
+  if (!movieId) {
+    return navigate("/");
+  }
+
   const fetchMovieDetails = async () => {
     if (!auth.user) {
       return auth.logout();
-    }
-
-    if (!movieId) {
-      return navigate("/");
     }
 
     try {
@@ -63,9 +89,6 @@ export default function MoviePage() {
     if (!auth.user) {
       return auth.logout();
     }
-    if (!movieId) {
-      return navigate("/");
-    }
 
     try {
       const episodes = await getEpisodesFromSeason(
@@ -87,6 +110,32 @@ export default function MoviePage() {
       setEpisodeList(episodes.data);
     } catch (error) {
       console.error(error);
+      return navigate("/");
+    }
+  };
+
+  const playMovie = async () => {
+    if (movieDetails.isSeries) {
+      if (!auth.user) {
+        return auth.logout();
+      }
+
+      const progress = await getMovieProgress(auth.user, movieId);
+      if (progress.data?.error) {
+        console.error(progress.data.error);
+        return navigate("/");
+      }
+      if (progress.status === 401) auth.logout();
+
+      const lastEpisode = progress.data?.lastEpisodeWatched;
+
+      if (lastEpisode) {
+        return navigate(`/movie/${movieId}/episode/${lastEpisode}/watch`);
+      } else {
+        return navigate(`/movie/${movieId}/episode/${episodeList[0].id}/watch`);
+      }
+    } else {
+      return navigate(`/movie/${movieId}/watch`);
     }
   };
 
@@ -110,7 +159,7 @@ export default function MoviePage() {
           >
             <IoArrowBack size={28} fill={colors.text} />
           </Link>
-          <img
+          <Image
             src={movieDetails.posterUrl}
             alt={movieDetails.title}
             className="h-full w-full rounded-lg object-cover"
@@ -118,9 +167,10 @@ export default function MoviePage() {
           <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#121212] to-transparent p-6">
             <h1 className="text-4xl font-bold">{movieDetails.title}</h1>
             <p className="text-[#B0B0B0]">{movieDetails.year}</p>
-            <button className="mt-4 rounded bg-[#E50914] px-6 py-2 transition-colors hover:bg-[#D30813]">
+
+            <Button onClick={playMovie} className="mt-2 max-h-9 max-w-32">
               Play
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -184,21 +234,7 @@ export default function MoviePage() {
                   minHeight: 200,
                 }}
               >
-                {/* <div className="flex overflow-x-auto gap-4"> */}
-                {episodeList.map((episode) => (
-                  <div key={episode.id} className="w-60">
-                    <Image
-                      src="/path/to/related-thumbnail.jpg"
-                      alt="Related Movie"
-                      className="aspect-video w-full rounded-lg object-cover"
-                    />
-                    <p className="mt-2">{episode.title}</p>
-                    {episode.videoDuration && (
-                      <p>{formatVideoDuration(episode.videoDuration)}</p>
-                    )}
-                  </div>
-                ))}
-                {/* </div> */}
+                {episodeList.map(EpisodeItem)}
               </List>
             </div>
           </>

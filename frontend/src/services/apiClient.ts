@@ -54,3 +54,7 @@ export function getEpisodesFromSeason(
     },
   });
 }
+
+export function getMovieProgress(user: string, movieId: string) {
+  return apiClient.get(`/progress?movieId=${movieId}&token=${user}`);
+}
