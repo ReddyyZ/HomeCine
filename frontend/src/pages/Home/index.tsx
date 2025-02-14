@@ -9,15 +9,23 @@ import "./styles.css";
 import colors from "../../constants/colors";
 import List from "../../components/List";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import { Link } from "react-router-dom";
 
 function MovieCard(movie: Movie) {
   return (
-    <div className="movieCard fadein h-80 w-56" key={movie.id}>
+    <Link
+      onClick={() => {
+        window.scrollTo(0, 0);
+      }}
+      to={`/movie/${movie.id}`}
+      className="movieCard fadein h-80 w-56"
+      key={movie.id}
+    >
       <img src={movie.posterUrl} alt={movie.title} />
       <div className="movieHover">
         <IoPlayCircle size={36} color={colors.text} />
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -43,7 +51,13 @@ export default function Home() {
     try {
       const result = await getMovies(auth.user);
       if (!result) return;
-      if (result.data.error) return alert(result.data.error);
+
+      if (result.status === 401) {
+        alert("Session expired!");
+        return auth.logout();
+      }
+
+      if (result.data.error) alert(result.data.error);
 
       const moviesResult = result.data as Movie[];
 
