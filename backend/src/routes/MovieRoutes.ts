@@ -10,6 +10,10 @@ router.get(
   "/movies/:movieId/season/:season",
   MovieController.getEpisodesFromSeason,
 );
+router.get(
+  "/movies/:movieId/episode/:episodeId",
+  MovieController.getEpisodeById
+);
 
 router.post("/movies/:movieId/update", MovieController.updateMovie);
 

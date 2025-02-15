@@ -67,6 +67,22 @@ export async function watchEpisode(req: Request, res: Response) {
   streamVideo(episode.filePath, req, res);
 }
 
+export async function watchEpisodeById(req: Request, res: Response) {
+  const { movieId, episodeId } = req.params;
+  if (!movieId || !episodeId) {
+    res.status(400).json({ error: "Missing movieId or episodeId" });
+    return;
+  }
+
+  const episode = await findEpisodeById(Number(episodeId));
+  if (!episode) {
+    res.status(404).json({ error: "Episode not found" });
+    return;
+  }
+
+  streamVideo(episode.filePath, req, res);
+}
+
 export async function getProgress(req: Request, res: Response) {
   const movieId = req.query.movieId ? String(req.query.movieId) : "";
   const episodeId = req.query.episodeId ? String(req.query.episodeId) : "";

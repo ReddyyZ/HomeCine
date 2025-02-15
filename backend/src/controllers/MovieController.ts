@@ -7,6 +7,7 @@ import {
   findAllEpisodesFromSeason,
   findAllMovies,
   findAllSeries,
+  findEpisodeById,
   findMovieById,
   getNumberOfSeasons,
   updateMovieById,
@@ -73,6 +74,18 @@ export async function getEpisodesFromSeason(req: Request, res: Response) {
   );
 
   res.json(episodes);
+}
+
+export async function getEpisodeById(req: Request, res: Response) {
+  const { movieId, episodeId } = req.params;
+  if (!movieId || !episodeId) {
+    res.status(400).json({ error: "Missing movieId or episodeId" });
+    return;
+  }
+
+  const episode = await findEpisodeById(Number(episodeId));
+
+  res.json(episode);
 }
 
 export async function getAllEpisodesByMovieId(req: Request, res: Response) {

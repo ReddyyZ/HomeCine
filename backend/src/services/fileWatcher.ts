@@ -33,6 +33,7 @@ const processMovie = async (filePath: string) => {
       overview: movieInfo?.overview,
       year: movieInfo && new Date(movieInfo.first_air_date).getUTCFullYear(),
       posterUrl: movieInfo && posterUrl + movieInfo.poster_path,
+      genreIds: movieInfo && movieInfo.genre_ids,
     });
   } catch (error) {
     console.error("Error adding movie:", error);
@@ -76,6 +77,7 @@ const processSerie = async (filePath: string) => {
         overview: movieInfo && movieInfo.overview,
         year: movieInfo && new Date(movieInfo.first_air_date).getUTCFullYear(),
         posterUrl: movieInfo && posterUrl + movieInfo.poster_path,
+        genreIds: movieInfo && movieInfo.genre_ids,
       });
 
       if (!movie) {
