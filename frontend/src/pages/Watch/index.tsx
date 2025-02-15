@@ -1,8 +1,10 @@
 import { useParams } from "react-router-dom";
-import { Movie } from "../types/movies";
+import { Episode, Movie } from "../types/movies";
 import {
+  getEpisodeById,
   getMovie,
   getMovieProgress,
+  updateEpisodeProgress,
   updateMovieProgress,
 } from "../../services/apiClient";
 import { useEffect, useRef, useState } from "react";
@@ -13,10 +15,15 @@ import colors from "../../constants/colors";
 import { formatVideoDuration } from "../../utils";
 
 export default function Watch() {
-  const { movieId } = useParams();
+  const { movieId, episodeId } = useParams();
   const [movieDetails, setMovieDetails] = useState<Movie>();
+  const [episodeDetails, setEpisodeDetails] = useState<Episode>();
   const auth = useAuth();
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  const videoUrl = episodeId
+    ? `${baseURL}/movies/${movieId}/episode/${episodeId}/watch?token=${auth.user}`
+    : `${baseURL}/movies/${movieId}/watch?token=${auth.user}`;
 
   const loadMovie = async () => {
     if (!auth.user) {
@@ -38,9 +45,21 @@ export default function Watch() {
       console.error("No movie data found");
       return;
     }
-    if (movie.data.isSeries) {
-      console.error("This is a series, not a movie");
-      return;
+    if (episodeId) {
+      const episode = await getEpisodeById(auth.user, movieId, episodeId);
+      if (!episode) {
+        return;
+      }
+      if (episode.data?.error) {
+        console.error(episode.data.error);
+        return;
+      }
+      if (!episode.data) {
+        console.error("No episode data found");
+        return;
+      }
+      console.log(episode.data);
+      setEpisodeDetails(episode.data);
     }
 
     setMovieDetails(movie.data);
@@ -72,7 +91,11 @@ export default function Watch() {
       return;
     }
 
-    videoRef.current.currentTime = progress.data.progress;
+    if (episodeId) {
+      videoRef.current.currentTime = progress.data.episodes[episodeId].progress;
+    } else {
+      videoRef.current.currentTime = progress.data.progress;
+    }
   };
 
   const sendProgress = async () => {
@@ -92,8 +115,22 @@ export default function Watch() {
       // Throttle updates
       if (!videoRef.current.paused) {
         console.log(movieId, currentTime);
-        const res = await updateMovieProgress(auth.user, movieId, currentTime);
-        console.log(res);
+        if (episodeId) {
+          const res = await updateEpisodeProgress(
+            auth.user,
+            movieId,
+            episodeId,
+            currentTime,
+          );
+          console.log(res);
+        } else {
+          const res = await updateMovieProgress(
+            auth.user,
+            movieId,
+            currentTime,
+          );
+          console.log(res);
+        }
       }
     }
   };
@@ -126,20 +163,40 @@ export default function Watch() {
           <video
             ref={videoRef}
             id="video"
-            src={`${baseURL}/movies/${movieId}/watch?token=${auth.user}`}
+            src={videoUrl}
             controls
             className="h-full w-full rounded-sm"
           />
         </div>
 
         <div>
-          <h1 className="mt-4 text-2xl font-bold">{movieDetails?.title}</h1>
-          {movieDetails?.videoDuration && (
-            <p className="mt-2">
-              Duration: {formatVideoDuration(movieDetails?.videoDuration)}
-            </p>
+          {episodeId ? (
+            <div className="mt-4">
+              <p style={{ color: colors.mutedText }}>
+                {movieDetails?.title} | Season {episodeDetails?.season} -
+                Episode {episodeDetails?.episodeNumber}
+              </p>
+              <h1 className="mt-1 text-2xl font-bold">
+                {episodeDetails ? episodeDetails.title : movieDetails?.title}
+              </h1>
+            </div>
+          ) : (
+            <h1 className="mt-4 text-2xl font-bold">{movieDetails?.title}</h1>
           )}
-          <p className="mt-2 text-sm">{movieDetails?.overview}</p>
+          {episodeDetails?.videoDuration ? (
+            <p className="mt-2">
+              Duration: {formatVideoDuration(episodeDetails.videoDuration)}
+            </p>
+          ) : (
+            movieDetails?.videoDuration && (
+              <p className="mt-2">
+                Duration: {formatVideoDuration(movieDetails.videoDuration)}
+              </p>
+            )
+          )}
+          {!movieDetails?.isSeries && (
+            <p className="mt-2 text-sm">{movieDetails?.overview}</p>
+          )}
         </div>
       </div>
     </div>

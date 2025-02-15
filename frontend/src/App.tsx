@@ -40,6 +40,10 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/movie/:movieId" element={<MoviePage />} />
       <Route path="/movie/:movieId/watch" element={<Watch />} />
+      <Route
+        path="/movie/:movieId/episode/:episodeId/watch"
+        element={<Watch />}
+      />
       <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   );

@@ -77,3 +77,36 @@ export function updateMovieProgress(
     },
   );
 }
+
+export function updateEpisodeProgress(
+  user: string,
+  movieId: string,
+  episodeId: string,
+  progress: number,
+) {
+  return apiClient.post(
+    "/progress",
+    {
+      movieId,
+      episodeId,
+      progress,
+    },
+    {
+      headers: {
+        Authorization: user,
+      },
+    },
+  );
+}
+
+export function getEpisodeById(
+  user: string,
+  movieId: string,
+  episodeId: string,
+) {
+  return apiClient.get(`/movies/${movieId}/episode/${episodeId}`, {
+    headers: {
+      Authorization: user,
+    },
+  });
+}
