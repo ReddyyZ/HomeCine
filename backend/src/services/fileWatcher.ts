@@ -1,20 +1,17 @@
-import chokidar from "chokidar";
 import path from "path";
 import {
   addEpisode,
   addMovie,
-  deleteEpisodeByPath,
-  deleteMovieByPath,
+  // deleteEpisodeByPath,
+  // deleteMovieByPath,
   findEpisodeByPath,
   movieExists,
 } from "../functions/MovieFuncs";
 import { searchMovie } from "./tmdb";
+import fs from "fs";
 
 const mediaPath = path.join(__dirname, "../../media");
 const posterUrl = "https://image.tmdb.org/t/p/original";
-
-const isSeries = (filePath: string) => filePath.includes("/series/");
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const extractMovieTitleFromPath = (filePath: string) => {
   const fileName = path.basename(filePath, path.extname(filePath));
@@ -106,38 +103,28 @@ const processSerie = async (filePath: string) => {
   }
 };
 
-export default async function initializeWatcher() {
-  console.log("Waiting for database to be loaded...");
-  await sleep(5000);
+export default function initialFileScan() {
+  const seriesPath = path.join(mediaPath, "series");
+  const moviesPath = path.join(mediaPath, "movies");
 
-  const watcher = chokidar.watch(mediaPath, {
-    persistent: true,
-    ignoreInitial: false,
-    depth: 99,
-  });
+  const processFiles = (dirPath: string, isSeries: boolean) => {
+    fs.readdirSync(dirPath).forEach((file) => {
+      const filePath = path.join(dirPath, file);
+      
+      if (isSeries) {
+        if (!fs.lstatSync(filePath).isDirectory()) {
+          return;
+        }
 
-  watcher
-    .on("unlink", (filePath) => {
-      const isSerie = isSeries(filePath);
-
-      if (isSerie) {
-        deleteEpisodeByPath(filePath);
-      } else {
-        deleteMovieByPath(filePath);
-      }
-    })
-    .on("add", (filePath) => {
-      const isSerie = isSeries(filePath);
-
-      if (isSerie) {
-        processSerie(filePath);
+        fs.readdirSync(filePath).forEach((episode) => {
+          processSerie(path.join(filePath, episode));
+        });
       } else {
         processMovie(filePath);
       }
-    })
-    .on("error", (error) => {
-      console.error(`Watcher error: ${error}`);
     });
+  };
 
-  console.log("Watcher initialized!");
+  processFiles(seriesPath, true);
+  processFiles(moviesPath, false);
 }
