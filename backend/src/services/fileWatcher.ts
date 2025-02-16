@@ -9,6 +9,7 @@ import {
 } from "../functions/MovieFuncs";
 import { searchMovie } from "./tmdb";
 import fs from "fs";
+import { getThumbnail } from "./ffmpeg";
 
 const mediaPath = path.join(__dirname, "../../media");
 const posterUrl = "https://image.tmdb.org/t/p/original";
@@ -23,13 +24,23 @@ const processMovie = async (filePath: string) => {
   const [movieInfo] = await searchMovie(title, false);
 
   try {
+    if (await movieExists(filePath)) {
+      console.log(`Movie already exists: ${filePath}`);
+      return;
+    };
+
+    const thumbnail = await getThumbnail({
+      filePath,
+      movieTitle: title,
+    });
+
     await addMovie({
       title,
       filePath,
       isSeries: false,
       overview: movieInfo?.overview,
       year: movieInfo && new Date(movieInfo.first_air_date).getUTCFullYear(),
-      posterUrl: movieInfo && posterUrl + movieInfo.poster_path,
+      posterUrl: thumbnail ? thumbnail : movieInfo && posterUrl + movieInfo.poster_path,
       genreIds: movieInfo && movieInfo.genre_ids,
     });
   } catch (error) {
@@ -85,12 +96,19 @@ const processSerie = async (filePath: string) => {
     console.log(`Episode from movie: [${movie.id}]${movie.title}`);
 
     // Add episode
+    const thumbnail = await getThumbnail({
+      filePath,
+      movieTitle,
+      episodeTitle,
+    });
+
     const episode = await addEpisode({
       title: episodeTitle,
       filePath,
       movieId: movie.id,
       season,
       episodeNumber,
+      posterUrl: thumbnail,
     });
     if (!episode) {
       console.error(`Error adding episode: ${episodeTitle}`);
