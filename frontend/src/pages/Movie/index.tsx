@@ -27,12 +27,12 @@ const EpisodeItem = (episode: Episode) => {
     <div key={episode.id} className="w-60">
       <div className="relative">
         <Image
-          src="/path/to/related-thumbnail.jpg"
-          alt="Related Movie"
+          src={episode.posterUrl}
+          alt={episode.title}
           className="aspect-video w-full rounded-lg object-cover"
         />
         <Link
-          to={`/movie/2/episode/${episode.id}/watch`}
+          to={`/movie/${episode.movieId}/episode/${episode.id}/watch`}
           className="absolute top-0 left-0 flex h-full w-full cursor-pointer items-center justify-center bg-[#00000067] opacity-0 transition-opacity duration-200 hover:opacity-100"
         >
           <IoPlayCircle size={36} color={colors.text} />
@@ -142,7 +142,7 @@ export default function MoviePage() {
         console.error(progress.data.error);
         return navigate("/");
       }
-      if (progress.status === 401) auth.logout();
+      if (progress.status === 401) return auth.logout();
 
       const lastEpisode = progress.data?.lastEpisodeWatched;
 
