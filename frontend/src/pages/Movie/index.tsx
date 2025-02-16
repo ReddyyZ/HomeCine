@@ -1,4 +1,9 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {
   getEpisodesFromSeason,
   getMovie,
@@ -46,7 +51,10 @@ export default function MoviePage() {
   const auth = useAuth();
   const navigate = useNavigate();
   const [movieDetails, setMovieDetails] = useState<Movie>({} as Movie);
-  const [currentSeason, setCurrentSeason] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentSeason, setCurrentSeason] = useState(
+    Number(searchParams.get("season")) || 1,
+  );
   const [episodeList, setEpisodeList] = useState<Episode[]>([] as Episode[]);
   const [loading, setLoading] = useState(false);
 
@@ -234,6 +242,7 @@ export default function MoviePage() {
                   )}
                   onSelect={(item) => {
                     setCurrentSeason(item.id);
+                    setSearchParams({ season: item.id.toString() });
                   }}
                   currentItem={currentSeason}
                   containerStyle={{

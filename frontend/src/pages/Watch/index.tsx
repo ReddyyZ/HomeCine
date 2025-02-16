@@ -43,6 +43,7 @@ export default function Watch() {
     }
     if (!movie.data) {
       console.error("No movie data found");
+      window.history.back();
       return;
     }
     if (episodeId) {
@@ -56,6 +57,7 @@ export default function Watch() {
       }
       if (!episode.data) {
         console.error("No episode data found");
+        window.history.back();
         return;
       }
       console.log(episode.data);
