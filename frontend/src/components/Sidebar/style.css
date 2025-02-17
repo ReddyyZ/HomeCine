@@ -1,0 +1,58 @@
+.borderAnimation {
+  position: relative;
+  overflow: hidden;
+}
+
+.borderAnimation:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s;
+}
+
+.borderAnimation:focus,
+.borderAnimation:hover {
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    /* width: 100%; */
+    height: 2px;
+    background-color: #bcbcbc;
+    animation: borderAnimation 0.2s forwards;
+  }
+}
+
+@keyframes borderAnimation {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-sidebarOpen {
+  animation: slideFromLeft 0.2s forwards;
+}
+
+.animate-sidebarClose {
+  animation: slideToLeft 0.2s forwards;
+}
+
+@keyframes slideFromLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideToLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
