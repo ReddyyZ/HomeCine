@@ -60,36 +60,11 @@ export default function Sidebar({ items, onLogout }: SideBarProps) {
             <Icons.IoExit size={24} />
             Logout
           </button>
-
-          <button
-            className="bg-secondaryBg absolute top-0 right-0 translate-x-[100%] translate-y-8 transform cursor-pointer rounded-r-sm p-2 md:hidden"
-            onClick={() => {
-              if (isOpen) {
-                setIsOpen(false);
-                document
-                  .getElementById("sidebar")
-                  ?.classList.remove("animate-sidebarOpen");
-                document
-                  .getElementById("sidebar")
-                  ?.classList.add("animate-sidebarClose");
-              } else {
-                setIsOpen(true);
-                document
-                  .getElementById("sidebar")
-                  ?.classList.remove("animate-sidebarClose");
-                document
-                  .getElementById("sidebar")
-                  ?.classList.add("animate-sidebarOpen");
-              }
-            }}
-          >
-            {!isOpen ? <Icons.IoMenu size={24} /> : <Icons.IoClose size={24} />}
-          </button>
         </div>
       </div>
 
       {/* Mobile sidebar */}
-      <div className="absolute w-0 md:hidden">
+      <div className="fixed w-0 md:hidden">
         <div
           id="mobile-sidebar"
           className={`animate-sidebarClose bg-secondaryBg relative mr-4 flex min-h-screen w-72 flex-col px-4 py-6 text-white md:max-w-72`}
