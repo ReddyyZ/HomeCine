@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import { jwtDecode } from "jwt-decode";
 import MoviePage from "./pages/Movie";
 import Watch from "./pages/Watch";
+import AdminHome from "./pages/Admin/Home";
 
 function AuthRoutes() {
   return (
@@ -44,6 +45,7 @@ function App() {
         path="/movie/:movieId/episode/:episodeId/watch"
         element={<Watch />}
       />
+      <Route path="/admin" element={<AdminHome />} />
       <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   );
