@@ -244,6 +244,7 @@ export default function MoviePage() {
                     setCurrentSeason(item.id);
                     setSearchParams({ season: item.id.toString() });
                   }}
+                  select
                   currentItem={currentSeason}
                   containerStyle={{
                     marginBottom: 24,

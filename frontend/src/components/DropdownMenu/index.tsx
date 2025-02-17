@@ -1,5 +1,4 @@
-import { useState } from "react";
-import Button from "../Button";
+import { ReactNode, useState } from "react";
 import { IoCaretDown, IoCaretUp } from "react-icons/io5";
 
 type DropdownMenuItemProps = {
@@ -7,15 +6,29 @@ type DropdownMenuItemProps = {
   value: string;
 };
 
-type DropdownMenuProps = {
+interface DropdownMenuMainProps {
   items: DropdownMenuItemProps[];
   onSelect: (item: DropdownMenuItemProps) => void;
-  currentItem: number;
   btnStyle?: React.CSSProperties;
   containerStyle?: React.CSSProperties;
   itemsContainerStyle?: React.CSSProperties;
   itemStyle?: React.CSSProperties;
-};
+}
+
+interface DropdownMenuSelectProps {
+  select: boolean;
+  currentItem: number;
+  value?: never;
+}
+
+interface DropdownMenuNonSelectProps {
+  select?: undefined;
+  currentItem?: never;
+  value: ReactNode;
+}
+
+type DropdownMenuProps = DropdownMenuMainProps &
+  (DropdownMenuSelectProps | DropdownMenuNonSelectProps);
 
 export default function DropdownMenu({
   items,
@@ -25,6 +38,8 @@ export default function DropdownMenu({
   containerStyle,
   itemsContainerStyle,
   itemStyle,
+  select,
+  value,
 }: DropdownMenuProps) {
   const currentItemValue = items.find((item) => item.id === currentItem);
   const [isOpen, setIsOpen] = useState(false);
@@ -32,12 +47,13 @@ export default function DropdownMenu({
   return (
     <div className="relative" style={containerStyle}>
       <button
-        className="flex w-[100%] cursor-pointer items-center justify-between bg-[#1e1e1e] px-4 py-2 text-white"
-        onClick={() => setIsOpen(!isOpen)}
         style={btnStyle}
+        className={`flex w-[100%] cursor-pointer items-center justify-between bg-[#1e1e1e] px-4 py-2 text-white ${!select ? "transition-opacity duration-200 hover:opacity-70" : ""}`}
+        onClick={() => setIsOpen(!isOpen)}
       >
-        {currentItemValue?.value}
-        {isOpen ? <IoCaretUp size={20} /> : <IoCaretDown size={20} />}
+        {select ? currentItemValue?.value : value}
+        {select &&
+          (isOpen ? <IoCaretUp size={20} /> : <IoCaretDown size={20} />)}
       </button>
 
       {isOpen && (
@@ -53,7 +69,7 @@ export default function DropdownMenu({
                   onSelect(item);
                   setIsOpen(false);
                 }}
-                className={`cursor-pointer p-2 hover:bg-[#3a3a3a] ${currentItem === item.id ? "bg-[#3a3a3a]" : ""}`}
+                className={`flex max-w-[100%] cursor-pointer p-2 break-all hover:bg-[#3a3a3a] ${currentItem === item.id ? "bg-[#3a3a3a]" : ""}`}
                 style={itemStyle}
               >
                 {item.value}
