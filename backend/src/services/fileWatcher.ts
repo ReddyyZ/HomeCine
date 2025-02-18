@@ -27,7 +27,7 @@ const processMovie = async (filePath: string) => {
     if (await movieExists(filePath)) {
       console.log(`Movie already exists: ${filePath}`);
       return;
-    };
+    }
 
     const thumbnail = await getThumbnail({
       filePath,
@@ -40,7 +40,9 @@ const processMovie = async (filePath: string) => {
       isSeries: false,
       overview: movieInfo?.overview,
       year: movieInfo && new Date(movieInfo.first_air_date).getUTCFullYear(),
-      posterUrl: thumbnail ? thumbnail : movieInfo && posterUrl + movieInfo.poster_path,
+      posterUrl: thumbnail
+        ? thumbnail
+        : movieInfo && posterUrl + movieInfo.poster_path,
       genreIds: movieInfo && movieInfo.genre_ids,
     });
   } catch (error) {
@@ -125,10 +127,16 @@ export default function initialFileScan() {
   const seriesPath = path.join(mediaPath, "series");
   const moviesPath = path.join(mediaPath, "movies");
 
-  const processFiles = (dirPath: string, isSeries: boolean) => {
+  const processFiles = async (dirPath: string, isSeries: boolean) => {
+    if (!fs.existsSync(dirPath)) {
+      return fs.mkdirSync(dirPath, {
+        recursive: true,
+      });
+    }
+
     fs.readdirSync(dirPath).forEach((file) => {
       const filePath = path.join(dirPath, file);
-      
+
       if (isSeries) {
         if (!fs.lstatSync(filePath).isDirectory()) {
           return;
