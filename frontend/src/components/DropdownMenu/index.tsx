@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { IoCaretDown, IoCaretUp } from "react-icons/io5";
 
 type DropdownMenuItemProps = {
@@ -43,9 +43,24 @@ export default function DropdownMenu({
 }: DropdownMenuProps) {
   const currentItemValue = items.find((item) => item.id === currentItem);
   const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   return (
-    <div className="relative" style={containerStyle}>
+    <div ref={containerRef} className="relative" style={containerStyle}>
       <button
         style={btnStyle}
         className={`flex w-[100%] cursor-pointer items-center justify-between bg-[#1e1e1e] px-4 py-2 text-white ${!select ? "transition-opacity duration-200 hover:opacity-70" : ""}`}
