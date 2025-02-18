@@ -8,7 +8,6 @@
   transition: transform 0.2s;
 }
 
-.borderAnimation:focus,
 .borderAnimation:hover {
   &::after {
     content: "";
