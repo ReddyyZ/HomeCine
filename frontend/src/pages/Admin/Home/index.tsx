@@ -1,19 +1,4 @@
-import Sidebar, { SidebarItemProps } from "../../../components/Sidebar";
-
 export default function AdminHome() {
-  const sideBarLinks: SidebarItemProps[] = [
-    {
-      icon: "IoHome",
-      label: "Home",
-      route: "/admin",
-    },
-    {
-      icon: "IoVideocam",
-      label: "Movies",
-      route: "/admin/movies",
-    },
-  ];
-
   return (
     <>
       <h1 className="mb-4 text-3xl font-bold">Dashboard</h1>
