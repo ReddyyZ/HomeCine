@@ -7,24 +7,12 @@ import {
 import { streamVideo } from "../functions/VideoFuncs";
 import { getUserByToken, updateUser } from "../functions/UserFuncs";
 import { getVideoDuration } from "../services/ffmpeg";
-import { sequelize } from "@src/db/sequilize";
 
 export async function watchMovie(req: Request, res: Response) {
   const { movieId } = req.params;
-  const token = String(req.query.token);
 
   if (!movieId) {
     res.status(400).json({ error: "Missing movieId" });
-    return;
-  }
-  if (!token) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-
-  const user = await getUserByToken(token);
-  if (!user) {
-    res.status(401).json({ error: "Unauthorized" });
     return;
   }
 
