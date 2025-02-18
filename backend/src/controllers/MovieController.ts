@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import {
+  addMovie,
   addMovieProps,
   deleteEpisodeById,
   deleteMovieById,
@@ -123,4 +124,16 @@ export async function deleteEpisode(req: Request, res: Response) {
   const result = await deleteEpisodeById(Number(episodeId));
 
   res.status(result.errorCode ? result.errorCode : 200).json(result);
+}
+
+export async function createMovie(req: Request, res: Response) {
+  const props: addMovieProps = req.body;
+  if (!props) {
+    res.status(400).json({ error: "Missing props" });
+    return;
+  }
+
+  const result = await addMovie(props);
+
+  res.status(result ? 200 : 500).json(result);
 }

@@ -15,6 +15,7 @@ router.get(
   MovieController.getEpisodeById
 );
 
+router.post("/movies", MovieController.createMovie);
 router.post("/movies/:movieId/update", MovieController.updateMovie);
 
 router.delete("/movies/:movieId", MovieController.deleteMovie);
