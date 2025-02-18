@@ -11,8 +11,11 @@ interface DropdownMenuMainProps {
   onSelect: (item: DropdownMenuItemProps) => void;
   btnStyle?: React.CSSProperties;
   containerStyle?: React.CSSProperties;
+  containerClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
   itemsContainerStyle?: React.CSSProperties;
+  itemsContainerClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
   itemStyle?: React.CSSProperties;
+  itemClassName?: React.HTMLAttributes<HTMLDivElement>["className"];
 }
 
 interface DropdownMenuSelectProps {
@@ -36,8 +39,11 @@ export default function DropdownMenu({
   currentItem,
   btnStyle,
   containerStyle,
+  containerClassName,
   itemsContainerStyle,
+  itemsContainerClassName,
   itemStyle,
+  itemClassName,
   select,
   value,
 }: DropdownMenuProps) {
@@ -63,7 +69,10 @@ export default function DropdownMenu({
     <div ref={containerRef} className="relative" style={containerStyle}>
       <button
         style={btnStyle}
-        className={`flex w-[100%] cursor-pointer items-center justify-between bg-[#1e1e1e] px-4 py-2 text-white ${!select ? "transition-opacity duration-200 hover:opacity-70" : ""}`}
+        className={
+          `flex w-[100%] cursor-pointer items-center justify-between bg-[#1e1e1e] px-4 py-2 text-white ${!select ? "transition-opacity duration-200 hover:opacity-70" : ""}` +
+          (containerClassName ? ` ${containerClassName}` : "")
+        }
         onClick={() => setIsOpen(!isOpen)}
       >
         {select ? currentItemValue?.value : value}
@@ -73,7 +82,10 @@ export default function DropdownMenu({
 
       {isOpen && (
         <div
-          className={`bg-cardBg absolute z-30 w-[100%] shadow-lg ${isOpen ? "" : "hidden"}`}
+          className={
+            `bg-cardBg absolute z-30 shadow-lg ${isOpen ? "" : "hidden"}` +
+            (itemsContainerClassName ? ` ${itemsContainerClassName}` : "")
+          }
           style={itemsContainerStyle}
         >
           {isOpen &&
@@ -84,7 +96,10 @@ export default function DropdownMenu({
                   onSelect(item);
                   setIsOpen(false);
                 }}
-                className={`flex max-w-[100%] cursor-pointer p-2 break-all hover:bg-[#3a3a3a] ${currentItem === item.id ? "bg-[#3a3a3a]" : ""}`}
+                className={
+                  `flex max-w-[100%] cursor-pointer p-2 break-all hover:bg-[#3a3a3a] ${currentItem === item.id ? "bg-[#3a3a3a]" : ""}` +
+                  (itemClassName ? ` ${itemClassName}` : "")
+                }
                 style={itemStyle}
               >
                 {item.value}
