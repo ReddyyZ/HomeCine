@@ -1,4 +1,10 @@
-import { InputHTMLAttributes, useState, TextareaHTMLAttributes } from "react";
+import {
+  InputHTMLAttributes,
+  useState,
+  TextareaHTMLAttributes,
+  useEffect,
+  useRef,
+} from "react";
 import colors from "../../constants/colors";
 import "./styles.css";
 import { IoSearch, IoEye, IoEyeOff } from "react-icons/io5";
@@ -43,6 +49,8 @@ export default function Input({
   ...props
 }: InputProps) {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const PasswordIcon = (props: IconBaseProps) => (
     <PasswordInputIcon
       visible={isPasswordVisible}
@@ -70,6 +78,14 @@ export default function Input({
           : null
         : null;
 
+  useEffect(() => {
+    if (multipleLine && textareaRef.current) {
+      textareaRef.current.value = value;
+    } else if (inputRef.current) {
+      inputRef.current.value = value;
+    }
+  }, [value]);
+
   return (
     <div
       style={{
@@ -85,7 +101,7 @@ export default function Input({
               backgroundColor: colors.cardBg,
               color: colors.text,
             }}
-            // className="input"
+            ref={inputRef}
             type={
               type === "password"
                 ? isPasswordVisible
@@ -119,6 +135,7 @@ export default function Input({
             (props.className ? ` ${props.className}` : "")
           }
           // {...props}
+          ref={textareaRef}
           onChange={(e) => onChangeText(e.target.value)}
         />
       )}
