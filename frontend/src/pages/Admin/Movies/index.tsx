@@ -1,16 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthProvider";
 import { getMovies } from "../../../services/apiClient";
 import { Movie } from "../../types/movies";
 import Image from "../../../components/Image";
 import DropdownMenu from "../../../components/DropdownMenu";
+import Button from "../../../components/Button";
 import { IoAdd } from "react-icons/io5";
 import colors from "../../../constants/colors";
 import { IoEllipsisVertical } from "react-icons/io5";
 import TextWithReadMore from "../../../components/TextWithReadMore";
+import Modal from "../../../components/Modal";
 
 export default function AdminMovies() {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState<JSX.Element>();
+  const [modalClassName, setModalClassName] = useState("");
   const auth = useAuth();
 
   const loadMovies = async () => {
@@ -26,6 +31,55 @@ export default function AdminMovies() {
 
     setMovies(res.data);
   };
+
+  const handleDeleteMovie = (movie: Movie) => {
+    setModalVisible(false);
+  };
+
+  const DeleteMovieModal = ({ movie }: { movie: Movie }) => {
+    return (
+      <div className="flex h-full flex-col justify-between">
+        <div>
+          <p className="mb-1 text-lg">
+            Delete <strong>{movie.title}</strong> movie?
+          </p>
+          <p>This action is irreversible!</p>
+        </div>
+        <div className="flex">
+          <Button
+            className="rounded-r-none! border border-[#3A3A3A] bg-[#252525]!"
+            onClick={handleDeleteMovie}
+          >
+            Yes
+          </Button>
+          <Button
+            className="rounded-l-none! border border-l-0 border-[#3A3A3A] bg-transparent!"
+            onClick={() => setModalVisible(false)}
+          >
+            No
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  const getModalContent = async ({
+    mode,
+    movie,
+  }: {
+    mode: "edit" | "delete" | "createSeries" | "uploadMovie";
+    movie?: Movie;
+  }) => {
+    if (mode === "delete") {
+      setModalVisible(true);
+      setModalClassName("max-w-90 max-h-40!");
+      return <DeleteMovieModal movie={movie} />;
+    }
+  };
+
+  useEffect(() => {
+    loadMovies();
+  });
 
   return (
     <div>
@@ -43,7 +97,9 @@ export default function AdminMovies() {
               value: "Upload movie",
             },
           ]}
-          onSelect={(item) => console.log(item)}
+          onSelect={(item) => {
+            setModalVisible(true);
+          }}
           value={
             <div className="flex gap-2">
               New
@@ -61,13 +117,6 @@ export default function AdminMovies() {
       </div>
 
       <div>
-        <button
-          onClick={loadMovies}
-          className="rounded bg-blue-500 px-4 py-2 text-white"
-        >
-          Load Movies
-        </button>
-
         <div className="bg-secondaryBg mt-4 rounded-sm p-4">
           {movies.map((movie) => (
             <div className="my-4 flex w-full justify-between gap-1">
@@ -99,7 +148,12 @@ export default function AdminMovies() {
                     value: "Delete",
                   },
                 ]}
-                onSelect={(item) => console.log(item)}
+                onSelect={(item) => {
+                  console.log(item);
+                  if (item.id === 2) {
+                    setModalContent(getModalContent({ mode: "delete", movie }));
+                  }
+                }}
                 value={<IoEllipsisVertical size={24} />}
                 btnStyle={{
                   maxWidth: "fit-content",
@@ -113,6 +167,15 @@ export default function AdminMovies() {
           ))}
         </div>
       </div>
+      <Modal
+        visible={modalVisible}
+        onDismiss={() => {
+          setModalVisible(false);
+        }}
+        modalClassName={modalClassName}
+      >
+        {modalContent}
+      </Modal>
     </div>
   );
 }
