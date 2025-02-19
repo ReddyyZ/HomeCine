@@ -1,17 +1,103 @@
-import { useState, useEffect, JSX } from "react";
+import { useState, useEffect, JSX, useRef } from "react";
 import { useAuth } from "../../../contexts/AuthProvider";
 import { getMovies } from "../../../services/apiClient";
 import { Movie } from "../../types/movies";
 import Image from "../../../components/Image";
 import DropdownMenu from "../../../components/DropdownMenu";
 import Button from "../../../components/Button";
-import { IoAdd, IoArrowBack } from "react-icons/io5";
+import { IoAdd, IoArrowBack, IoCloudUpload } from "react-icons/io5";
 import colors from "../../../constants/colors";
 import { IoEllipsisVertical } from "react-icons/io5";
 import TextWithReadMore from "../../../components/TextWithReadMore";
 import Modal from "../../../components/Modal";
 import Input from "../../../components/Input";
 import { formatVideoDuration, removeAccents } from "../../../utils";
+import ImageUploading from "react-images-uploading";
+
+const EditMovieModal = ({
+  movie,
+  setModalClassName,
+}: {
+  movie: Movie;
+  setModalClassName: (value: string) => void;
+}) => {
+  const [posterImage, setPosterImage] = useState("");
+
+  setModalClassName("p-2");
+
+  useEffect(() => {
+    if (movie.posterUrl) {
+      setPosterImage(movie.posterUrl);
+    }
+  }, []);
+
+  return (
+    <>
+      <div className="flex flex-col gap-4 p-4 md:flex-row">
+        <div className="flex max-w-72 flex-col">
+          {/* TODO: show actual image and image input */}
+          <ImageUploading
+            value={[]}
+            onChange={(imgList) => {
+              setPosterImage(String(imgList[0].dataURL));
+            }}
+          >
+            {({ onImageUpload, onImageRemove, dragProps, isDragging }) => (
+              <div className="upload__image-wrapper">
+                <button
+                  onClick={onImageUpload}
+                  {...dragProps}
+                  className="relative"
+                >
+                  <div
+                    className={`absolute h-full w-full bg-[#000000b5] ${!isDragging && "hidden"}`}
+                  />
+                  {isDragging && (
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+                      <IoCloudUpload size={24} />
+                    </div>
+                  )}
+                  <Image
+                    key={posterImage}
+                    src={posterImage}
+                    className="max-h-full"
+                  />
+                </button>
+                <div className="mt-2 flex justify-around">
+                  <button
+                    onClick={onImageUpload}
+                    className="bg-cardBg w-full cursor-pointer py-2 transition-opacity hover:opacity-70"
+                  >
+                    Update
+                  </button>
+                  <button
+                    onClick={() => {
+                      setPosterImage("");
+                      onImageRemove(0);
+                    }}
+                    className="bg-cardBg w-full cursor-pointer py-2 transition-opacity hover:opacity-70"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            )}
+          </ImageUploading>
+        </div>
+        <div className="w-full">
+          <div>
+            {/* TODO: title and year input */}
+            <Input />
+            <Input />
+          </div>
+          {/* TODO: overview input */}
+          <Input />
+        </div>
+        <div>{/* TODO: episode list */}</div>
+      </div>
+    </>
+  );
+};
 
 export default function AdminMovies() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -102,6 +188,11 @@ export default function AdminMovies() {
     if (mode === "delete" && movie) {
       setModalVisible(true);
       return <DeleteMovieModal movie={movie} />;
+    } else if (mode === "edit" && movie) {
+      setModalVisible(true);
+      return (
+        <EditMovieModal movie={movie} setModalClassName={setModalClassName} />
+      );
     }
 
     return <div />;
@@ -228,7 +319,9 @@ export default function AdminMovies() {
                 ]}
                 onSelect={(item) => {
                   console.log(item);
-                  if (item.id === 2) {
+                  if (item.id === 1) {
+                    setModalContent(getModalContent({ mode: "edit", movie }));
+                  } else if (item.id === 2) {
                     setModalContent(getModalContent({ mode: "delete", movie }));
                   }
                 }}
