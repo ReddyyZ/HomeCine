@@ -1,21 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, JSX } from "react";
 import { useAuth } from "../../../contexts/AuthProvider";
 import { getMovies } from "../../../services/apiClient";
 import { Movie } from "../../types/movies";
 import Image from "../../../components/Image";
 import DropdownMenu from "../../../components/DropdownMenu";
 import Button from "../../../components/Button";
-import { IoAdd } from "react-icons/io5";
+import { IoAdd, IoArrowBack } from "react-icons/io5";
 import colors from "../../../constants/colors";
 import { IoEllipsisVertical } from "react-icons/io5";
 import TextWithReadMore from "../../../components/TextWithReadMore";
 import Modal from "../../../components/Modal";
+import Input from "../../../components/Input";
+import { formatVideoDuration, removeAccents } from "../../../utils";
 
 export default function AdminMovies() {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState<JSX.Element>();
   const [modalClassName, setModalClassName] = useState("");
+  const [search, setSearch] = useState("");
+  const [querySearched, setQuerySearched] = useState("");
   const auth = useAuth();
 
   const loadMovies = async () => {
@@ -30,6 +35,28 @@ export default function AdminMovies() {
     }
 
     setMovies(res.data);
+    setFilteredMovies(res.data);
+  };
+
+  const showMovies = (searchInput: string) => {
+    const filtered = movies.filter((movie) =>
+      removeAccents(movie.title)
+        .toLowerCase()
+        .includes(removeAccents(searchInput).toLowerCase()),
+    );
+
+    setFilteredMovies(filtered);
+    setQuerySearched(searchInput);
+    console.log("adsa");
+  };
+
+  const clearSearch = () => {
+    setSearch("");
+    showMovies("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    const searchElement = document.getElementById("search") as HTMLInputElement;
+    searchElement.value = "";
   };
 
   const handleDeleteMovie = (movie: Movie) => {
@@ -37,6 +64,8 @@ export default function AdminMovies() {
   };
 
   const DeleteMovieModal = ({ movie }: { movie: Movie }) => {
+    setModalClassName("max-w-72 md: max-w-80 max-h-40!");
+
     return (
       <div className="flex h-full flex-col justify-between">
         <div>
@@ -48,7 +77,7 @@ export default function AdminMovies() {
         <div className="flex">
           <Button
             className="rounded-r-none! border border-[#3A3A3A] bg-[#252525]!"
-            onClick={handleDeleteMovie}
+            onClick={() => handleDeleteMovie(movie)}
           >
             Yes
           </Button>
@@ -63,23 +92,24 @@ export default function AdminMovies() {
     );
   };
 
-  const getModalContent = async ({
+  const getModalContent = ({
     mode,
     movie,
   }: {
     mode: "edit" | "delete" | "createSeries" | "uploadMovie";
     movie?: Movie;
   }) => {
-    if (mode === "delete") {
+    if (mode === "delete" && movie) {
       setModalVisible(true);
-      setModalClassName("max-w-90 max-h-40!");
       return <DeleteMovieModal movie={movie} />;
     }
+
+    return <div />;
   };
 
   useEffect(() => {
     loadMovies();
-  });
+  }, []);
 
   return (
     <div>
@@ -116,24 +146,72 @@ export default function AdminMovies() {
         />
       </div>
 
+      <form className="mt-4">
+        <Input
+          type="search"
+          onChangeText={(value) => setSearch(value)}
+          onSearch={showMovies}
+          value={search}
+          placeholder="Search movies"
+        />
+      </form>
+
       <div>
-        <div className="bg-secondaryBg mt-4 rounded-sm p-4">
-          {movies.map((movie) => (
-            <div className="my-4 flex w-full justify-between gap-1">
+        <div className="bg-secondaryBg scrollbar scrollbar-thumb-[#3A3A3A] scrollbar-track-[#1E1E1E] mt-4 flex max-h-130 flex-col gap-4 overflow-y-auto rounded-sm p-4">
+          {
+            // Exibe a mensagem de erro caso não encontre nenhum filme
+            querySearched && (
+              <div className="mb-1 flex items-center gap-3">
+                <button
+                  onClick={clearSearch}
+                  className="cursor-pointer p-1 transition-opacity duration-150 hover:opacity-70"
+                >
+                  <IoArrowBack size={24} color={colors.text} />
+                </button>
+                <p className="text-lg">
+                  Showing results for: <strong>"{querySearched}"</strong>
+                </p>
+              </div>
+            )
+          }
+          {filteredMovies.map((movie) => (
+            <div className="bg-cardBg flex w-full justify-between gap-1 rounded-sm">
               <div
                 key={movie.id}
-                className="flex flex-col justify-between gap-4 rounded-sm md:flex-row"
+                className="flex flex-col justify-between gap-4 md:flex-row"
               >
                 <Image
                   src={movie.posterUrl}
-                  className="aspect-video h-44 w-full max-w-80"
+                  className="aspect-auto max-h-fit w-full max-w-50 rounded-tl-sm md:rounded-l-sm"
                 />
-                <div>
-                  <p className="text-xl font-bold">{movie.title}</p>
-                  <p>{movie.year}</p>
+                <div className="p-2">
+                  <p className="mb-2 text-xl font-bold">
+                    {movie.title} {movie.year && `(${movie.year})`}
+                  </p>
+                  {movie.genres && (
+                    <div className="flex gap-2">
+                      <p className="font-semibold text-[#B0B0B0]">Genre: </p>
+                      <p>{JSON.parse(movie.genres).join(", ")}</p>
+                    </div>
+                  )}
+                  {movie.videoDuration ? (
+                    <div className="flex gap-2">
+                      <p className="font-semibold text-[#B0B0B0]">Duration:</p>
+                      <p>{formatVideoDuration(movie.videoDuration)}</p>
+                    </div>
+                  ) : (
+                    movie.isSeries &&
+                    movie.numberOfSeasons && (
+                      <div className="mb-2 flex gap-2">
+                        <p className="font-semibold text-[#B0B0B0]">Seasons</p>
+                        <p>{movie.numberOfSeasons}</p>
+                      </div>
+                    )
+                  )}
                   <TextWithReadMore
                     value={movie.overview ? movie.overview : ""}
                     limit={250}
+                    className="mt-2"
                   />
                 </div>
               </div>
@@ -160,6 +238,7 @@ export default function AdminMovies() {
                   padding: 6,
                   justifyContent: "center",
                   borderRadius: 4,
+                  backgroundColor: "transparent",
                 }}
                 itemsContainerClassName="w-24 -translate-x-1/2"
               />
