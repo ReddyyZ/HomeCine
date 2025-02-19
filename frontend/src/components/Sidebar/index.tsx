@@ -27,7 +27,7 @@ export default function Sidebar({ items, onLogout }: SideBarProps) {
     const color = item.route === location.pathname ? "#FFA726" : "#E0E0E0";
 
     return (
-      <li>
+      <li key={index}>
         <Link
           to={item.route}
           className={
