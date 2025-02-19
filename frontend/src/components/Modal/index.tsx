@@ -31,6 +31,8 @@ export default function Modal({
       }
     };
 
+    document.addEventListener("keydown", detectESCKey);
+
     return () => {
       document.removeEventListener("keydown", detectESCKey);
     };
@@ -48,12 +50,14 @@ export default function Modal({
         <div className="relative h-full w-full">
           <div
             className={
-              "bg-secondaryBg scrollbar scrollbar-thumb-[#252525] scrollbar-track-[#1E1E1E] absolute top-1/2 left-1/2 z-30 h-full max-h-160 w-full max-w-5xl -translate-x-1/2 -translate-y-1/2 transform overflow-y-auto rounded-lg p-4" +
+              "bg-secondaryBg absolute top-1/2 left-1/2 z-30 h-full max-h-160 w-full max-w-5xl -translate-x-1/2 -translate-y-1/2 transform rounded-lg p-3" +
               (modalClassName ? ` ${modalClassName}` : "")
             }
             style={modalStyle}
           >
-            {children}
+            <div className="scrollbar scrollbar-thumb-[#252525] scrollbar-track-[#1E1E1E] h-full w-full overflow-y-auto">
+              {children}
+            </div>
           </div>
         </div>
         <div
