@@ -11,6 +11,7 @@ import List from "../../components/List";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { Link } from "react-router-dom";
 import Image from "../../components/Image";
+import { removeAccents } from "../../utils";
 
 function MovieCard(movie: Movie) {
   return (
@@ -32,10 +33,6 @@ function MovieCard(movie: Movie) {
       </div>
     </Link>
   );
-}
-
-function removeAccents(str: string) {
-  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 export default function Home() {
