@@ -1,7 +1,11 @@
 import { useState, useEffect, JSX, memo } from "react";
 import { useAuth } from "../../../contexts/AuthProvider";
-import { getMovies } from "../../../services/apiClient";
-import { Movie } from "../../types/movies";
+import {
+  getEpisodesFromSeason,
+  getMovies,
+  getSeasonNumber,
+} from "../../../services/apiClient";
+import { Episode, Movie } from "../../types/movies";
 import Image from "../../../components/Image";
 import DropdownMenu from "../../../components/DropdownMenu";
 import Button from "../../../components/Button";
@@ -13,6 +17,31 @@ import Modal from "../../../components/Modal";
 import Input from "../../../components/Input";
 import { formatVideoDuration, removeAccents } from "../../../utils";
 import ImageUploading from "react-images-uploading";
+import List from "../../../components/List";
+
+const EpisodeItem = (episode: Episode) => {
+  return (
+    <div key={episode.id} className="w-60">
+      <div className="relative">
+        <Image
+          src={episode.posterUrl}
+          alt={episode.title}
+          className="aspect-video w-full rounded-lg object-cover"
+        />
+        {/* <Link
+          to={`/movie/${episode.movieId}/episode/${episode.id}/watch`}
+          className="absolute top-0 left-0 flex h-full w-full cursor-pointer items-center justify-center bg-[#00000067] opacity-0 transition-opacity duration-200 hover:opacity-100"
+        >
+          <IoPlayCircle size={36} color={colors.text} />
+        </Link> */}
+      </div>
+      <p className="mt-2">{episode.title}</p>
+      {episode.videoDuration && (
+        <p>{formatVideoDuration(episode.videoDuration)}</p>
+      )}
+    </div>
+  );
+};
 
 const MovieItem = memo(
   ({ movie, onSelect }: { movie: Movie; onSelect: (item) => void }) => (
@@ -126,11 +155,38 @@ const EditMovieModal = memo(
   ({
     movie,
     setModalClassName,
+    user,
   }: {
     movie: Movie;
     setModalClassName: (value: string) => void;
+    user: string;
   }) => {
     const [posterImage, setPosterImage] = useState("");
+    const [seasons, setSeasons] = useState(1);
+    const [currentSeason, setCurrentSeason] = useState(1);
+    const [episodes, setEpisodes] = useState<Episode[]>([]);
+    const [title, setTitle] = useState(movie.title);
+    const [year, setYear] = useState(String(movie.year));
+    const [overview, setOverview] = useState(String(movie.overview));
+
+    const loadEpisodes = async () => {
+      const seasons = await getSeasonNumber(user, String(movie.id));
+      if (seasons.data?.error) {
+        return alert(seasons.data.error);
+      }
+      setSeasons(seasons.data.seasons);
+
+      const episodesResult = await getEpisodesFromSeason(
+        user,
+        String(movie.id),
+        currentSeason,
+      );
+      if (episodesResult.data?.error) {
+        return alert(episodesResult.data.error);
+      }
+
+      setEpisodes(episodesResult.data);
+    };
 
     useEffect(() => {
       setModalClassName("p-2");
@@ -138,6 +194,12 @@ const EditMovieModal = memo(
         setPosterImage(movie.posterUrl);
       }
     }, []);
+
+    useEffect(() => {
+      if (movie.isSeries) {
+        loadEpisodes();
+      }
+    }, [currentSeason]);
 
     return (
       <>
@@ -192,16 +254,75 @@ const EditMovieModal = memo(
               )}
             </ImageUploading>
           </div>
-          <div className="w-full">
-            <div>
-              {/* TODO: title and year input */}
-              <Input />
-              <Input />
+          <div className="flex w-full flex-col gap-6">
+            <div className="flex w-full flex-col gap-4">
+              <div className="flex gap-4">
+                {/* TODO: title and year input */}
+                <div className="flex w-full flex-col gap-1">
+                  <label htmlFor="title" className="text-lg font-semibold">
+                    Movie Title
+                  </label>
+                  <Input
+                    name="title"
+                    placeholder="Title"
+                    value={title}
+                    onChangeText={setTitle}
+                  />
+                </div>
+                <div className="flex w-32 flex-col gap-1">
+                  <label htmlFor="year" className="text-lg font-semibold">
+                    Year
+                  </label>
+                  <Input
+                    name="year"
+                    placeholder="Year"
+                    value={year}
+                    onChangeText={setYear}
+                  />
+                </div>
+              </div>
+              {/* TODO: overview input */}
+              <div className="flex w-full flex-col gap-1">
+                <label htmlFor="overview" className="text-lg font-semibold">
+                  Overview
+                </label>
+                <Input
+                  name="overview"
+                  className=""
+                  multipleLine
+                  value={overview}
+                  onChangeText={setOverview}
+                />
+              </div>
             </div>
-            {/* TODO: overview input */}
-            <Input />
+            {movie.isSeries && (
+              <div>
+                <p className="mb-2 text-lg font-semibold">Episode list</p>
+                {/* TODO: episode list */}
+                <div className="w-full max-w-60">
+                  <DropdownMenu
+                    items={[...Array(seasons).keys()].map((i) => ({
+                      id: i + 1,
+                      value: `Season ${i + 1}`,
+                    }))}
+                    onSelect={(item) => {
+                      setCurrentSeason(item.id);
+                      // setSearchParams({ season: item.id.toString() });
+                    }}
+                    select
+                    currentItem={currentSeason}
+                    containerStyle={{
+                      marginBottom: 24,
+                    }}
+                    itemsContainerClassName="w-full"
+                  />
+                </div>
+                <div className="max-w-160">
+                  <List type={"search"}>{episodes.map(EpisodeItem)}</List>
+                </div>
+              </div>
+            )}
           </div>
-          <div>{/* TODO: episode list */}</div>
         </div>
       </>
     );
@@ -277,7 +398,11 @@ export default function AdminMovies() {
     } else if (mode === "edit" && movie) {
       setModalVisible(true);
       return (
-        <EditMovieModal movie={movie} setModalClassName={setModalClassName} />
+        <EditMovieModal
+          movie={movie}
+          setModalClassName={setModalClassName}
+          user={auth.user}
+        />
       );
     }
 
