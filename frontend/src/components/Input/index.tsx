@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, useState } from "react";
+import { InputHTMLAttributes, useState, TextareaHTMLAttributes } from "react";
 import colors from "../../constants/colors";
 import "./styles.css";
 import { IoSearch, IoEye, IoEyeOff } from "react-icons/io5";
@@ -9,6 +9,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   onChangeText: (value: string) => void;
   type?: "text" | "password" | "email" | "search";
   onSearch?: (value: string) => void;
+  multipleLine?: boolean;
 }
 
 interface PasswordInputIcon extends IconBaseProps {
@@ -38,6 +39,7 @@ export default function Input({
   onChangeText,
   value,
   onSearch,
+  multipleLine,
   ...props
 }: InputProps) {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
@@ -74,38 +76,51 @@ export default function Input({
         backgroundColor: colors.cardBg,
         color: colors.text,
       }}
-      className="input"
+      className={`input`}
     >
-      <input
-        style={{
-          backgroundColor: colors.cardBg,
-          color: colors.text,
-        }}
-        // className="input"
-        type={
-          type === "password"
-            ? isPasswordVisible
-              ? "text"
-              : "password"
-            : type === "email"
-              ? "email"
-              : "text"
-        }
-        onChange={(e) => onChangeText(e.target.value)}
-        {...props}
-      />
-      {Icon && (
-        <div className="flex items-center justify-center p-2">
-          <Icon
-            size={24}
-            fill={colors.text}
+      {!multipleLine ? (
+        <>
+          <input
             style={{
-              opacity: value.length ? 1 : 0.6,
-              transition: "opacity 0.2s",
+              backgroundColor: colors.cardBg,
+              color: colors.text,
             }}
-            disabled={!value.length}
+            // className="input"
+            type={
+              type === "password"
+                ? isPasswordVisible
+                  ? "text"
+                  : "password"
+                : type === "email"
+                  ? "email"
+                  : "text"
+            }
+            onChange={(e) => onChangeText(e.target.value)}
+            {...props}
           />
-        </div>
+          {Icon && (
+            <div className="flex items-center justify-center p-2">
+              <Icon
+                size={24}
+                fill={colors.text}
+                style={{
+                  opacity: value.length ? 1 : 0.6,
+                  transition: "opacity 0.2s",
+                }}
+                disabled={!value.length}
+              />
+            </div>
+          )}
+        </>
+      ) : (
+        <textarea
+          className={
+            "scrollbar scrollbar-thumb-[#3A3A3A] scrollbar-track-[#252525] min-h-48 w-full resize-none bg-transparent p-2" +
+            (props.className ? ` ${props.className}` : "")
+          }
+          // {...props}
+          onChange={(e) => onChangeText(e.target.value)}
+        />
       )}
     </div>
   );
