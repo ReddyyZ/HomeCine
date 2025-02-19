@@ -1,4 +1,4 @@
-import { useState, useEffect, JSX, useRef } from "react";
+import { useState, useEffect, JSX, memo } from "react";
 import { useAuth } from "../../../contexts/AuthProvider";
 import { getMovies } from "../../../services/apiClient";
 import { Movie } from "../../types/movies";
@@ -14,90 +14,199 @@ import Input from "../../../components/Input";
 import { formatVideoDuration, removeAccents } from "../../../utils";
 import ImageUploading from "react-images-uploading";
 
-const EditMovieModal = ({
-  movie,
-  setModalClassName,
-}: {
-  movie: Movie;
-  setModalClassName: (value: string) => void;
-}) => {
-  const [posterImage, setPosterImage] = useState("");
+const MovieItem = memo(
+  ({ movie, onSelect }: { movie: Movie; onSelect: (item) => void }) => (
+    <div className="bg-cardBg flex w-full justify-between gap-1 rounded-md">
+      <div className="flex flex-col justify-between gap-4 md:flex-row">
+        <Image
+          src={movie.posterUrl}
+          className="aspect-auto max-h-fit w-full max-w-50 rounded-tl-md md:rounded-l-md"
+        />
+        <div className="p-2">
+          <p className="mb-2 text-xl font-bold">
+            {movie.title} {movie.year && `(${movie.year})`}
+          </p>
+          {movie.genres && (
+            <div className="flex gap-2">
+              <p className="font-semibold text-[#B0B0B0]">Genre: </p>
+              <p>{JSON.parse(movie.genres).join(", ")}</p>
+            </div>
+          )}
+          {movie.videoDuration ? (
+            <div className="flex gap-2">
+              <p className="font-semibold text-[#B0B0B0]">Duration:</p>
+              <p>{formatVideoDuration(movie.videoDuration)}</p>
+            </div>
+          ) : (
+            movie.isSeries &&
+            movie.numberOfSeasons && (
+              <div className="mb-2 flex gap-2">
+                <p className="font-semibold text-[#B0B0B0]">Seasons</p>
+                <p>{movie.numberOfSeasons}</p>
+              </div>
+            )
+          )}
+          <TextWithReadMore
+            value={movie.overview ? movie.overview : ""}
+            limit={250}
+            className="mt-2"
+          />
+        </div>
+      </div>
+      <DropdownMenu
+        items={[
+          {
+            id: 1,
+            value: "Edit",
+          },
+          {
+            id: 2,
+            value: "Delete",
+          },
+        ]}
+        onSelect={onSelect}
+        value={<IoEllipsisVertical size={24} />}
+        btnStyle={{
+          maxWidth: "fit-content",
+          padding: 6,
+          justifyContent: "center",
+          borderRadius: 4,
+          backgroundColor: "transparent",
+        }}
+        itemsContainerClassName="w-24 -translate-x-1/2"
+      />
+    </div>
+  ),
+);
 
-  setModalClassName("p-2");
+const DeleteMovieModal = memo(
+  ({
+    movie,
+    setModalClassName,
+    handleDeleteMovie,
+    onDismiss,
+  }: {
+    movie: Movie;
+    setModalClassName: (value: string) => void;
+    handleDeleteMovie: (movie: Movie) => void;
+    onDismiss: () => void;
+  }) => {
+    useEffect(() => {
+      setModalClassName("max-w-72 md: max-w-80 max-h-40!");
+    }, []);
 
-  useEffect(() => {
-    if (movie.posterUrl) {
-      setPosterImage(movie.posterUrl);
-    }
-  }, []);
-
-  return (
-    <>
-      <div className="flex flex-col gap-4 p-4 md:flex-row">
-        <div className="flex max-w-72 flex-col">
-          {/* TODO: show actual image and image input */}
-          <ImageUploading
-            value={[]}
-            onChange={(imgList) => {
-              setPosterImage(String(imgList[0].dataURL));
-            }}
+    return (
+      <div className="flex h-full flex-col justify-between">
+        <div>
+          <p className="mb-1 text-lg">
+            Delete <strong>{movie.title}</strong> movie?
+          </p>
+          <p>This action is irreversible!</p>
+        </div>
+        <div className="flex">
+          <Button
+            className="rounded-r-none! border border-[#3A3A3A] bg-[#252525]!"
+            onClick={() => handleDeleteMovie(movie)}
           >
-            {({ onImageUpload, onImageRemove, dragProps, isDragging }) => (
-              <div className="upload__image-wrapper">
-                <button
-                  onClick={onImageUpload}
-                  {...dragProps}
-                  className="relative"
-                >
-                  <div
-                    className={`absolute h-full w-full bg-[#000000b5] ${!isDragging && "hidden"}`}
-                  />
-                  {isDragging && (
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-                      <IoCloudUpload size={24} />
-                    </div>
-                  )}
-                  <Image
-                    key={posterImage}
-                    src={posterImage}
-                    className="max-h-full"
-                  />
-                </button>
-                <div className="mt-2 flex justify-around">
+            Yes
+          </Button>
+          <Button
+            className="rounded-l-none! border border-l-0 border-[#3A3A3A] bg-transparent!"
+            onClick={onDismiss}
+          >
+            No
+          </Button>
+        </div>
+      </div>
+    );
+  },
+);
+
+const EditMovieModal = memo(
+  ({
+    movie,
+    setModalClassName,
+  }: {
+    movie: Movie;
+    setModalClassName: (value: string) => void;
+  }) => {
+    const [posterImage, setPosterImage] = useState("");
+
+    useEffect(() => {
+      setModalClassName("p-2");
+      if (movie.posterUrl) {
+        setPosterImage(movie.posterUrl);
+      }
+    }, []);
+
+    return (
+      <>
+        <div className="flex flex-col gap-4 p-4 md:flex-row">
+          <div className="flex max-w-72 flex-col">
+            {/* TODO: show actual image and image input */}
+            <ImageUploading
+              value={[]}
+              onChange={(imgList) => {
+                setPosterImage(String(imgList[0].dataURL));
+              }}
+            >
+              {({ onImageUpload, onImageRemove, dragProps, isDragging }) => (
+                <div className="upload__image-wrapper">
                   <button
                     onClick={onImageUpload}
-                    className="bg-cardBg w-full cursor-pointer py-2 transition-opacity hover:opacity-70"
+                    {...dragProps}
+                    className="relative"
                   >
-                    Update
+                    <div
+                      className={`absolute h-full w-full bg-[#000000b5] ${!isDragging && "hidden"}`}
+                    />
+                    {isDragging && (
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+                        <IoCloudUpload size={24} />
+                      </div>
+                    )}
+                    <Image
+                      key={posterImage}
+                      src={posterImage}
+                      className="max-h-full"
+                    />
                   </button>
-                  <button
-                    onClick={() => {
-                      setPosterImage("");
-                      onImageRemove(0);
-                    }}
-                    className="bg-cardBg w-full cursor-pointer py-2 transition-opacity hover:opacity-70"
-                  >
-                    Remove
-                  </button>
+                  <div className="mt-2 flex justify-around">
+                    <button
+                      onClick={onImageUpload}
+                      className="bg-cardBg w-full cursor-pointer py-2 transition-opacity hover:opacity-70"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPosterImage("");
+                        onImageRemove(0);
+                      }}
+                      className="bg-cardBg w-full cursor-pointer py-2 transition-opacity hover:opacity-70"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </ImageUploading>
-        </div>
-        <div className="w-full">
-          <div>
-            {/* TODO: title and year input */}
-            <Input />
+              )}
+            </ImageUploading>
+          </div>
+          <div className="w-full">
+            <div>
+              {/* TODO: title and year input */}
+              <Input />
+              <Input />
+            </div>
+            {/* TODO: overview input */}
             <Input />
           </div>
-          {/* TODO: overview input */}
-          <Input />
+          <div>{/* TODO: episode list */}</div>
         </div>
-        <div>{/* TODO: episode list */}</div>
-      </div>
-    </>
-  );
-};
+      </>
+    );
+  },
+);
 
 export default function AdminMovies() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -133,7 +242,6 @@ export default function AdminMovies() {
 
     setFilteredMovies(filtered);
     setQuerySearched(searchInput);
-    console.log("adsa");
   };
 
   const clearSearch = () => {
@@ -149,35 +257,6 @@ export default function AdminMovies() {
     setModalVisible(false);
   };
 
-  const DeleteMovieModal = ({ movie }: { movie: Movie }) => {
-    setModalClassName("max-w-72 md: max-w-80 max-h-40!");
-
-    return (
-      <div className="flex h-full flex-col justify-between">
-        <div>
-          <p className="mb-1 text-lg">
-            Delete <strong>{movie.title}</strong> movie?
-          </p>
-          <p>This action is irreversible!</p>
-        </div>
-        <div className="flex">
-          <Button
-            className="rounded-r-none! border border-[#3A3A3A] bg-[#252525]!"
-            onClick={() => handleDeleteMovie(movie)}
-          >
-            Yes
-          </Button>
-          <Button
-            className="rounded-l-none! border border-l-0 border-[#3A3A3A] bg-transparent!"
-            onClick={() => setModalVisible(false)}
-          >
-            No
-          </Button>
-        </div>
-      </div>
-    );
-  };
-
   const getModalContent = ({
     mode,
     movie,
@@ -187,7 +266,14 @@ export default function AdminMovies() {
   }) => {
     if (mode === "delete" && movie) {
       setModalVisible(true);
-      return <DeleteMovieModal movie={movie} />;
+      return (
+        <DeleteMovieModal
+          movie={movie}
+          setModalClassName={setModalClassName}
+          handleDeleteMovie={handleDeleteMovie}
+          onDismiss={() => setModalVisible(false)}
+        />
+      );
     } else if (mode === "edit" && movie) {
       setModalVisible(true);
       return (
@@ -266,76 +352,17 @@ export default function AdminMovies() {
             )
           }
           {filteredMovies.map((movie) => (
-            <div className="bg-cardBg flex w-full justify-between gap-1 rounded-sm">
-              <div
-                key={movie.id}
-                className="flex flex-col justify-between gap-4 md:flex-row"
-              >
-                <Image
-                  src={movie.posterUrl}
-                  className="aspect-auto max-h-fit w-full max-w-50 rounded-tl-sm md:rounded-l-sm"
-                />
-                <div className="p-2">
-                  <p className="mb-2 text-xl font-bold">
-                    {movie.title} {movie.year && `(${movie.year})`}
-                  </p>
-                  {movie.genres && (
-                    <div className="flex gap-2">
-                      <p className="font-semibold text-[#B0B0B0]">Genre: </p>
-                      <p>{JSON.parse(movie.genres).join(", ")}</p>
-                    </div>
-                  )}
-                  {movie.videoDuration ? (
-                    <div className="flex gap-2">
-                      <p className="font-semibold text-[#B0B0B0]">Duration:</p>
-                      <p>{formatVideoDuration(movie.videoDuration)}</p>
-                    </div>
-                  ) : (
-                    movie.isSeries &&
-                    movie.numberOfSeasons && (
-                      <div className="mb-2 flex gap-2">
-                        <p className="font-semibold text-[#B0B0B0]">Seasons</p>
-                        <p>{movie.numberOfSeasons}</p>
-                      </div>
-                    )
-                  )}
-                  <TextWithReadMore
-                    value={movie.overview ? movie.overview : ""}
-                    limit={250}
-                    className="mt-2"
-                  />
-                </div>
-              </div>
-              <DropdownMenu
-                items={[
-                  {
-                    id: 1,
-                    value: "Edit",
-                  },
-                  {
-                    id: 2,
-                    value: "Delete",
-                  },
-                ]}
-                onSelect={(item) => {
-                  console.log(item);
-                  if (item.id === 1) {
-                    setModalContent(getModalContent({ mode: "edit", movie }));
-                  } else if (item.id === 2) {
-                    setModalContent(getModalContent({ mode: "delete", movie }));
-                  }
-                }}
-                value={<IoEllipsisVertical size={24} />}
-                btnStyle={{
-                  maxWidth: "fit-content",
-                  padding: 6,
-                  justifyContent: "center",
-                  borderRadius: 4,
-                  backgroundColor: "transparent",
-                }}
-                itemsContainerClassName="w-24 -translate-x-1/2"
-              />
-            </div>
+            <MovieItem
+              key={movie.id}
+              movie={movie}
+              onSelect={(item) => {
+                if (item.id === 1) {
+                  setModalContent(getModalContent({ mode: "edit", movie }));
+                } else if (item.id === 2) {
+                  setModalContent(getModalContent({ mode: "delete", movie }));
+                }
+              }}
+            />
           ))}
         </div>
       </div>
