@@ -1,9 +1,9 @@
 import express from "express";
 // import { CreateUser } from "./controller/UserController";
-import MovieRoutes from "@src/routes/MovieRoutes";
-import UserRoutes from "@src/routes/UserRoutes";
-import VideoRoutes from "@src/routes/VideoRoutes";
-import UploadRoutes from "@src/routes/UploadRoutes";
+import MovieRoutes from "./routes/MovieRoutes";
+import UserRoutes from "./routes/UserRoutes";
+import VideoRoutes from "./routes/VideoRoutes";
+import UploadRoutes from "./routes/UploadRoutes";
 import { authenticate } from "./controllers/UserController";
 
 const routes = express.Router();
