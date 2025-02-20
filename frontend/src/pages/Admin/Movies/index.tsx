@@ -9,7 +9,7 @@ import { Episode, Movie } from "../../types/movies";
 import Image from "../../../components/Image";
 import DropdownMenu from "../../../components/DropdownMenu";
 import Button from "../../../components/Button";
-import { IoAdd, IoArrowBack, IoCloudUpload } from "react-icons/io5";
+import { IoAdd, IoArrowBack, IoClose, IoCloudUpload } from "react-icons/io5";
 import colors from "../../../constants/colors";
 import { IoEllipsisVertical } from "react-icons/io5";
 import TextWithReadMore from "../../../components/TextWithReadMore";
@@ -156,18 +156,25 @@ const EditMovieModal = memo(
     movie,
     setModalClassName,
     user,
+    onDismiss,
   }: {
     movie: Movie;
     setModalClassName: (value: string) => void;
     user: string;
+    onDismiss: () => void;
   }) => {
     const [posterImage, setPosterImage] = useState("");
     const [seasons, setSeasons] = useState(1);
     const [currentSeason, setCurrentSeason] = useState(1);
     const [episodes, setEpisodes] = useState<Episode[]>([]);
-    const [title, setTitle] = useState(movie.title);
-    const [year, setYear] = useState(String(movie.year));
-    const [overview, setOverview] = useState(String(movie.overview));
+    const [title, setTitle] = useState("");
+    const [year, setYear] = useState("");
+    const [overview, setOverview] = useState("");
+    const hasChanged =
+      title !== movie.title ||
+      year !== String(movie.year) ||
+      overview !== String(movie.overview) ||
+      posterImage !== String(movie.posterUrl);
 
     const loadEpisodes = async () => {
       const seasons = await getSeasonNumber(user, String(movie.id));
@@ -188,11 +195,16 @@ const EditMovieModal = memo(
       setEpisodes(episodesResult.data);
     };
 
+    const loadInputs = () => {
+      setTitle(movie.title);
+      setYear(String(movie.year));
+      setOverview(String(movie.overview));
+      setPosterImage(String(movie.posterUrl));
+    };
+
     useEffect(() => {
       setModalClassName("p-2");
-      if (movie.posterUrl) {
-        setPosterImage(movie.posterUrl);
-      }
+      loadInputs();
     }, []);
 
     useEffect(() => {
@@ -203,6 +215,41 @@ const EditMovieModal = memo(
 
     return (
       <>
+        <div className="flex justify-between">
+          <button
+            className="cursor-pointer transition-opacity hover:opacity-70"
+            onClick={onDismiss}
+          >
+            <IoClose size={28} />
+          </button>
+          <div className="flex w-72 gap-2">
+            <Button
+              style={{
+                backgroundColor: "#252525",
+                color: !hasChanged ? "#3A3A3A" : "",
+              }}
+              className={
+                !hasChanged ? "cursor-default! hover:opacity-100!" : ""
+              }
+              disabled={!hasChanged}
+              onClick={loadInputs}
+            >
+              Discard changes
+            </Button>
+            <Button
+              style={{
+                backgroundColor: !hasChanged ? "#252525" : colors.primary,
+                color: !hasChanged ? "#3A3A3A" : "",
+              }}
+              className={
+                !hasChanged ? "cursor-default! hover:opacity-100!" : ""
+              }
+              disabled={!hasChanged}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
         <div className="flex flex-col gap-4 p-4 md:flex-row">
           <div className="flex max-w-72 flex-col">
             {/* TODO: show actual image and image input */}
@@ -333,7 +380,7 @@ export default function AdminMovies() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalContent, setModalContent] = useState<JSX.Element>();
+  const [modalContent, setModalContent] = useState<JSX.Element>(<div />);
   const [modalClassName, setModalClassName] = useState("");
   const [search, setSearch] = useState("");
   const [querySearched, setQuerySearched] = useState("");
@@ -385,6 +432,8 @@ export default function AdminMovies() {
     mode: "edit" | "delete" | "createSeries" | "uploadMovie";
     movie?: Movie;
   }) => {
+    const dismiss = () => setModalVisible(false);
+
     if (mode === "delete" && movie) {
       setModalVisible(true);
       return (
@@ -392,21 +441,28 @@ export default function AdminMovies() {
           movie={movie}
           setModalClassName={setModalClassName}
           handleDeleteMovie={handleDeleteMovie}
-          onDismiss={() => setModalVisible(false)}
+          onDismiss={dismiss}
         />
       );
-    } else if (mode === "edit" && movie) {
+    } else if (mode === "edit" && movie && auth.user) {
       setModalVisible(true);
       return (
         <EditMovieModal
           movie={movie}
           setModalClassName={setModalClassName}
           user={auth.user}
+          onDismiss={dismiss}
         />
       );
     }
 
     return <div />;
+  };
+
+  const onDismissModal = () => {
+    setModalVisible(false);
+    setModalClassName("");
+    setModalContent(<div />);
   };
 
   useEffect(() => {
@@ -429,7 +485,7 @@ export default function AdminMovies() {
               value: "Upload movie",
             },
           ]}
-          onSelect={(item) => {
+          onSelect={() => {
             setModalVisible(true);
           }}
           value={
@@ -493,12 +549,10 @@ export default function AdminMovies() {
       </div>
       <Modal
         visible={modalVisible}
-        onDismiss={() => {
-          setModalVisible(false);
-        }}
+        onDismiss={onDismissModal}
         modalClassName={modalClassName}
       >
-        {modalContent}
+        {modalContent || <div />}
       </Modal>
     </div>
   );
