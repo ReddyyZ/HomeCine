@@ -48,7 +48,7 @@ export default function Sidebar({ items, onLogout }: SideBarProps) {
       <div className="hidden md:block">
         <div
           id="sidebar"
-          className={`bg-secondaryBg relative mr-4 flex min-h-screen w-72 flex-col px-4 py-6 text-white md:max-w-72`}
+          className={`relative mr-4 flex min-h-screen w-72 flex-col bg-gray-600 px-4 py-6 text-white md:max-w-72`}
         >
           <div className="mb-12">
             <Logo size="small" />

@@ -18,7 +18,7 @@ export default function Admin() {
   return (
     <div className="flex min-h-screen overflow-hidden md:max-h-screen">
       <Sidebar items={sideBarLinks} onLogout={() => {}} />
-      <div className="scrollbar scrollbar-thumb-[#3A3A3A] scrollbar-track-[#1E1E1E] flex w-full flex-col gap-4 p-8 md:overflow-y-auto">
+      <div className="scrollbar scrollbar-thumb-gray-300 scrollbar-track-gray-600 flex w-full flex-col gap-4 p-8 md:overflow-y-auto">
         <Outlet />
       </div>
     </div>

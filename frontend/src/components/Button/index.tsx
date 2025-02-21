@@ -13,8 +13,8 @@ export default function Button(
       {...props}
       className={"button" + `${props.className ? ` ${props.className}` : ""}`}
       style={{
-        ...props.style,
         backgroundColor: colors.primary,
+        ...props.style,
       }}
     >
       {props.children}

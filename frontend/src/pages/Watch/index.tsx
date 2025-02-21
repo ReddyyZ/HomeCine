@@ -152,7 +152,7 @@ export default function Watch() {
 
   return (
     <div className="p-8">
-      <div className="bg-secondaryBg fadein relative mx-auto max-w-4xl rounded-sm p-4">
+      <div className="fadein relative mx-auto max-w-4xl rounded-sm bg-gray-600 p-4">
         <button
           className="mb-4 flex cursor-pointer items-center gap-2 transition-opacity duration-200 hover:opacity-70"
           onClick={() => window.history.back()}

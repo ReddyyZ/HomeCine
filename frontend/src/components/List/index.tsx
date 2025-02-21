@@ -58,7 +58,7 @@ export default function List({ children, type, style }: ListProps) {
     );
   } else {
     return (
-      <div className="flex flex-col items-center p-8 text-center text-[#E0E0E0]">
+      <div className="flex flex-col items-center p-8 text-center text-gray-100">
         {/* Illustration */}
         <PiPopcorn size={48} fill="#FFA726" />
 
@@ -66,7 +66,7 @@ export default function List({ children, type, style }: ListProps) {
         <h1 className="mb-2 text-2xl font-bold">{emptyMessages[type].main}</h1>
 
         {/* Subtext */}
-        <p className="mb-6 text-center text-[#B0B0B0]">
+        <p className="mb-6 text-center text-gray-200">
           {emptyMessages[type].sub}
         </p>
       </div>

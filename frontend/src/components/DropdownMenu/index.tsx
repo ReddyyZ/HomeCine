@@ -70,7 +70,7 @@ export default function DropdownMenu({
       <button
         style={btnStyle}
         className={
-          `flex w-[100%] cursor-pointer items-center justify-between bg-[#1e1e1e] px-4 py-2 text-white ${!select ? "transition-opacity duration-200 hover:opacity-70" : ""}` +
+          `flex w-[100%] cursor-pointer items-center justify-between bg-gray-600 px-4 py-2 text-white ${!select ? "transition-opacity duration-200 hover:opacity-70" : ""}` +
           (containerClassName ? ` ${containerClassName}` : "")
         }
         onClick={() => setIsOpen(!isOpen)}
@@ -97,7 +97,7 @@ export default function DropdownMenu({
                   setIsOpen(false);
                 }}
                 className={
-                  `flex max-w-[100%] cursor-pointer p-2 break-all hover:bg-[#3a3a3a] ${currentItem === item.id ? "bg-[#3a3a3a]" : ""}` +
+                  `flex max-w-[100%] cursor-pointer p-2 break-all hover:bg-gray-300 ${currentItem === item.id ? "bg-gray-300" : ""}` +
                   (itemClassName ? ` ${itemClassName}` : "")
                 }
                 style={itemStyle}

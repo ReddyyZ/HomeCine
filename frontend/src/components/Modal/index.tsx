@@ -50,19 +50,19 @@ export default function Modal({
         <div className="relative h-full w-full">
           <div
             className={
-              "bg-secondaryBg absolute top-1/2 left-1/2 z-30 h-full max-h-160 w-full max-w-5xl -translate-x-1/2 -translate-y-1/2 transform rounded-lg p-3" +
+              "absolute top-1/2 left-1/2 z-30 h-full max-h-160 w-full max-w-5xl -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-gray-600 p-3" +
               (modalClassName ? ` ${modalClassName}` : "")
             }
             style={modalStyle}
           >
-            <div className="scrollbar scrollbar-thumb-[#252525] scrollbar-track-[#1E1E1E] h-full w-full overflow-y-auto">
+            <div className="scrollbar scrollbar-thumb-gray-500 scrollbar-track-gray-600 h-full w-full overflow-y-auto">
               {children}
             </div>
           </div>
         </div>
         <div
           className={
-            "fixed top-0 left-0 h-full w-full bg-[#000000b3]" +
+            "bg-black-opacity fixed top-0 left-0 h-full w-full" +
             (bgClassName ? ` ${bgClassName}` : "")
           }
           onClick={onDismiss}

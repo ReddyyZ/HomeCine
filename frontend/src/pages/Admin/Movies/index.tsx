@@ -57,20 +57,20 @@ const MovieItem = memo(
           </p>
           {movie.genres && (
             <div className="flex gap-2">
-              <p className="font-semibold text-[#B0B0B0]">Genre: </p>
+              <p className="font-semibold text-gray-200">Genre: </p>
               <p>{JSON.parse(movie.genres).join(", ")}</p>
             </div>
           )}
           {movie.videoDuration ? (
             <div className="flex gap-2">
-              <p className="font-semibold text-[#B0B0B0]">Duration:</p>
+              <p className="font-semibold text-gray-200">Duration:</p>
               <p>{formatVideoDuration(movie.videoDuration)}</p>
             </div>
           ) : (
             movie.isSeries &&
             movie.numberOfSeasons && (
               <div className="mb-2 flex gap-2">
-                <p className="font-semibold text-[#B0B0B0]">Seasons</p>
+                <p className="font-semibold text-gray-200">Seasons</p>
                 <p>{movie.numberOfSeasons}</p>
               </div>
             )
@@ -134,13 +134,13 @@ const DeleteMovieModal = memo(
         </div>
         <div className="flex">
           <Button
-            className="rounded-r-none! border border-[#3A3A3A] bg-[#252525]!"
+            className="rounded-r-none! border border-gray-300 bg-gray-500!"
             onClick={() => handleDeleteMovie(movie)}
           >
             Yes
           </Button>
           <Button
-            className="rounded-l-none! border border-l-0 border-[#3A3A3A] bg-transparent!"
+            className="rounded-l-none! border border-l-0 border-gray-300 bg-transparent!"
             onClick={onDismiss}
           >
             No
@@ -267,7 +267,7 @@ const EditMovieModal = memo(
                     className="relative"
                   >
                     <div
-                      className={`absolute h-full w-full bg-[#000000b5] ${!isDragging && "hidden"}`}
+                      className={`bg-black-opacity absolute h-full w-full ${!isDragging && "hidden"}`}
                     />
                     {isDragging && (
                       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
@@ -515,7 +515,7 @@ export default function AdminMovies() {
       </form>
 
       <div>
-        <div className="bg-secondaryBg scrollbar scrollbar-thumb-[#3A3A3A] scrollbar-track-[#1E1E1E] mt-4 flex max-h-130 flex-col gap-4 overflow-y-auto rounded-sm p-4">
+        <div className="bg-secondaryBg scrollbar scrollbar-thumb-gray-300 scrollbar-track-[#1E1E1E] mt-4 flex max-h-130 flex-col gap-4 overflow-y-auto rounded-sm p-4">
           {
             // Exibe a mensagem de erro caso não encontre nenhum filme
             querySearched && (

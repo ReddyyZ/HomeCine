@@ -1,10 +1,4 @@
-import {
-  InputHTMLAttributes,
-  useState,
-  TextareaHTMLAttributes,
-  useEffect,
-  useRef,
-} from "react";
+import { InputHTMLAttributes, useState, useEffect, useRef } from "react";
 import colors from "../../constants/colors";
 import "./styles.css";
 import { IoSearch, IoEye, IoEyeOff } from "react-icons/io5";
@@ -131,7 +125,7 @@ export default function Input({
       ) : (
         <textarea
           className={
-            "scrollbar scrollbar-thumb-[#3A3A3A] scrollbar-track-[#252525] min-h-48 w-full resize-none bg-transparent p-2" +
+            "scrollbar scrollbar-thumb-gray-300 scrollbar-track-gray-500 min-h-48 w-full resize-none bg-transparent p-2" +
             (props.className ? ` ${props.className}` : "")
           }
           // {...props}

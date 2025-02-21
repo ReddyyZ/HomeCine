@@ -33,7 +33,7 @@ const EpisodeItem = (episode: Episode) => {
         />
         <Link
           to={`/movie/${episode.movieId}/episode/${episode.id}/watch`}
-          className="absolute top-0 left-0 flex h-full w-full cursor-pointer items-center justify-center bg-[#00000067] opacity-0 transition-opacity duration-200 hover:opacity-100"
+          className="bg-black-opacity absolute top-0 left-0 flex h-full w-full cursor-pointer items-center justify-center opacity-0 transition-opacity duration-200 hover:opacity-100"
         >
           <IoPlayCircle size={36} color={colors.text} />
         </Link>
@@ -168,7 +168,7 @@ export default function MoviePage() {
   }, [currentSeason]);
 
   return (
-    <div className="min-h-screen bg-[#121212] p-8 text-[#E0E0E0]">
+    <div className="min-h-screen bg-gray-700 p-8 text-gray-100">
       <div className="fadein relative mx-auto max-w-7xl">
         {loading && <LoadingView />}
         {/* Hero Section */}
@@ -188,9 +188,9 @@ export default function MoviePage() {
           ) : (
             <div className="h-full w-full rounded-lg bg-[#000000]"></div>
           )}
-          <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#121212] to-transparent p-6">
+          <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-gray-700 to-transparent p-6">
             <h1 className="text-4xl font-bold">{movieDetails.title}</h1>
-            <p className="text-[#B0B0B0]">{movieDetails.year}</p>
+            <p className="text-gray-200">{movieDetails.year}</p>
 
             <Button onClick={playMovie} className="mt-2 max-h-9 max-w-32">
               Play
@@ -199,32 +199,32 @@ export default function MoviePage() {
         </div>
 
         {/* Details Section */}
-        <div className="mb-8 rounded-lg bg-[#252525] p-6">
+        <div className="mb-8 rounded-lg bg-gray-500 p-6">
           <h2 className="mb-4 text-2xl font-bold">Details</h2>
-          <p className="mb-4 text-[#B0B0B0]">{movieDetails.overview}</p>
+          <p className="mb-4 text-gray-200">{movieDetails.overview}</p>
           <div className="grid grid-cols-2 gap-4">
             {movieDetails.genres && (
               <div>
-                <p className="font-semibold text-[#B0B0B0]">Genre</p>
+                <p className="font-semibold text-gray-200">Genre</p>
                 <p>{JSON.parse(movieDetails.genres).join(", ")}</p>
               </div>
             )}
             {movieDetails.videoDuration ? (
               <div>
-                <p className="font-semibold text-[#B0B0B0]">Duration</p>
+                <p className="font-semibold text-gray-200">Duration</p>
                 <p>{formatVideoDuration(movieDetails.videoDuration)}</p>
               </div>
             ) : (
               movieDetails.isSeries && (
                 <div>
-                  <p className="font-semibold text-[#B0B0B0]">Seasons</p>
+                  <p className="font-semibold text-gray-200">Seasons</p>
                   <p>{movieDetails.numberOfSeasons}</p>
                 </div>
               )
             )}
             {movieDetails.originalName && (
               <div>
-                <p className="font-semibold text-[#B0B0B0]">Original Name</p>
+                <p className="font-semibold text-gray-200">Original Name</p>
                 <p>{movieDetails.originalName}</p>
               </div>
             )}

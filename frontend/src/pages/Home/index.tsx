@@ -143,7 +143,7 @@ export default function Home() {
             <LoadingIndicator size="large" />
           </div>
         )}
-        <div className="bg-secondaryBg mx-auto max-w-7xl rounded-lg p-6">
+        <div className="mx-auto max-w-7xl rounded-lg bg-gray-600 p-6 shadow-lg shadow-gray-600">
           {
             // Exibe a mensagem de erro caso não encontre nenhum filme
             querySearched && (

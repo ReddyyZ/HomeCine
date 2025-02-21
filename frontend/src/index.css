@@ -6,6 +6,20 @@
   src: local("Orbitron-Variable"), url("./assets/fonts/Orbitron-Variable.ttf");
 }
 
+@theme {
+  --color-primary: #e50914;
+  --color-secondary: #ffa726;
+  --color-gray-*: initial;
+  --color-gray-100: #e0e0e0;
+  --color-gray-200: #b0b0b0;
+  --color-gray-300: #3a3a3a;
+  --color-gray-500: #252525;
+  --color-gray-600: #1e1e1e;
+  --color-gray-700: #121212;
+  --color-black-opacity: #00000067;
+  --color-black-opacity-100: #00000021;
+}
+
 @layer components {
   @keyframes appear {
     0% {
