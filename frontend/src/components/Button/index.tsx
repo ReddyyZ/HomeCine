@@ -2,6 +2,7 @@ import { ClassAttributes, ButtonHTMLAttributes } from "react";
 import { JSX } from "react/jsx-runtime";
 import "./styles.css";
 import colors from "../../constants/colors";
+import { twMerge } from "tailwind-merge";
 
 export default function Button(
   props: JSX.IntrinsicAttributes &
@@ -11,7 +12,7 @@ export default function Button(
   return (
     <button
       {...props}
-      className={"button" + `${props.className ? ` ${props.className}` : ""}`}
+      className={twMerge("button", props.className)}
       style={{
         backgroundColor: colors.primary,
         ...props.style,

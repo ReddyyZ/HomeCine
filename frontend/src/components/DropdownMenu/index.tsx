@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { IoCaretDown, IoCaretUp } from "react-icons/io5";
+import { twMerge } from "tailwind-merge";
 
 type DropdownMenuItemProps = {
   id: number;
@@ -69,10 +70,10 @@ export default function DropdownMenu({
     <div ref={containerRef} className="relative" style={containerStyle}>
       <button
         style={btnStyle}
-        className={
-          `flex w-[100%] cursor-pointer items-center justify-between bg-gray-600 px-4 py-2 text-white ${!select ? "transition-opacity duration-200 hover:opacity-70" : ""}` +
-          (containerClassName ? ` ${containerClassName}` : "")
-        }
+        className={twMerge(
+          `flex w-[100%] cursor-pointer items-center justify-between bg-gray-600 px-4 py-2 text-white ${!select ? "transition-opacity duration-200 hover:opacity-70" : ""}`,
+          containerClassName,
+        )}
         onClick={() => setIsOpen(!isOpen)}
       >
         {select ? currentItemValue?.value : value}
@@ -82,10 +83,10 @@ export default function DropdownMenu({
 
       {isOpen && (
         <div
-          className={
-            `bg-cardBg absolute z-30 shadow-lg ${isOpen ? "" : "hidden"}` +
-            (itemsContainerClassName ? ` ${itemsContainerClassName}` : "")
-          }
+          className={twMerge(
+            `bg-cardBg absolute z-30 shadow-lg ${isOpen ? "" : "hidden"}`,
+            itemsContainerClassName,
+          )}
           style={itemsContainerStyle}
         >
           {isOpen &&
@@ -96,10 +97,10 @@ export default function DropdownMenu({
                   onSelect(item);
                   setIsOpen(false);
                 }}
-                className={
-                  `flex max-w-[100%] cursor-pointer p-2 break-all hover:bg-gray-300 ${currentItem === item.id ? "bg-gray-300" : ""}` +
-                  (itemClassName ? ` ${itemClassName}` : "")
-                }
+                className={twMerge(
+                  `flex max-w-[100%] cursor-pointer p-2 break-all hover:bg-gray-300 ${currentItem === item.id ? "bg-gray-300" : ""}`,
+                  itemClassName,
+                )}
                 style={itemStyle}
               >
                 {item.value}

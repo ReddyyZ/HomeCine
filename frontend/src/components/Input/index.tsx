@@ -3,6 +3,7 @@ import colors from "../../constants/colors";
 import "./styles.css";
 import { IoSearch, IoEye, IoEyeOff } from "react-icons/io5";
 import { IconBaseProps } from "react-icons";
+import { twMerge } from "tailwind-merge";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   value: string;
@@ -124,10 +125,10 @@ export default function Input({
         </>
       ) : (
         <textarea
-          className={
-            "scrollbar scrollbar-thumb-gray-300 scrollbar-track-gray-500 min-h-48 w-full resize-none bg-transparent p-2" +
-            (props.className ? ` ${props.className}` : "")
-          }
+          className={twMerge(
+            "scrollbar scrollbar-thumb-gray-300 scrollbar-track-gray-500 min-h-48 w-full resize-none bg-transparent p-2",
+            props.className,
+          )}
           // {...props}
           ref={textareaRef}
           onChange={(e) => onChangeText(e.target.value)}
