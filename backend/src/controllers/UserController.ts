@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import User from "@src/models/User";
+import User from "../models/User";
 import { checkPassword, registerUserToken, verifyUser } from "../services/auth";
 
 export async function login(req: Request, res: Response) {
