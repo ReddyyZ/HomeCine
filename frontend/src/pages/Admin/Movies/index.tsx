@@ -1,6 +1,7 @@
 import { useState, useEffect, JSX, memo } from "react";
 import { useAuth } from "../../../contexts/AuthProvider";
 import {
+  getAllEpisodesFromMovie,
   getEpisodesFromSeason,
   getMovies,
   getSeasonNumber,
@@ -9,9 +10,15 @@ import { Episode, Movie, VideoMetadata } from "../../types/movies";
 import Image from "../../../components/Image";
 import DropdownMenu from "../../../components/DropdownMenu";
 import Button from "../../../components/Button";
-import { IoAdd, IoArrowBack, IoClose, IoCloudUpload } from "react-icons/io5";
+import {
+  IoAdd,
+  IoArrowBack,
+  IoClose,
+  IoCloudUpload,
+  IoEllipsisVertical,
+  IoTrash,
+} from "react-icons/io5";
 import colors from "../../../constants/colors";
-import { IoEllipsisVertical } from "react-icons/io5";
 import TextWithReadMore from "../../../components/TextWithReadMore";
 import Modal from "../../../components/Modal";
 import Input from "../../../components/Input";
@@ -24,7 +31,12 @@ import {
   UploadRoot,
 } from "../../../components/Upload";
 
-const EpisodeItem = (episode: Episode) => {
+interface EpisodeItemProps {
+  episode: Episode;
+  onDelete: (episodeId: number) => void;
+}
+
+const EpisodeItem = ({ episode, onDelete }: EpisodeItemProps) => {
   return (
     <div key={episode.id} className="w-60">
       <div className="relative">
@@ -33,12 +45,12 @@ const EpisodeItem = (episode: Episode) => {
           alt={episode.title}
           className="aspect-video w-full rounded-lg object-cover"
         />
-        {/* <Link
-          to={`/movie/${episode.movieId}/episode/${episode.id}/watch`}
-          className="absolute top-0 left-0 flex h-full w-full cursor-pointer items-center justify-center bg-[#00000067] opacity-0 transition-opacity duration-200 hover:opacity-100"
+        <button
+          onClick={() => onDelete(episode.id)}
+          className="bg-black-opacity absolute top-0 left-0 flex h-full w-full cursor-pointer items-center justify-center opacity-0 transition-opacity duration-200 hover:opacity-100"
         >
-          <IoPlayCircle size={36} color={colors.text} />
-        </Link> */}
+          <IoTrash size={36} color={colors.text} />
+        </button>
       </div>
       <p className="mt-2">{episode.title}</p>
       {episode.videoDuration && (
@@ -172,6 +184,7 @@ const EditMovieModal = memo(
     const [seasons, setSeasons] = useState(1);
     const [currentSeason, setCurrentSeason] = useState(1);
     const [episodes, setEpisodes] = useState<Episode[]>([]);
+    const [allEpisodes, setAllEpisodes] = useState<Episode[]>([]);
     const [title, setTitle] = useState("");
     const [year, setYear] = useState("");
     const [overview, setOverview] = useState("");
@@ -184,7 +197,8 @@ const EditMovieModal = memo(
       year !== String(movie.year) ||
       overview !== String(movie.overview) ||
       posterImage !== String(movie.posterUrl) ||
-      files.length > 0;
+      files.length > 0 ||
+      episodes !== allEpisodes;
 
     const loadEpisodes = async () => {
       const seasons = await getSeasonNumber(user, String(movie.id));
@@ -193,16 +207,32 @@ const EditMovieModal = memo(
       }
       setSeasons(seasons.data.seasons);
 
-      const episodesResult = await getEpisodesFromSeason(
+      const allEpisodesResult = await getAllEpisodesFromMovie(
         user,
         String(movie.id),
-        currentSeason,
       );
-      if (episodesResult.data?.error) {
-        return alert(episodesResult.data.error);
+      if (allEpisodesResult.data?.error) {
+        return alert(allEpisodesResult.data.error);
       }
 
-      setEpisodes(episodesResult.data);
+      setAllEpisodes(allEpisodesResult.data);
+      setEpisodes(allEpisodesResult.data);
+    };
+
+    const onDeleteEpisode = (episodeId: number) => {
+      setEpisodes((prevEpisodes) =>
+        prevEpisodes.filter((episode) => episode.id !== episodeId),
+      );
+    };
+
+    const getDeletedEpisodes = () => {
+      return allEpisodes.filter(
+        (episode) => !episodes.some((e) => e.id === episode.id),
+      );
+    };
+
+    const filterEpisodesFromSeason = (season: number) => {
+      return episodes.filter((episode) => episode.season === season);
     };
 
     const loadInputs = () => {
@@ -211,6 +241,7 @@ const EditMovieModal = memo(
       setOverview(String(movie.overview));
       setPosterImage(String(movie.posterUrl));
       setFiles([]);
+      loadEpisodes();
     };
 
     const handleFileRemove = (index: number) => {
@@ -242,12 +273,6 @@ const EditMovieModal = memo(
       setModalClassName("p-2");
       loadInputs();
     }, []);
-
-    useEffect(() => {
-      if (movie.isSeries) {
-        loadEpisodes();
-      }
-    }, [currentSeason]);
 
     return (
       <>
@@ -390,7 +415,6 @@ const EditMovieModal = memo(
                     }))}
                     onSelect={(item) => {
                       setCurrentSeason(item.id);
-                      // setSearchParams({ season: item.id.toString() });
                     }}
                     select
                     currentItem={currentSeason}
@@ -401,7 +425,11 @@ const EditMovieModal = memo(
                   />
                 </div>
                 <div className="max-w-160">
-                  <List type={"search"}>{episodes.map(EpisodeItem)}</List>
+                  <List type={"search"}>
+                    {filterEpisodesFromSeason(currentSeason).map((item) => (
+                      <EpisodeItem episode={item} onDelete={onDeleteEpisode} />
+                    ))}
+                  </List>
                 </div>
                 <UploadRoot>
                   <p className="text-lg font-semibold">Upload new episodes</p>
