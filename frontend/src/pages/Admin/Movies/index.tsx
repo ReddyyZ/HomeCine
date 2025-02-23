@@ -5,7 +5,7 @@ import {
   getMovies,
   getSeasonNumber,
 } from "../../../services/apiClient";
-import { Episode, Movie } from "../../types/movies";
+import { Episode, Movie, VideoMetadata } from "../../types/movies";
 import Image from "../../../components/Image";
 import DropdownMenu from "../../../components/DropdownMenu";
 import Button from "../../../components/Button";
@@ -18,6 +18,11 @@ import Input from "../../../components/Input";
 import { formatVideoDuration, removeAccents } from "../../../utils";
 import ImageUploading from "react-images-uploading";
 import List from "../../../components/List";
+import {
+  UploadField,
+  UploadList,
+  UploadRoot,
+} from "../../../components/Upload";
 
 const EpisodeItem = (episode: Episode) => {
   return (
@@ -170,11 +175,16 @@ const EditMovieModal = memo(
     const [title, setTitle] = useState("");
     const [year, setYear] = useState("");
     const [overview, setOverview] = useState("");
+    const [files, setFiles] = useState<File[]>([]);
+    const [videosMetadata, setVideosMetadata] = useState<
+      Record<string, VideoMetadata>
+    >({});
     const hasChanged =
       title !== movie.title ||
       year !== String(movie.year) ||
       overview !== String(movie.overview) ||
-      posterImage !== String(movie.posterUrl);
+      posterImage !== String(movie.posterUrl) ||
+      files.length > 0;
 
     const loadEpisodes = async () => {
       const seasons = await getSeasonNumber(user, String(movie.id));
@@ -200,6 +210,32 @@ const EditMovieModal = memo(
       setYear(String(movie.year));
       setOverview(String(movie.overview));
       setPosterImage(String(movie.posterUrl));
+      setFiles([]);
+    };
+
+    const handleFileRemove = (index: number) => {
+      setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    };
+
+    const onUpload = (
+      file: File[],
+      filesMetadata: Record<string, VideoMetadata>,
+    ) => {
+      setVideosMetadata((prevMetadata) => ({
+        ...prevMetadata,
+        ...filesMetadata,
+      }));
+      setFiles((prevFiles) => [...prevFiles, ...file]);
+    };
+
+    const filterFiles = (files: FileList) => {
+      const allowedTypes = ["video/mp4", "video/quicktime"];
+      for (let i = 0; i < files.length; i++) {
+        if (!allowedTypes.includes(files[i].type)) {
+          return false;
+        }
+      }
+      return true;
     };
 
     useEffect(() => {
@@ -367,6 +403,20 @@ const EditMovieModal = memo(
                 <div className="max-w-160">
                   <List type={"search"}>{episodes.map(EpisodeItem)}</List>
                 </div>
+                <UploadRoot>
+                  <p className="text-lg font-semibold">Upload new episodes</p>
+                  <UploadList
+                    filesMetadata={videosMetadata}
+                    files={files}
+                    setFileMetadata={setVideosMetadata}
+                    onRemove={handleFileRemove}
+                  />
+                  <UploadField
+                    multiple={false}
+                    onUpload={onUpload}
+                    filter={filterFiles}
+                  />
+                </UploadRoot>
               </div>
             )}
           </div>

@@ -39,3 +39,11 @@ export type movieProgress = {
   lastEpisodeWatched?: string;
   watched: boolean;
 };
+
+export type VideoMetadata = {
+  title?: string;
+  episodeTitle?: string;
+  season?: number;
+  episodeNumber?: number;
+  movieId?: number;
+};
