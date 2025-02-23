@@ -12,7 +12,11 @@ router.get(
 );
 router.get(
   "/movies/:movieId/episode/:episodeId",
-  MovieController.getEpisodeById
+  MovieController.getEpisodeById,
+);
+router.get(
+  "/movies/:movieId/episodes",
+  MovieController.getAllEpisodesByMovieId,
 );
 
 router.post("/movies", MovieController.createMovie);
