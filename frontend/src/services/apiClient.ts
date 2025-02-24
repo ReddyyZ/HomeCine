@@ -1,5 +1,5 @@
 import { AxiosProgressEvent } from "axios";
-import { VideoMetadata } from "../pages/types/movies";
+import { Movie, VideoMetadata } from "../pages/types/movies";
 import apiClient from "./axios";
 
 export type LoginProps = {
@@ -146,6 +146,49 @@ export function uploadVideos(
       );
 
       onUploadProgress(progress);
+    },
+  });
+}
+
+export function deleteEpisode(
+  user: string,
+  movieId: string,
+  episodeId: string,
+) {
+  return apiClient.delete(`/movies/${movieId}/episode/${episodeId}`, {
+    headers: {
+      Authorization: user,
+    },
+  });
+}
+
+export function deleteEpisodes(
+  user: string,
+  movieId: string,
+  episodeIds: string[],
+) {
+  return apiClient.delete(`/movies/${movieId}/episodes`, {
+    headers: {
+      Authorization: user,
+    },
+    data: {
+      episodeIds,
+    },
+  });
+}
+
+export function deleteMovie(user: string, movieId: string) {
+  return apiClient.delete(`/movies/${movieId}`, {
+    headers: {
+      Authorization: user,
+    },
+  });
+}
+
+export function updateMovie(user: string, movieId: string, data: any) {
+  return apiClient.put(`/movies/${movieId}`, data, {
+    headers: {
+      Authorization: user,
     },
   });
 }

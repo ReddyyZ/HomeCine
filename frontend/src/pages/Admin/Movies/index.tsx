@@ -1,10 +1,12 @@
 import { useState, useEffect, JSX, memo } from "react";
 import { useAuth } from "../../../contexts/AuthProvider";
 import {
+  deleteEpisodes,
   getAllEpisodesFromMovie,
   getEpisodesFromSeason,
   getMovies,
   getSeasonNumber,
+  updateMovie,
   uploadVideos,
 } from "../../../services/apiClient";
 import { Episode, Movie, VideoMetadata } from "../../types/movies";
@@ -185,11 +187,13 @@ const EditMovieModal = memo(
     setModalClassName,
     user,
     onDismiss,
+    onReload,
   }: {
     movie: Movie;
     setModalClassName: (value: string) => void;
     user: string;
     onDismiss: () => void;
+    onReload: () => void;
   }) => {
     const [posterImage, setPosterImage] = useState("");
     const [seasons, setSeasons] = useState(1);
@@ -282,19 +286,32 @@ const EditMovieModal = memo(
       return callback(filesToFilter, true);
     };
 
-    {
-      /*
-    ------------TODO: Implement the following functions------------
-    
-    const deleteEpisodes = async () => {};
-    
-    const updateMovieMetadata = async () => {};
-    
-    */
-    }
+    const updateMovieMetadata = async () => {
+      const res = await updateMovie(user, String(movie.id), {
+        title,
+        year: Number(year),
+        overview,
+        posterUrl: posterImage,
+      });
+      if (res.data?.error) {
+        return alert(res.data.error);
+      }
+    };
 
-    const saveChanges = async () => {
-      uploadEpisodes();
+    const deleteRemovedEpisodes = async () => {
+      const deletedEpisodes = getDeletedEpisodes();
+      if (deletedEpisodes.length === 0) return;
+
+      const res = await deleteEpisodes(
+        user,
+        String(movie.id),
+        deletedEpisodes.map((episode) => String(episode.id)),
+      );
+      if (res.data?.error) {
+        return alert(res.data.error);
+      }
+
+      loadEpisodes();
     };
 
     const uploadEpisodes = async () => {
@@ -328,6 +345,14 @@ const EditMovieModal = memo(
       setFiles([]);
       setVideosMetadata({});
       loadEpisodes();
+    };
+
+    const saveChanges = async () => {
+      await updateMovieMetadata();
+      await deleteRemovedEpisodes();
+      await uploadEpisodes();
+      onReload();
+      onDismiss();
     };
 
     useEffect(() => {
@@ -588,6 +613,7 @@ export default function AdminMovies() {
           setModalClassName={setModalClassName}
           user={auth.user}
           onDismiss={dismiss}
+          onReload={loadMovies}
         />
       );
     }
