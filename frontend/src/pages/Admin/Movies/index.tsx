@@ -3,7 +3,6 @@ import { useAuth } from "../../../contexts/AuthProvider";
 import {
   deleteEpisodes,
   getAllEpisodesFromMovie,
-  getEpisodesFromSeason,
   getMovies,
   getSeasonNumber,
   updateMovie,
@@ -34,6 +33,7 @@ import {
   UploadList,
   UploadRoot,
 } from "../../../components/Upload";
+import LoadingView from "../../../components/LoadingView";
 
 interface EpisodeItemProps {
   episode: Episode;
@@ -205,6 +205,7 @@ const EditMovieModal = memo(
     const [overview, setOverview] = useState("");
     const [files, setFiles] = useState<File[]>([]);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [loading, setLoading] = useState(false);
     const [videosMetadata, setVideosMetadata] = useState<
       Record<string, VideoMetadata>
     >({});
@@ -348,21 +349,32 @@ const EditMovieModal = memo(
     };
 
     const saveChanges = async () => {
+      setLoading(true);
       await updateMovieMetadata();
       await deleteRemovedEpisodes();
       await uploadEpisodes();
       onReload();
-      onDismiss();
+      setLoading(false);
+      // onDismiss();
     };
 
     useEffect(() => {
-      setModalClassName("p-2");
+      setModalClassName("p-2 transition-all duration-200 relative");
       loadInputs();
     }, []);
+
+    useEffect(() => {
+      if (loading) {
+        setModalClassName("p-0 transition-all duration-200 relative");
+      } else {
+        setModalClassName("p-2 transition-all duration-200 relative");
+      }
+    }, [loading, setModalClassName]);
 
     return (
       <>
         <div className="flex justify-between">
+          {loading && <LoadingView />}
           <button
             className="cursor-pointer transition-opacity hover:opacity-70"
             onClick={onDismiss}
