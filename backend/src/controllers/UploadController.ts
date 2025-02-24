@@ -65,7 +65,11 @@ export async function uploadFile(req: Request, res: Response) {
     if (isSeries) {
       // let movie = movieId ? await findMovieById(movieId) : null;
       const movie = await findMovieById(movieId);
-      const moviePath = path.join(mediaPath, "series", String(movie?.title));
+      const moviePath = path.join(
+        mediaPath,
+        "series",
+        String(movie?.originalTitle),
+      );
       const episodePath = path.join(
         moviePath,
         `S${String(season).length < 2 ? `0${season}` : season}E${String(episodeNumber).length < 2 ? `0${episodeNumber}` : episodeNumber} - ${episodeTitle}${path.extname(String(file.originalname))}`,

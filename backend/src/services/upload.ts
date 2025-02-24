@@ -25,8 +25,11 @@ const storage = multer.diskStorage({
           return;
         }
 
-        const { title } = movie;
-        const dir = path.join(__dirname, `../../media/series/${title}/`);
+        const { originalTitle } = movie;
+        const dir = path.join(
+          __dirname,
+          `../../media/series/${originalTitle}/`,
+        );
 
         try {
           if (!fs.existsSync(dir)) {
