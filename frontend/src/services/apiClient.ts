@@ -1,3 +1,5 @@
+import { AxiosProgressEvent } from "axios";
+import { VideoMetadata } from "../pages/types/movies";
 import apiClient from "./axios";
 
 export type LoginProps = {
@@ -115,6 +117,35 @@ export function getEpisodeById(
   return apiClient.get(`/movies/${movieId}/episode/${episodeId}`, {
     headers: {
       Authorization: user,
+    },
+  });
+}
+
+export function uploadVideos(
+  user: string,
+  metadata: Record<string, VideoMetadata>,
+  files: File[],
+  onUploadProgress: (progress: number) => void,
+) {
+  const data = new FormData();
+  data.append("videos", JSON.stringify(metadata));
+  files.forEach((file) => {
+    console.log(file);
+    data.append("file", file);
+  });
+
+  return apiClient.post("/upload", data, {
+    headers: {
+      Authorization: user,
+      "Content-Type": "multipart/form-data",
+    },
+    transformRequest: (data) => data,
+    onUploadProgress(progressEvent: AxiosProgressEvent) {
+      const progress = Math.round(
+        (progressEvent.loaded * 100) / (progressEvent.total || 1),
+      );
+
+      onUploadProgress(progress);
     },
   });
 }

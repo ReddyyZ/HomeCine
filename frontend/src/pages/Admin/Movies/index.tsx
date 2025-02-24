@@ -5,6 +5,7 @@ import {
   getEpisodesFromSeason,
   getMovies,
   getSeasonNumber,
+  uploadVideos,
 } from "../../../services/apiClient";
 import { Episode, Movie, VideoMetadata } from "../../types/movies";
 import Image from "../../../components/Image";
@@ -26,6 +27,7 @@ import { formatVideoDuration, removeAccents } from "../../../utils";
 import ImageUploading from "react-images-uploading";
 import List from "../../../components/List";
 import {
+  FilterCallback,
   UploadField,
   UploadList,
   UploadRoot,
@@ -198,6 +200,7 @@ const EditMovieModal = memo(
     const [year, setYear] = useState("");
     const [overview, setOverview] = useState("");
     const [files, setFiles] = useState<File[]>([]);
+    const [uploadProgress, setUploadProgress] = useState(0);
     const [videosMetadata, setVideosMetadata] = useState<
       Record<string, VideoMetadata>
     >({});
@@ -268,28 +271,64 @@ const EditMovieModal = memo(
       setFiles((prevFiles) => [...prevFiles, ...file]);
     };
 
-    const filterFiles = (files: FileList) => {
+    const filterFiles = (filesToFilter: FileList, callback: FilterCallback) => {
       const allowedTypes = ["video/mp4", "video/quicktime"];
       for (let i = 0; i < files.length; i++) {
         if (!allowedTypes.includes(files[i].type)) {
-          return false;
+          return callback(filesToFilter, false, "File type not allowed");
         }
       }
-      return true;
+
+      return callback(filesToFilter, true);
     };
 
     {
       /*
     ------------TODO: Implement the following functions------------
-    const uploadEpisodes = async () => {};
-
+    
     const deleteEpisodes = async () => {};
-
+    
     const updateMovieMetadata = async () => {};
-
-    const saveChanges = async () => {};
-      */
+    
+    */
     }
+
+    const saveChanges = async () => {
+      uploadEpisodes();
+    };
+
+    const uploadEpisodes = async () => {
+      if (files.length === 0) return;
+
+      const onUploadProgress = (progress: number) => {
+        setUploadProgress(progress);
+      };
+
+      const videoMetadataWithMovieId = Object.keys(videosMetadata).reduce(
+        (acc: Record<string, VideoMetadata>, key) => {
+          acc[key] = {
+            ...videosMetadata[key],
+            movieId: movie.id,
+          };
+          return acc;
+        },
+        {},
+      );
+
+      const res = await uploadVideos(
+        user,
+        videoMetadataWithMovieId,
+        files,
+        onUploadProgress,
+      );
+      if (res.data?.error) {
+        return alert(res.data.error);
+      }
+
+      setFiles([]);
+      setVideosMetadata({});
+      loadEpisodes();
+    };
 
     useEffect(() => {
       setModalClassName("p-2");
@@ -320,6 +359,7 @@ const EditMovieModal = memo(
               Discard changes
             </Button>
             <Button
+              onClick={saveChanges}
               style={{
                 backgroundColor: !hasChanged ? "#252525" : colors.primary,
                 color: !hasChanged ? "#3A3A3A" : "",
