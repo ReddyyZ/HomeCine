@@ -37,7 +37,6 @@ export async function addMovie(props: addMovieProps) {
     return null;
   }
 
-  
   try {
     const genres: string[] = [];
 
@@ -51,6 +50,7 @@ export async function addMovie(props: addMovieProps) {
     }
 
     const movie = await Movie.create({
+      originalTitle: props.title,
       title: props.title,
       year: props.year,
       overview: props.overview,
@@ -58,7 +58,9 @@ export async function addMovie(props: addMovieProps) {
       filePath: props.filePath,
       isSeries: props.isSeries,
       numberOfSeasons: props.numberOfSeasons,
-      videoDuration: !props.isSeries ? await getVideoDuration(props.filePath) : undefined,
+      videoDuration: !props.isSeries
+        ? await getVideoDuration(props.filePath)
+        : undefined,
       genres: JSON.stringify(genres),
     });
 

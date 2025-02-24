@@ -16,6 +16,7 @@ export class Movie extends Model<
   declare overview: CreationOptional<string>;
   declare posterUrl: CreationOptional<string>;
   declare videoDuration: CreationOptional<number>;
+  declare originalTitle: string;
   declare title: string;
   declare filePath: string;
   declare isSeries: boolean;
@@ -51,7 +52,21 @@ Movie.init(
       type: DataTypes.TEXT,
     },
     videoDuration: {
-      type: DataTypes.NUMBER
+      type: DataTypes.NUMBER,
+    },
+    originalTitle: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      validate: {
+        min: {
+          msg: "Title must be at least 1 characters long",
+          args: [1],
+        },
+        max: {
+          msg: "Title must be at most 150 characters long",
+          args: [150],
+        },
+      },
     },
     title: {
       type: DataTypes.TEXT,
@@ -83,8 +98,8 @@ Movie.init(
       type: DataTypes.JSON,
     },
     originalName: {
-      type: DataTypes.STRING
-    }
+      type: DataTypes.STRING,
+    },
   },
   {
     tableName: "movies",
@@ -136,7 +151,7 @@ Episode.init(
       type: DataTypes.TEXT,
     },
     videoDuration: {
-      type: DataTypes.NUMBER
+      type: DataTypes.NUMBER,
     },
     season: {
       type: DataTypes.NUMBER,
