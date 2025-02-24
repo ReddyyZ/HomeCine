@@ -52,7 +52,16 @@ const EpisodeItem = ({ episode, onDelete }: EpisodeItemProps) => {
           <IoTrash size={36} color={colors.text} />
         </button>
       </div>
-      <p className="mt-2">{episode.title}</p>
+      <p className="mt-2">
+        <span className="text-gray-200!">
+          E
+          {String(episode.episodeNumber).length === 1
+            ? `0${episode.episodeNumber}`
+            : episode.episodeNumber}{" "}
+          -{" "}
+        </span>
+        {episode.title}
+      </p>
       {episode.videoDuration && (
         <p>{formatVideoDuration(episode.videoDuration)}</p>
       )}
@@ -452,11 +461,7 @@ const EditMovieModal = memo(
                     setFileMetadata={setVideosMetadata}
                     onRemove={handleFileRemove}
                   />
-                  <UploadField
-                    multiple={false}
-                    onUpload={onUpload}
-                    filter={filterFiles}
-                  />
+                  <UploadField onUpload={onUpload} filter={filterFiles} />
                 </UploadRoot>
               </div>
             )}
