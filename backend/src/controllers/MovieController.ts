@@ -126,6 +126,20 @@ export async function deleteEpisode(req: Request, res: Response) {
   res.status(result.errorCode ? result.errorCode : 200).json(result);
 }
 
+export async function deleteMultipleEpisodes(req: Request, res: Response) {
+  const { episodeIds } = req.body;
+  if (!episodeIds) {
+    res.status(400).json({ error: "Missing ids" });
+    return;
+  }
+
+  const results = await Promise.all(
+    episodeIds.map(async (id: number) => await deleteEpisodeById(id)),
+  );
+
+  res.json(results);
+}
+
 export async function createMovie(req: Request, res: Response) {
   const props: addMovieProps = req.body;
   if (!props) {

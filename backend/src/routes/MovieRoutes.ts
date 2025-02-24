@@ -20,12 +20,16 @@ router.get(
 );
 
 router.post("/movies", MovieController.createMovie);
-router.post("/movies/:movieId/update", MovieController.updateMovie);
+router.put("/movies/:movieId", MovieController.updateMovie);
 
 router.delete("/movies/:movieId", MovieController.deleteMovie);
 router.delete(
   "/movies/:movieId/episode/:episodeId",
   MovieController.deleteEpisode,
+);
+router.delete(
+  "/movies/:movieId/episodes",
+  MovieController.deleteMultipleEpisodes,
 );
 
 export default router;
