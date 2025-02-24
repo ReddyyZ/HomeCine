@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { addEpisode, addMovie, findMovieById } from "../functions/MovieFuncs";
 import path from "path";
+import { getThumbnail } from "../services/ffmpeg";
 
 const mediaPath = path.join(__dirname, "../../media");
 
@@ -97,13 +98,19 @@ export async function uploadFile(req: Request, res: Response) {
       // }
       console.log(`Episode from movie: [${movie.id}]${movie.title}`);
 
+      const thumbnail = await getThumbnail({
+        filePath: episodePath,
+        movieId: String(movie.id),
+        episodeTitle,
+      });
+
       const episode = await addEpisode({
         title: episodeTitle,
         filePath: episodePath,
         movieId: movie.id,
         season,
         episodeNumber,
-        posterUrl,
+        posterUrl: thumbnail,
       });
 
       if (!episode) {

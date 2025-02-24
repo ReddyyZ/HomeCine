@@ -17,14 +17,20 @@ export function getVideoDuration(filePath: string): Promise<number> {
 
 type getThumbnailProps = {
   filePath: string;
-  movieTitle: string;
+  movieTitle?: string;
   episodeTitle?: string;
+  movieId?: string;
 };
 
 const thumbnailsFolder = path.join(__dirname, "../../media/thumbnails");
 
-export function getThumbnail({filePath, movieTitle, episodeTitle}: getThumbnailProps): Promise<string> {
-  const output = `http://localhost:8080/media/${episodeTitle ? `${movieTitle}-${episodeTitle}` : movieTitle}.png`;
+export function getThumbnail({
+  filePath,
+  movieId,
+  episodeTitle,
+  movieTitle,
+}: getThumbnailProps): Promise<string> {
+  const output = `http://localhost:8080/media/${episodeTitle ? `${movieId}-${episodeTitle}` : movieTitle}.png`;
 
   return new Promise((resolve, reject) => {
     ffmpeg(filePath)
@@ -36,7 +42,7 @@ export function getThumbnail({filePath, movieTitle, episodeTitle}: getThumbnailP
       .takeScreenshots({
         count: 1,
         timemarks: ["50%"],
-        filename: `${episodeTitle ? `${movieTitle}-${episodeTitle}` : movieTitle}.png`,
+        filename: `${episodeTitle ? `${movieId}-${episodeTitle}` : movieTitle}.png`,
         folder: thumbnailsFolder,
       });
   });
