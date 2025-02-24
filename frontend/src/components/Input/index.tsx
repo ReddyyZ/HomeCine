@@ -87,7 +87,7 @@ export default function Input({
         backgroundColor: colors.cardBg,
         color: colors.text,
       }}
-      className={`input`}
+      className={twMerge(`input`, props.className)}
     >
       {!multipleLine ? (
         <>
