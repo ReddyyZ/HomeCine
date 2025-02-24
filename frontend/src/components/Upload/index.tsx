@@ -114,23 +114,54 @@ function UploadItem(props: UploadItemProps) {
   );
 }
 
+export type FilterCallback = (
+  files: FileList,
+  isValid: boolean,
+  error?: string,
+) => void;
 interface UploadFieldProps {
   onUpload: (
     files: File[],
     filesMetadata: Record<string, VideoMetadata>,
   ) => void;
-  filter?: (files: FileList) => boolean;
+  filter?: (files: FileList, callback: FilterCallback) => void;
   multiple?: boolean;
 }
 
 export function UploadField({
   onUpload,
-  filter = () => true,
+  filter,
   multiple = true,
 }: UploadFieldProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [fileErrorMessage, setFileErrorMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const filterCallback = (
+    files: FileList,
+    isValid: boolean,
+    error?: string,
+  ) => {
+    if (!isValid) {
+      setFileErrorMessage(error ?? "File type not allowed");
+      return;
+    }
+
+    setFileErrorMessage("");
+
+    const filesMetadata = Array.from(files).reduce(
+      (acc, file) => {
+        acc[file.name] = {
+          episodeTitle: file.name.replace(/\.[^/.]+$/, ""),
+          season: 1,
+        };
+        return acc;
+      },
+      {} as Record<string, VideoMetadata>,
+    );
+
+    onUpload(Array.from(files), filesMetadata);
+  };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files as FileList;
@@ -139,25 +170,24 @@ export function UploadField({
         setFileErrorMessage("Only one file allowed");
         return;
       }
-      if (!filter(files)) {
-        setFileErrorMessage("File type not allowed");
-        return;
+      if (filter) {
+        filter(files, filterCallback);
+      } else {
+        setFileErrorMessage("");
+
+        const filesMetadata = Array.from(files).reduce(
+          (acc, file) => {
+            acc[file.name] = {
+              episodeTitle: file.name.replace(/\.[^/.]+$/, ""),
+              season: 1,
+            };
+            return acc;
+          },
+          {} as Record<string, VideoMetadata>,
+        );
+
+        onUpload(Array.from(files), filesMetadata);
       }
-
-      setFileErrorMessage("");
-
-      const filesMetadata = Array.from(files).reduce(
-        (acc, file) => {
-          acc[file.name] = {
-            episodeTitle: file.name.replace(/\.[^/.]+$/, ""),
-            season: 1,
-          };
-          return acc;
-        },
-        {} as Record<string, VideoMetadata>,
-      );
-
-      onUpload(Array.from(files), filesMetadata);
     }
   };
 
@@ -169,23 +199,24 @@ export function UploadField({
         setFileErrorMessage("Only one file allowed");
         return;
       }
-      if (!filter(droppedFiles)) {
-        setFileErrorMessage("File type not allowed");
-        return;
+      if (filter) {
+        filter(droppedFiles, filterCallback);
+      } else {
+        setFileErrorMessage("");
+
+        const filesMetadata = Array.from(droppedFiles).reduce(
+          (acc, file) => {
+            acc[file.name] = {
+              episodeTitle: file.name.replace(/\.[^/.]+$/, ""),
+              season: 1,
+            };
+            return acc;
+          },
+          {} as Record<string, VideoMetadata>,
+        );
+
+        onUpload(Array.from(droppedFiles), filesMetadata);
       }
-
-      const filesMetadata = Array.from(droppedFiles).reduce(
-        (acc, file) => {
-          acc[file.name] = {
-            episodeTitle: file.name.replace(/\.[^/.]+$/, ""),
-            season: 1,
-          };
-          return acc;
-        },
-        {} as Record<string, VideoMetadata>,
-      );
-
-      onUpload(Array.from(droppedFiles), filesMetadata);
     }
 
     setIsDragging(false);
@@ -193,11 +224,6 @@ export function UploadField({
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (filter(e.dataTransfer.files) === true) {
-      setFileErrorMessage("");
-    } else {
-      setFileErrorMessage("File type not allowed");
-    }
     setIsDragging(true);
   };
 
