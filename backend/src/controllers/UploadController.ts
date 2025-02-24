@@ -14,12 +14,14 @@ type VideoMetadata = {
   genreIds?: number[];
   movieId?: number;
   year?: number;
-}
+};
 
 type VideoMetadataList = Record<string, VideoMetadata>;
 
 export async function uploadFile(req: Request, res: Response) {
-  const videos = req.body.videos ? JSON.parse(req.body.videos) as VideoMetadataList: null;
+  const videos = req.body.videos
+    ? (JSON.parse(req.body.videos) as VideoMetadataList)
+    : null;
   const files = req.files as Express.Multer.File[];
 
   if (!videos) {
@@ -36,14 +38,26 @@ export async function uploadFile(req: Request, res: Response) {
     const video = videos[file.originalname];
 
     if (!video) {
-      res.status(400).json({ error: `Missing metadata for ${file.originalname}` });
+      res
+        .status(400)
+        .json({ error: `Missing metadata for ${file.originalname}` });
       return;
     }
 
-    const { title, episodeTitle, season, episodeNumber, year, movieId, genreIds, overview, posterUrl } = video;
+    const {
+      title,
+      episodeTitle,
+      season,
+      episodeNumber,
+      year,
+      movieId,
+      genreIds,
+      overview,
+      posterUrl,
+    } = video;
     const isSeries = movieId && episodeTitle && season && episodeNumber;
 
-    if (!title) {
+    if (!isSeries && !title) {
       res.status(400).json({ error: "Missing title" });
       return;
     }
@@ -51,8 +65,11 @@ export async function uploadFile(req: Request, res: Response) {
     if (isSeries) {
       // let movie = movieId ? await findMovieById(movieId) : null;
       const movie = await findMovieById(movieId);
-      const moviePath = path.join(mediaPath, "series", title);
-      const episodePath = path.join(moviePath, `S${season}E${episodeNumber} - ${episodeTitle}${path.extname(file.originalname)}`);
+      const moviePath = path.join(mediaPath, "series", String(movie?.title));
+      const episodePath = path.join(
+        moviePath,
+        `S${season}E${episodeNumber} - ${episodeTitle}${path.extname(String(file.originalname))}`,
+      );
 
       if (!movie) {
         res.status(400).json({ error: `Movie with id ${movieId} not found` });
@@ -68,7 +85,7 @@ export async function uploadFile(req: Request, res: Response) {
       //     posterUrl,
       //     genreIds: genreIds ? genreIds : [],
       //   });
-  
+
       //   if (!movie) {
       //     console.error(`Error adding movie: ${title}`);
       //     return;
@@ -82,7 +99,7 @@ export async function uploadFile(req: Request, res: Response) {
         movieId: movie.id,
         season,
         episodeNumber,
-        posterUrl
+        posterUrl,
       });
 
       if (!episode) {
@@ -110,8 +127,8 @@ export async function uploadFile(req: Request, res: Response) {
 
       console.log(`Movie added: [${movie.id}]${movie.title}`);
     }
-  })
-  
+  });
+
   // if (isSeries && (!season || !episodeNumber)) {
   //   res.status(400).json({ error: "Missing season or episodeNumber or episodeTitle" });
   //   return;
