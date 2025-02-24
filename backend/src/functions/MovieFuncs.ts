@@ -398,3 +398,23 @@ export function deleteAllEpisodesFromMovieId(movieId: number) {
     },
   });
 }
+
+export function countMovies() {
+  return Movie.count({
+    where: {
+      isSeries: false,
+    },
+  });
+}
+
+export function countSeries() {
+  return Movie.count({
+    where: {
+      isSeries: true,
+    },
+  });
+}
+
+export function countEpisodes() {
+  return Episode.count();
+}

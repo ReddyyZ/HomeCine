@@ -26,3 +26,7 @@ export async function updateUser(id: string, data: Partial<User>) {
 
   return user.update(data);
 }
+
+export function countUsers() {
+  return User.count();
+}
