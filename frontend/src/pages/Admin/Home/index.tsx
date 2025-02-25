@@ -1,4 +1,30 @@
+import { useEffect, useState } from "react";
+import { counts } from "../../../services/apiClient";
+
 export default function AdminHome() {
+  const [countsData, setCountsData] = useState<{
+    movies: number;
+    series: number;
+    videos: number;
+    users: number;
+  }>();
+
+  const loadData = async () => {
+    const res = await counts();
+    if (!res) {
+      return console.log("Error loading data");
+    }
+    if (res.data?.error) {
+      return console.log(res.data.error);
+    }
+
+    setCountsData(res.data);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   return (
     <>
       <h1 className="mb-4 text-3xl font-bold">Dashboard</h1>
@@ -8,15 +34,15 @@ export default function AdminHome() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="rounded-md bg-gray-600 p-4 shadow-md">
             <h3 className="text-lg font-bold">Number of movies</h3>
-            <p className="text-gray-500">10</p>
+            <p className="text-gray-500">{countsData?.movies}</p>
           </div>
           <div className="rounded-md bg-gray-600 p-4 shadow-md">
             <h3 className="text-lg font-bold">Number of series</h3>
-            <p className="text-gray-500">10</p>
+            <p className="text-gray-500">{countsData?.series}</p>
           </div>
           <div className="rounded-md bg-gray-600 p-4 shadow-md">
             <h3 className="text-lg font-bold">Total of uploaded videos</h3>
-            <p className="text-gray-500">20</p>
+            <p className="text-gray-500">{countsData?.videos}</p>
           </div>
         </div>
       </div>
@@ -26,7 +52,7 @@ export default function AdminHome() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="rounded-md bg-gray-600 p-4 shadow-md">
             <h3 className="text-lg font-bold">Registered users</h3>
-            <p className="text-gray-500">10</p>
+            <p className="text-gray-500">{countsData?.users}</p>
           </div>
         </div>
       </div>

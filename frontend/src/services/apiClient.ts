@@ -7,6 +7,11 @@ export type LoginProps = {
   password: string;
 };
 
+export type AdminLoginProps = {
+  user: string;
+  password: string;
+};
+
 export type RegisterProps = {
   name: string;
   email: string;
@@ -191,4 +196,16 @@ export function updateMovie(user: string, movieId: string, data: any) {
       Authorization: user,
     },
   });
+}
+
+export function counts() {
+  return apiClient.get("/counts", {
+    // headers: {
+    //   Authorization: user,
+    // },
+  });
+}
+
+export function loginAdmin(data: AdminLoginProps) {
+  return apiClient.post("/admin/login", data);
 }

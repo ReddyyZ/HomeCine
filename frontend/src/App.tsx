@@ -10,6 +10,7 @@ import Watch from "./pages/Watch";
 import AdminHome from "./pages/Admin/Home";
 import Admin from "./pages/Admin";
 import AdminMovies from "./pages/Admin/Movies";
+import LoginAdmin from "./pages/Admin/Login";
 
 function AuthRoutes() {
   return (
@@ -35,6 +36,19 @@ function App() {
       return true;
     }
   };
+  const checkAdmin = () => {
+    if (!auth.admin) return false;
+    const jwt = jwtDecode(auth.admin);
+
+    if (!jwt.exp) return false;
+
+    if (jwt.exp * 1000 < Date.now()) {
+      auth.logoutAdmin();
+      return false;
+    } else {
+      return true;
+    }
+  };
 
   return (
     <Routes>
@@ -52,10 +66,14 @@ function App() {
           <Route path="*" element={<h1>Not Found</h1>} />
         </Routes>
       )}
-      <Route path="/admin" element={<Admin />}>
-        <Route path="" element={<AdminHome />} />
-        <Route path="movies" element={<AdminMovies />} />
-      </Route>
+      {checkAdmin() ? (
+        <Route path="/admin" element={<Admin />}>
+          <Route path="" element={<AdminHome />} />
+          <Route path="movies" element={<AdminMovies />} />
+        </Route>
+      ) : (
+        <Route path="/admin" element={<LoginAdmin />} />
+      )}
     </Routes>
   );
 }
