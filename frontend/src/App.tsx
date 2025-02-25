@@ -13,10 +13,10 @@ import AdminMovies from "./pages/Admin/Movies";
 
 function AuthRoutes() {
   return (
-    <Routes>
+    <>
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
-    </Routes>
+    </>
   );
 }
 
@@ -36,22 +36,26 @@ function App() {
     }
   };
 
-  return !checkUser() ? (
-    <AuthRoutes />
-  ) : (
+  return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/movie/:movieId" element={<MoviePage />} />
-      <Route path="/movie/:movieId/watch" element={<Watch />} />
-      <Route
-        path="/movie/:movieId/episode/:episodeId/watch"
-        element={<Watch />}
-      />
+      {!checkUser() ? (
+        AuthRoutes()
+      ) : (
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/movie/:movieId" element={<MoviePage />} />
+          <Route path="/movie/:movieId/watch" element={<Watch />} />
+          <Route
+            path="/movie/:movieId/episode/:episodeId/watch"
+            element={<Watch />}
+          />
+          <Route path="*" element={<h1>Not Found</h1>} />
+        </Routes>
+      )}
       <Route path="/admin" element={<Admin />}>
         <Route path="" element={<AdminHome />} />
         <Route path="movies" element={<AdminMovies />} />
       </Route>
-      <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   );
 }
