@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { registerAdminToken, verifyAdmin } from "../services/auth";
+import { registerAdminToken, verifyAdmin, verifyUser } from "../services/auth";
 
 export async function login(req: Request, res: Response) {
   const { user, password } = req.body;
@@ -21,14 +21,13 @@ export async function adminAuthenticate(
   res: Response,
   next: NextFunction,
 ) {
-  const token = String(req.query.token) || String(req.headers.adminToken);
-
+  const token = req.query.token ? req.query.token : req.headers.admintoken;
   if (!token) {
     res.status(401).json({ error: "Missing token" });
     return;
   }
 
-  const { role } = verifyAdmin(token);
+  const { role } = verifyUser(String(token));
   if (role !== "admin") {
     res.status(401).json({ error: "Unauthorized" });
     return;

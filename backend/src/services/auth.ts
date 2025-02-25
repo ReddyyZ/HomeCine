@@ -22,15 +22,24 @@ export function registerUserToken(id: string): string {
   });
 }
 
-export function verifyUser(token: string): { id: string } {
+export function verifyUser(token: string): { id: string; role: string } {
   if (!process.env.JWT_PRIVATE_KEY) {
     throw new Error("JWT private key is not defined");
   }
   if (!token) {
-    return { id: "" };
+    return { id: "", role: "" };
   }
 
-  return jwt.verify(token, process.env.JWT_PRIVATE_KEY) as { id: string };
+  try {
+    const result = jwt.verify(token, process.env.JWT_PRIVATE_KEY) as {
+      id: string;
+      role: string;
+    };
+    return result;
+  } catch (error) {
+    console.error("Failed to verify user token");
+    return { id: "", role: "" };
+  }
 }
 
 interface RegisterAdminTokenReturn {
@@ -68,6 +77,10 @@ export function verifyAdmin(token: string): { role: string } {
     throw new Error("JWT private key is not defined");
   }
 
+  if (!token) {
+    return { role: "" };
+  }
+
   try {
     const result = jwt.verify(token, process.env.JWT_PRIVATE_KEY) as {
       role: string;
@@ -75,7 +88,7 @@ export function verifyAdmin(token: string): { role: string } {
 
     return result;
   } catch (error) {
-    console.error("Failed to verify token", error);
+    console.error("Failed to verify admin token");
     return { role: "" };
   }
 }

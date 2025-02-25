@@ -71,7 +71,7 @@ export async function authenticate(
     ? req.headers.authorization
     : String(req.query.token);
 
-  const adminToken = String(req.headers.adminToken);
+  const adminToken = String(req.headers.admintoken);
 
   if (!token) {
     res.status(401).json({ error: "Missing token" });
@@ -79,22 +79,11 @@ export async function authenticate(
   }
 
   try {
-    const { id } = verifyUser(token);
-    if (!id) {
-      const { role } = verifyAdmin(token);
-      if (role !== "admin") {
-        const { role } = verifyAdmin(adminToken);
-        if (role !== "admin") {
-          res.status(401).json({ error: "Unauthorized" });
-          return;
-        } else {
-          next();
-          return;
-        }
-      } else {
-        next();
-        return;
-      }
+    console.log(adminToken, token);
+    const { id, role } = verifyUser(token);
+    if (!id && !role) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
     }
 
     next();
