@@ -27,19 +27,4 @@ router.get(
   MovieController.getAllEpisodesByMovieId,
 );
 
-router.post("/movies", authenticate, MovieController.createMovie);
-router.put("/movies/:movieId", authenticate, MovieController.updateMovie);
-
-router.delete("/movies/:movieId", authenticate, MovieController.deleteMovie);
-router.delete(
-  "/movies/:movieId/episode/:episodeId",
-  authenticate,
-  MovieController.deleteEpisode,
-);
-router.delete(
-  "/movies/:movieId/episodes",
-  authenticate,
-  MovieController.deleteMultipleEpisodes,
-);
-
 export default router;

@@ -75,7 +75,7 @@ export function verifyAdmin(token: string): { role: string } {
 
     return result;
   } catch (error) {
-    console.error("Failed to verify token");
+    console.error("Failed to verify token", error);
     return { role: "" };
   }
 }
