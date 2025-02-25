@@ -21,7 +21,7 @@ export async function adminAuthenticate(
   res: Response,
   next: NextFunction,
 ) {
-  const token = String(req.query.token);
+  const token = String(req.query.token) || String(req.headers.adminToken);
 
   if (!token) {
     res.status(401).json({ error: "Missing token" });
