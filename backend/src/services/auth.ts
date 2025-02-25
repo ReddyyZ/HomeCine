@@ -45,7 +45,7 @@ export function registerAdminToken(
     user !== process.env.ADMIN_USER ||
     password !== process.env.ADMIN_PASSWORD
   ) {
-    throw new Error("Invalid credentials");
+    return { token: undefined };
   }
 
   try {
@@ -75,7 +75,7 @@ export function verifyAdmin(token: string): { role: string } {
 
     return result;
   } catch (error) {
-    console.error("Failed to verify token", error);
+    console.error("Failed to verify token");
     return { role: "" };
   }
 }
