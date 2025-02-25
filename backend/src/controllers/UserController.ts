@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/User";
-import { checkPassword, registerUserToken, verifyUser } from "../services/auth";
+import {
+  checkPassword,
+  registerUserToken,
+  verifyAdmin,
+  verifyUser,
+} from "../services/auth";
 
 export async function login(req: Request, res: Response) {
   const { email, password } = req.body;
@@ -66,6 +71,8 @@ export async function authenticate(
     ? req.headers.authorization
     : String(req.query.token);
 
+  const adminToken = String(req.headers.adminToken);
+
   if (!token) {
     res.status(401).json({ error: "Missing token" });
     return;
@@ -74,8 +81,20 @@ export async function authenticate(
   try {
     const { id } = verifyUser(token);
     if (!id) {
-      res.status(401).json({ error: "Invalid token" });
-      return;
+      const { role } = verifyAdmin(token);
+      if (role !== "admin") {
+        const { role } = verifyAdmin(adminToken);
+        if (role !== "admin") {
+          res.status(401).json({ error: "Unauthorized" });
+          return;
+        } else {
+          next();
+          return;
+        }
+      } else {
+        next();
+        return;
+      }
     }
 
     next();
