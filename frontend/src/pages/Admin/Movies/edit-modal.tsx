@@ -37,6 +37,12 @@ function EditMovieModal({
   onDismiss: () => void;
   onReload: () => void;
 }) {
+  const [originalMetadata, setOriginalMetadata] = useState<{
+    title?: string;
+    year?: string;
+    overview?: string;
+    posterUrl?: string;
+  }>();
   const [posterImage, setPosterImage] = useState("");
   const [seasons, setSeasons] = useState(1);
   const [currentSeason, setCurrentSeason] = useState(1);
@@ -52,10 +58,10 @@ function EditMovieModal({
     Record<string, VideoMetadata>
   >({});
   const hasChanged =
-    title !== movie.title ||
-    year !== String(movie.year) ||
-    overview !== String(movie.overview) ||
-    posterImage !== String(movie.posterUrl) ||
+    title !== originalMetadata?.title ||
+    year !== originalMetadata?.year ||
+    overview !== originalMetadata?.overview ||
+    posterImage !== originalMetadata?.posterUrl ||
     files.length > 0 ||
     episodes !== allEpisodes;
 
@@ -99,6 +105,12 @@ function EditMovieModal({
     setYear(String(movie.year));
     setOverview(String(movie.overview));
     setPosterImage(String(movie.posterUrl));
+    setOriginalMetadata({
+      title: movie.title,
+      year: String(movie.year),
+      overview: String(movie.overview),
+      posterUrl: String(movie.posterUrl),
+    });
     setFiles([]);
     loadEpisodes();
   };
@@ -139,6 +151,12 @@ function EditMovieModal({
     if (res.data?.error) {
       return alert(res.data.error);
     }
+    setOriginalMetadata({
+      title: title,
+      year: String(year),
+      overview,
+      posterUrl: posterImage,
+    });
   };
 
   const deleteRemovedEpisodes = async () => {
