@@ -127,7 +127,7 @@ export function getEpisodeById(
 }
 
 export function uploadVideos(
-  user: string,
+  admin: string,
   metadata: Record<string, VideoMetadata>,
   files: File[],
   onUploadProgress: (progress: number) => void,
@@ -141,7 +141,7 @@ export function uploadVideos(
 
   return apiClient.post("/upload", data, {
     headers: {
-      Authorization: user,
+      adminToken: admin,
       "Content-Type": "multipart/form-data",
     },
     transformRequest: (data) => data,
@@ -156,25 +156,25 @@ export function uploadVideos(
 }
 
 export function deleteEpisode(
-  user: string,
+  admin: string,
   movieId: string,
   episodeId: string,
 ) {
   return apiClient.delete(`/movies/${movieId}/episode/${episodeId}`, {
     headers: {
-      Authorization: user,
+      adminToken: admin,
     },
   });
 }
 
 export function deleteEpisodes(
-  user: string,
+  admin: string,
   movieId: string,
   episodeIds: string[],
 ) {
   return apiClient.delete(`/movies/${movieId}/episodes`, {
     headers: {
-      Authorization: user,
+      adminToken: admin,
     },
     data: {
       episodeIds,
@@ -182,28 +182,24 @@ export function deleteEpisodes(
   });
 }
 
-export function deleteMovie(user: string, movieId: string) {
+export function deleteMovie(admin: string, movieId: string) {
   return apiClient.delete(`/movies/${movieId}`, {
     headers: {
-      Authorization: user,
+      adminToken: admin,
     },
   });
 }
 
-export function updateMovie(user: string, movieId: string, data: any) {
+export function updateMovie(admin: string, movieId: string, data: any) {
   return apiClient.put(`/movies/${movieId}`, data, {
     headers: {
-      Authorization: user,
+      adminToken: admin,
     },
   });
 }
 
-export function counts() {
-  return apiClient.get("/counts", {
-    // headers: {
-    //   Authorization: user,
-    // },
-  });
+export function counts(token: string) {
+  return apiClient.get(`/counts?token=${token}`);
 }
 
 export function loginAdmin(data: AdminLoginProps) {

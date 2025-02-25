@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { counts } from "../../../services/apiClient";
+import { useAuth } from "../../../contexts/AuthProvider";
 
 export default function AdminHome() {
   const [countsData, setCountsData] = useState<{
@@ -8,9 +9,13 @@ export default function AdminHome() {
     videos: number;
     users: number;
   }>();
+  const auth = useAuth();
 
   const loadData = async () => {
-    const res = await counts();
+    if (!auth.admin) {
+      return auth.logoutAdmin();
+    }
+    const res = await counts(auth.admin);
     if (!res) {
       return console.log("Error loading data");
     }
