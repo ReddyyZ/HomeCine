@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { IoCaretDown, IoCaretUp } from "react-icons/io5";
+import { IoCaretDown, IoCaretUp, IoCheckmark } from "react-icons/io5";
 import { twMerge } from "tailwind-merge";
 
 type DropdownMenuItemProps = {
@@ -21,23 +21,41 @@ interface DropdownMenuMainProps {
 
 interface DropdownMenuSelectProps {
   select: boolean;
+  multipleSelect?: never;
   currentItem: number;
-  value?: never;
+  currentItems?: never;
+  value?: ReactNode;
+}
+
+interface DropdownMenuMultipleSelectProps {
+  select?: never;
+  multipleSelect: boolean;
+  currentItem?: never;
+  currentItems: number[];
+  value?: ReactNode;
 }
 
 interface DropdownMenuNonSelectProps {
   select?: undefined;
+  multipleSelect?: never;
   currentItem?: never;
+  currentItems?: never;
   value: ReactNode;
 }
 
 type DropdownMenuProps = DropdownMenuMainProps &
-  (DropdownMenuSelectProps | DropdownMenuNonSelectProps);
+  (
+    | DropdownMenuSelectProps
+    | DropdownMenuMultipleSelectProps
+    | DropdownMenuNonSelectProps
+  );
 
 export default function DropdownMenu({
   items,
   onSelect,
+  multipleSelect,
   currentItem,
+  currentItems,
   btnStyle,
   containerStyle,
   containerClassName,
@@ -76,9 +94,10 @@ export default function DropdownMenu({
         )}
         onClick={() => setIsOpen(!isOpen)}
       >
-        {select ? currentItemValue?.value : value}
-        {select &&
-          (isOpen ? <IoCaretUp size={20} /> : <IoCaretDown size={20} />)}
+        {select ? (value ? value : currentItemValue?.value) : value}
+        {select ||
+          (multipleSelect &&
+            (isOpen ? <IoCaretUp size={20} /> : <IoCaretDown size={20} />))}
       </button>
 
       {isOpen && (
@@ -98,12 +117,17 @@ export default function DropdownMenu({
                   setIsOpen(false);
                 }}
                 className={twMerge(
-                  `flex max-w-[100%] cursor-pointer p-2 break-all hover:bg-gray-300 ${currentItem === item.id ? "bg-gray-300" : ""}`,
+                  `flex max-w-[100%] cursor-pointer items-center justify-between p-2 break-all hover:bg-gray-300 ${currentItem === item.id ? "bg-gray-300" : ""}`,
                   itemClassName,
                 )}
                 style={itemStyle}
               >
                 {item.value}
+
+                {
+                  // Checkmark if multiple select
+                  currentItems?.includes(item.id) && <IoCheckmark size={20} />
+                }
               </div>
             ))}
         </div>
