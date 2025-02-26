@@ -1,5 +1,5 @@
 import { IoClose, IoCloudUpload } from "react-icons/io5";
-import LoadingView from "../../../components/LoadingView";
+import LoadingView from "../../../../components/LoadingView";
 import { memo, useEffect, useState } from "react";
 import {
   deleteEpisodes,
@@ -7,22 +7,24 @@ import {
   getSeasonNumber,
   updateMovie,
   uploadVideos,
-} from "../../../services/apiClient";
-import { Episode, Movie, VideoMetadata } from "../../types/movies";
+} from "../../../../services/apiClient";
+import { Episode, Movie, VideoMetadata } from "../../../types/movies";
 import {
   FilterCallback,
   UploadField,
   UploadList,
   UploadRoot,
-} from "../../../components/Upload";
-import Button from "../../../components/Button";
-import DropdownMenu from "../../../components/DropdownMenu";
-import Input from "../../../components/Input";
-import List from "../../../components/List";
-import colors from "../../../constants/colors";
+} from "../../../../components/Upload";
+import Button from "../../../../components/Button";
+import DropdownMenu from "../../../../components/DropdownMenu";
+import Input from "../../../../components/Input";
+import List from "../../../../components/List";
+import colors from "../../../../constants/colors";
 import ImageUploading from "react-images-uploading";
-import Image from "../../../components/Image";
-import EpisodeItem from "./episode-item";
+import Image from "../../../../components/Image";
+import EpisodeItem from "../episode-item";
+import HeaderBtns from "./header-btns";
+import ImageSelector from "./image-selector";
 
 function EditMovieModal({
   movie,
@@ -233,89 +235,20 @@ function EditMovieModal({
 
   return (
     <>
-      <div className="flex justify-between">
-        {loading && <LoadingView />}
-        <button
-          className="cursor-pointer transition-opacity hover:opacity-70"
-          onClick={onDismiss}
-        >
-          <IoClose size={28} />
-        </button>
-        <div className="flex w-72 gap-2">
-          <Button
-            style={{
-              backgroundColor: "#252525",
-              color: !hasChanged ? "#3A3A3A" : "",
-            }}
-            className={!hasChanged ? "cursor-default! hover:opacity-100!" : ""}
-            disabled={!hasChanged}
-            onClick={loadInputs}
-          >
-            Discard changes
-          </Button>
-          <Button
-            onClick={saveChanges}
-            style={{
-              backgroundColor: !hasChanged ? "#252525" : colors.primary,
-              color: !hasChanged ? "#3A3A3A" : "",
-            }}
-            className={!hasChanged ? "cursor-default! hover:opacity-100!" : ""}
-            disabled={!hasChanged}
-          >
-            Save
-          </Button>
-        </div>
-      </div>
+      {loading && <LoadingView />}
+      <HeaderBtns
+        onDismiss={onDismiss}
+        hasChanged={hasChanged}
+        onDiscardChanges={loadInputs}
+        saveChanges={saveChanges}
+      />
       <div className="flex flex-col gap-4 p-4 md:flex-row">
         <div className="flex max-w-72 flex-col">
           {/* TODO: show actual image and image input */}
-          <ImageUploading
-            value={[]}
-            onChange={(imgList) => {
-              setPosterImage(String(imgList[0].dataURL));
-            }}
-          >
-            {({ onImageUpload, onImageRemove, dragProps, isDragging }) => (
-              <div className="upload__image-wrapper">
-                <button
-                  onClick={onImageUpload}
-                  {...dragProps}
-                  className="relative"
-                >
-                  <div
-                    className={`bg-black-opacity absolute h-full w-full ${!isDragging && "hidden"}`}
-                  />
-                  {isDragging && (
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-                      <IoCloudUpload size={24} />
-                    </div>
-                  )}
-                  <Image
-                    key={posterImage}
-                    src={posterImage}
-                    className="max-h-full"
-                  />
-                </button>
-                <div className="mt-2 flex justify-around">
-                  <button
-                    onClick={onImageUpload}
-                    className="bg-cardBg w-full cursor-pointer py-2 transition-opacity hover:opacity-70"
-                  >
-                    Update
-                  </button>
-                  <button
-                    onClick={() => {
-                      setPosterImage("");
-                      onImageRemove(0);
-                    }}
-                    className="bg-cardBg w-full cursor-pointer py-2 transition-opacity hover:opacity-70"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            )}
-          </ImageUploading>
+          <ImageSelector
+            posterImage={posterImage}
+            setPosterImage={setPosterImage}
+          />
         </div>
         <div className="flex w-full flex-col gap-6">
           <div className="flex w-full flex-col gap-4">

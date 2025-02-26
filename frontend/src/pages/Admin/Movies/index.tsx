@@ -8,7 +8,7 @@ import colors from "../../../constants/colors";
 import Modal from "../../../components/Modal";
 import Input from "../../../components/Input";
 import { removeAccents } from "../../../utils";
-import EditMovieModal from "./edit-modal";
+import EditMovieModal from "./MovieModal";
 import DeleteMovieModal from "./delete-modal";
 import MovieItem from "./movie-item";
 
