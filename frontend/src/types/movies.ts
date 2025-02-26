@@ -53,9 +53,6 @@ export type AddMovieProps = {
   year?: number;
   overview?: string;
   posterUrl?: string;
-  filePath: string;
   isSeries: boolean;
-  numberOfSeasons?: number;
   genreIds: number[];
-  originalName?: string;
 };
