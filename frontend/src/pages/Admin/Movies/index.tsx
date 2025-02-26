@@ -1,6 +1,6 @@
 import { useState, useEffect, JSX } from "react";
 import { useAuth } from "../../../contexts/AuthProvider";
-import { getMovies } from "../../../services/apiClient";
+import { deleteMovie, getMovies } from "../../../services/apiClient";
 import { Movie } from "../../../types/movies";
 import DropdownMenu from "../../../components/DropdownMenu";
 import { IoAdd, IoArrowBack } from "react-icons/io5";
@@ -57,8 +57,20 @@ export default function AdminMovies() {
     searchElement.value = "";
   };
 
-  const handleDeleteMovie = (movie: Movie) => {
+  const handleDeleteMovie = async (movie: Movie) => {
     setModalVisible(false);
+    if (!auth.admin) return;
+
+    const res = await deleteMovie(auth.admin, String(movie.id));
+    if (res.status === 401) {
+      return auth.logoutAdmin();
+    }
+
+    if (res.data?.error) {
+      return alert(res.data.error);
+    }
+
+    loadMovies();
   };
 
   const getModalContent = ({
