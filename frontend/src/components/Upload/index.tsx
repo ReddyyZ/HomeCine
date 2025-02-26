@@ -2,7 +2,7 @@ import { useState, ReactNode, useRef } from "react";
 import { IoCloudUpload, IoTrash, IoBug } from "react-icons/io5";
 import Input from "../Input";
 import colors from "../../constants/colors";
-import { VideoMetadata } from "../../pages/types/movies";
+import { VideoMetadata } from "../../types/movies";
 
 export function UploadRoot({ children }: { children: ReactNode }) {
   return <div className="space-y-2">{children}</div>;

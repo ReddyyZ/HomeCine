@@ -11,7 +11,7 @@ import {
   getSeasonNumber,
 } from "../../services/apiClient";
 import { useAuth } from "../../contexts/AuthProvider";
-import { Episode, Movie } from "../types/movies";
+import { Episode, Movie } from "../../types/movies";
 import { useEffect, useState } from "react";
 import { IoArrowBack, IoPlayCircle } from "react-icons/io5";
 import colors from "../../constants/colors";

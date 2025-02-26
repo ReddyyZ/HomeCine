@@ -1,7 +1,7 @@
 import { useState, useEffect, JSX } from "react";
 import { useAuth } from "../../../contexts/AuthProvider";
 import { getMovies } from "../../../services/apiClient";
-import { Movie } from "../../types/movies";
+import { Movie } from "../../../types/movies";
 import DropdownMenu from "../../../components/DropdownMenu";
 import { IoAdd, IoArrowBack } from "react-icons/io5";
 import colors from "../../../constants/colors";
@@ -85,6 +85,8 @@ export default function AdminMovies() {
       return (
         <EditMovieModal
           movie={movie}
+          edit
+          // isSeries
           setModalClassName={setModalClassName}
           user={auth.admin}
           onDismiss={dismiss}

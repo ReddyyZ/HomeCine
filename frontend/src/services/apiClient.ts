@@ -1,5 +1,5 @@
 import { AxiosProgressEvent } from "axios";
-import { Movie, VideoMetadata } from "../pages/types/movies";
+import { AddMovieProps, Movie, VideoMetadata } from "../types/movies";
 import apiClient from "./axios";
 
 export type LoginProps = {
@@ -204,4 +204,12 @@ export function counts(token: string) {
 
 export function loginAdmin(data: AdminLoginProps) {
   return apiClient.post("/admin/login", data);
+}
+
+export function createMovie(admin: string, data: AddMovieProps) {
+  return apiClient.post("/movies", data, {
+    headers: {
+      adminToken: admin,
+    },
+  });
 }

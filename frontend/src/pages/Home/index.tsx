@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Input from "../../components/Input";
 import Logo from "../../components/Logo";
-import { Movie } from "../types/movies";
+import { Movie } from "../../types/movies";
 import { useAuth } from "../../contexts/AuthProvider";
 import { getMovies } from "../../services/apiClient";
 import { IoPlayCircle, IoArrowBack } from "react-icons/io5";

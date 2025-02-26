@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Episode, Movie } from "../types/movies";
+import { Episode, Movie } from "../../types/movies";
 import {
   getEpisodeById,
   getMovie,

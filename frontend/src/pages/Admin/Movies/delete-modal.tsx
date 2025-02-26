@@ -1,6 +1,6 @@
 import { memo, useEffect } from "react";
 import Button from "../../../components/Button";
-import { Movie } from "../../types/movies";
+import { Movie } from "../../../types/movies";
 
 function DeleteMovieModal({
   movie,

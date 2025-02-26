@@ -8,7 +8,7 @@ import {
   updateMovie,
   uploadVideos,
 } from "../../../../services/apiClient";
-import { Episode, Movie, VideoMetadata } from "../../../types/movies";
+import { Episode, Movie, VideoMetadata } from "../../../../types/movies";
 import {
   FilterCallback,
   UploadField,

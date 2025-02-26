@@ -47,3 +47,15 @@ export type VideoMetadata = {
   episodeNumber?: number;
   movieId?: number;
 };
+
+export type AddMovieProps = {
+  title: string;
+  year?: number;
+  overview?: string;
+  posterUrl?: string;
+  filePath: string;
+  isSeries: boolean;
+  numberOfSeasons?: number;
+  genreIds: number[];
+  originalName?: string;
+};

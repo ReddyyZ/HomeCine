@@ -3,7 +3,7 @@ import colors from "../../../constants/colors";
 import { formatVideoDuration } from "../../../utils";
 import Image from "../../../components/Image";
 import { memo } from "react";
-import { Episode } from "../../types/movies";
+import { Episode } from "../../../types/movies";
 
 interface EpisodeItemProps {
   episode: Episode;

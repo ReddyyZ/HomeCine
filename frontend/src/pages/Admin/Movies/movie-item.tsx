@@ -3,7 +3,7 @@ import { IoEllipsisVertical } from "react-icons/io5";
 import DropdownMenu from "../../../components/DropdownMenu";
 import TextWithReadMore from "../../../components/TextWithReadMore";
 import { formatVideoDuration } from "../../../utils";
-import { Movie } from "../../types/movies";
+import { Movie } from "../../../types/movies";
 import Image from "../../../components/Image";
 
 function MovieItem({
