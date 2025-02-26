@@ -8,7 +8,7 @@ import colors from "../../../constants/colors";
 import Modal from "../../../components/Modal";
 import Input from "../../../components/Input";
 import { removeAccents } from "../../../utils";
-import EditMovieModal from "./MovieModal";
+import MovieModal from "./MovieModal";
 import DeleteMovieModal from "./delete-modal";
 import MovieItem from "./movie-item";
 
@@ -65,13 +65,32 @@ export default function AdminMovies() {
     mode,
     movie,
   }: {
-    mode: "edit" | "delete" | "createSeries" | "uploadMovie";
+    mode: "edit" | "delete" | "createSeries" | "createMovie";
     movie?: Movie;
   }) => {
     const dismiss = () => setModalVisible(false);
+    setModalVisible(true);
 
-    if (mode === "delete" && movie) {
-      setModalVisible(true);
+    if (mode === "createSeries" && auth.admin) {
+      return (
+        <MovieModal
+          isSeries
+          setModalClassName={setModalClassName}
+          onDismiss={dismiss}
+          onReload={loadMovies}
+          user={auth.admin}
+        />
+      );
+    } else if (mode === "createMovie" && auth.admin) {
+      return (
+        <MovieModal
+          user={auth.admin}
+          setModalClassName={setModalClassName}
+          onDismiss={dismiss}
+          onReload={loadMovies}
+        />
+      );
+    } else if (mode === "delete" && movie) {
       return (
         <DeleteMovieModal
           movie={movie}
@@ -81,12 +100,10 @@ export default function AdminMovies() {
         />
       );
     } else if (mode === "edit" && movie && auth.admin) {
-      setModalVisible(true);
       return (
-        <EditMovieModal
+        <MovieModal
           movie={movie}
           edit
-          // isSeries
           setModalClassName={setModalClassName}
           user={auth.admin}
           onDismiss={dismiss}
@@ -117,15 +134,19 @@ export default function AdminMovies() {
           items={[
             {
               id: 1,
-              value: "Create series",
+              value: "Movie",
             },
             {
               id: 2,
-              value: "Upload movie",
+              value: "Series",
             },
           ]}
-          onSelect={() => {
-            setModalVisible(true);
+          onSelect={(item) => {
+            if (item.id === 1) {
+              setModalContent(getModalContent({ mode: "createMovie" }));
+            } else if (item.id === 2) {
+              setModalContent(getModalContent({ mode: "createSeries" }));
+            }
           }}
           value={
             <div className="flex gap-2">
@@ -176,9 +197,7 @@ export default function AdminMovies() {
               key={movie.id}
               movie={movie}
               onSelect={(item) => {
-                console.log("a");
                 if (item.id === 1) {
-                  console.log("edit", movie);
                   setModalContent(getModalContent({ mode: "edit", movie }));
                 } else if (item.id === 2) {
                   setModalContent(getModalContent({ mode: "delete", movie }));
