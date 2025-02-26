@@ -21,6 +21,7 @@ import List from "../../../../components/List";
 import EpisodeItem from "../episode-item";
 import HeaderBtns from "./header-btns";
 import ImageSelector from "./image-selector";
+import genreList from "../../../../constants/genres";
 
 interface MovieModalMainProps {
   setModalClassName: (value: string) => void;
@@ -58,11 +59,13 @@ function MovieModal({
     year?: string;
     overview?: string;
     posterUrl?: string;
+    genres?: string[];
   }>({
     title: "",
     year: "",
     overview: "",
     posterUrl: "",
+    genres: [],
   });
   const [posterImage, setPosterImage] = useState("");
   const [seasons, setSeasons] = useState(1);
@@ -73,16 +76,33 @@ function MovieModal({
   const [year, setYear] = useState("");
   const [overview, setOverview] = useState("");
   const [files, setFiles] = useState<File[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [loading, setLoading] = useState(false);
   const [videosMetadata, setVideosMetadata] = useState<
     Record<string, VideoMetadata>
   >({});
+
+  const getGenresNames = () => {
+    return selectedGenres
+      .map((genreId) => genreList.find((genre) => genre.id === genreId)?.name)
+      .filter((genre) => genre !== undefined);
+  };
+
+  const getGenresIdsByGenresNames = (genres: string[]) => {
+    return genres
+      .map(
+        (genre) => genreList.find((genreItem) => genreItem.name === genre)?.id,
+      )
+      .filter((genre) => genre !== undefined);
+  };
+
   const hasChanged =
     title !== originalMetadata?.title ||
     year !== originalMetadata?.year ||
     overview !== originalMetadata?.overview ||
     posterImage !== originalMetadata?.posterUrl ||
+    getGenresNames().toString() !== originalMetadata?.genres?.toString() ||
     files.length > 0 ||
     episodes.toString() !== allEpisodes.toString();
 
@@ -126,17 +146,20 @@ function MovieModal({
     const year = movie ? String(movie.year) : "";
     const overview = movie ? String(movie.overview) : "";
     const posterUrl = movie ? String(movie.posterUrl) : "";
+    const genres = movie ? JSON.parse(movie.genres) : [];
 
     setTitle(title);
     setYear(year);
     setOverview(overview);
     setPosterImage(posterUrl);
+    setSelectedGenres(getGenresIdsByGenresNames(genres));
 
     setOriginalMetadata({
       title,
       year,
       overview,
       posterUrl,
+      genres,
     });
 
     setFiles([]);
@@ -175,6 +198,7 @@ function MovieModal({
       year: Number(year),
       overview,
       posterUrl: posterImage,
+      genres: JSON.stringify(getGenresNames()),
     });
     if (res.data?.error) {
       return alert(res.data.error);
@@ -184,6 +208,7 @@ function MovieModal({
       year: String(year),
       overview,
       posterUrl: posterImage,
+      genres: getGenresNames(),
     });
   };
 
@@ -325,6 +350,29 @@ function MovieModal({
                 onChangeText={setOverview}
               />
             </div>
+
+            <label className="text-lg font-semibold">Genres</label>
+            <DropdownMenu
+              items={genreList.map((genre) => ({
+                id: genre.id,
+                value: genre.name,
+              }))}
+              onSelect={(item) => {
+                setSelectedGenres((prevGenres) => {
+                  if (prevGenres.includes(item.id)) {
+                    return prevGenres.filter((genre) => genre !== item.id);
+                  }
+                  return [...prevGenres, item.id];
+                });
+              }}
+              multipleSelect
+              currentItems={selectedGenres}
+              value={
+                selectedGenres.length > 0
+                  ? `${selectedGenres.length} ${selectedGenres.length === 1 ? "genre" : "genres"} selected`
+                  : "Select genres"
+              }
+            />
           </div>
           {movie && movie.isSeries && (
             <div>
