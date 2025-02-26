@@ -95,9 +95,8 @@ export default function DropdownMenu({
         onClick={() => setIsOpen(!isOpen)}
       >
         {select ? (value ? value : currentItemValue?.value) : value}
-        {select ||
-          (multipleSelect &&
-            (isOpen ? <IoCaretUp size={20} /> : <IoCaretDown size={20} />))}
+        {(select || multipleSelect) &&
+          (isOpen ? <IoCaretUp size={20} /> : <IoCaretDown size={20} />)}
       </button>
 
       {isOpen && (
