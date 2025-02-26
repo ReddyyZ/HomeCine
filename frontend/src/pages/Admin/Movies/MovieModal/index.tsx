@@ -1,7 +1,7 @@
-import { IoClose, IoCloudUpload } from "react-icons/io5";
 import LoadingView from "../../../../components/LoadingView";
 import { memo, useEffect, useState } from "react";
 import {
+  createMovie,
   deleteEpisodes,
   getAllEpisodesFromMovie,
   getSeasonNumber,
@@ -15,36 +15,55 @@ import {
   UploadList,
   UploadRoot,
 } from "../../../../components/Upload";
-import Button from "../../../../components/Button";
 import DropdownMenu from "../../../../components/DropdownMenu";
 import Input from "../../../../components/Input";
 import List from "../../../../components/List";
-import colors from "../../../../constants/colors";
-import ImageUploading from "react-images-uploading";
-import Image from "../../../../components/Image";
 import EpisodeItem from "../episode-item";
 import HeaderBtns from "./header-btns";
 import ImageSelector from "./image-selector";
 
-function EditMovieModal({
-  movie,
-  setModalClassName,
-  user,
-  onDismiss,
-  onReload,
-}: {
-  movie: Movie;
+interface MovieModalMainProps {
   setModalClassName: (value: string) => void;
   user: string;
   onDismiss: () => void;
   onReload: () => void;
-}) {
+}
+
+interface MovieModalEditProps {
+  movie: Movie;
+  edit: true;
+  isSeries?: never;
+}
+
+interface MovieModalCreateProps {
+  movie?: undefined;
+  edit?: false;
+  isSeries: boolean;
+}
+
+type MovieModalProps = MovieModalMainProps &
+  (MovieModalEditProps | MovieModalCreateProps);
+
+function MovieModal({
+  movie,
+  edit,
+  isSeries,
+  setModalClassName,
+  user,
+  onDismiss,
+  onReload,
+}: MovieModalProps) {
   const [originalMetadata, setOriginalMetadata] = useState<{
     title?: string;
     year?: string;
     overview?: string;
     posterUrl?: string;
-  }>();
+  }>({
+    title: "",
+    year: "",
+    overview: "",
+    posterUrl: "",
+  });
   const [posterImage, setPosterImage] = useState("");
   const [seasons, setSeasons] = useState(1);
   const [currentSeason, setCurrentSeason] = useState(1);
@@ -65,7 +84,7 @@ function EditMovieModal({
     overview !== originalMetadata?.overview ||
     posterImage !== originalMetadata?.posterUrl ||
     files.length > 0 ||
-    episodes !== allEpisodes;
+    episodes.toString() !== allEpisodes.toString();
 
   const loadEpisodes = async () => {
     const seasons = await getSeasonNumber(user, String(movie.id));
@@ -103,16 +122,23 @@ function EditMovieModal({
   };
 
   const loadInputs = () => {
-    setTitle(movie.title);
-    setYear(String(movie.year));
-    setOverview(String(movie.overview));
-    setPosterImage(String(movie.posterUrl));
+    const title = movie ? movie.title : "";
+    const year = movie ? String(movie.year) : "";
+    const overview = movie ? String(movie.overview) : "";
+    const posterUrl = movie ? String(movie.posterUrl) : "";
+
+    setTitle(title);
+    setYear(year);
+    setOverview(overview);
+    setPosterImage(posterUrl);
+
     setOriginalMetadata({
-      title: movie.title,
-      year: String(movie.year),
-      overview: String(movie.overview),
-      posterUrl: String(movie.posterUrl),
+      title,
+      year,
+      overview,
+      posterUrl,
     });
+
     setFiles([]);
     loadEpisodes();
   };
@@ -210,6 +236,15 @@ function EditMovieModal({
     loadEpisodes();
   };
 
+  // const createNewMovie = async () => {
+  //   createMovie(user, {
+  //     title,
+  //     year: Number(year),
+  //     overview,
+  //     posterUrl: posterImage,
+  //   })
+  // }
+
   const saveChanges = async () => {
     setLoading(true);
     await updateMovieMetadata();
@@ -291,7 +326,7 @@ function EditMovieModal({
               />
             </div>
           </div>
-          {movie.isSeries && (
+          {movie && movie.isSeries && (
             <div>
               <p className="mb-2 text-lg font-semibold">Episode list</p>
               {/* TODO: episode list */}
@@ -337,4 +372,4 @@ function EditMovieModal({
   );
 }
 
-export default memo(EditMovieModal);
+export default memo(MovieModal);
