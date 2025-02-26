@@ -39,7 +39,7 @@ interface MovieModalEditProps {
 interface MovieModalCreateProps {
   movie?: undefined;
   edit?: false;
-  isSeries: boolean;
+  isSeries?: boolean;
 }
 
 type MovieModalProps = MovieModalMainProps &
@@ -107,6 +107,8 @@ function MovieModal({
     episodes.toString() !== allEpisodes.toString();
 
   const loadEpisodes = async () => {
+    if (!movie) return;
+
     const seasons = await getSeasonNumber(user, String(movie.id));
     if (seasons.data?.error) {
       return alert(seasons.data.error);
@@ -142,10 +144,12 @@ function MovieModal({
   };
 
   const loadInputs = () => {
-    const title = movie ? movie.title : "";
-    const year = movie ? String(movie.year) : "";
-    const overview = movie ? String(movie.overview) : "";
-    const posterUrl = movie ? String(movie.posterUrl) : "";
+    if (!edit) return;
+
+    const title = movie?.title ?? "";
+    const year = String(movie?.year);
+    const overview = movie?.overview ?? "";
+    const posterUrl = movie?.posterUrl ?? "";
     const genres = movie ? JSON.parse(movie.genres) : [];
 
     setTitle(title);
@@ -228,7 +232,7 @@ function MovieModal({
     loadEpisodes();
   };
 
-  const uploadEpisodes = async () => {
+  const uploadEpisodes = async (movieId: number) => {
     if (files.length === 0) return;
 
     const onUploadProgress = (progress: number) => {
@@ -239,7 +243,7 @@ function MovieModal({
       (acc: Record<string, VideoMetadata>, key) => {
         acc[key] = {
           ...videosMetadata[key],
-          movieId: movie.id,
+          movieId,
         };
         return acc;
       },
@@ -261,20 +265,45 @@ function MovieModal({
     loadEpisodes();
   };
 
-  // const createNewMovie = async () => {
-  //   createMovie(user, {
-  //     title,
-  //     year: Number(year),
-  //     overview,
-  //     posterUrl: posterImage,
-  //   })
-  // }
+  const createNewMovie = async () => {
+    const result = await createMovie(user, {
+      title,
+      year: Number(year),
+      overview,
+      posterUrl: posterImage,
+      genreIds: selectedGenres,
+      isSeries: isSeries ?? false,
+    });
+
+    if (result.data?.error) {
+      alert(result.data.error);
+      return;
+    }
+
+    return result.data as Movie;
+  };
 
   const saveChanges = async () => {
+    if (loading) return;
+
     setLoading(true);
-    await updateMovieMetadata();
-    await deleteRemovedEpisodes();
-    await uploadEpisodes();
+    if (edit) {
+      await updateMovieMetadata();
+      await deleteRemovedEpisodes();
+      await uploadEpisodes(movie.id);
+    } else {
+      const createMovieResult = await createNewMovie();
+      if (!createMovieResult) {
+        setLoading(false);
+        return;
+      }
+
+      if (isSeries) {
+        await uploadEpisodes(createMovieResult.id);
+      }
+
+      onDismiss();
+    }
     onReload();
     setLoading(false);
     // onDismiss();
@@ -374,7 +403,7 @@ function MovieModal({
               }
             />
           </div>
-          {movie && movie.isSeries && (
+          {(isSeries || movie?.isSeries) && (
             <div>
               <p className="mb-2 text-lg font-semibold">Episode list</p>
               {/* TODO: episode list */}
