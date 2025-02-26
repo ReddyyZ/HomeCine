@@ -1,6 +1,7 @@
 import { IoClose } from "react-icons/io5";
 import Button from "../../../../components/Button";
 import colors from "../../../../constants/colors";
+import { memo } from "react";
 
 interface HeaderBtnsProps {
   onDismiss: () => void;
@@ -9,7 +10,7 @@ interface HeaderBtnsProps {
   saveChanges: () => void;
 }
 
-export default function HeaderBtns(props: HeaderBtnsProps) {
+function HeaderBtns(props: HeaderBtnsProps) {
   return (
     <div className="flex justify-between">
       <button
@@ -49,3 +50,5 @@ export default function HeaderBtns(props: HeaderBtnsProps) {
     </div>
   );
 }
+
+export default memo(HeaderBtns);

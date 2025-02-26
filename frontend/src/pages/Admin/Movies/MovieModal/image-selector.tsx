@@ -1,13 +1,14 @@
 import ImageUploading from "react-images-uploading";
 import Image from "../../../../components/Image";
 import { IoCloudUpload } from "react-icons/io5";
+import { memo } from "react";
 
 interface ImageSelectorProps {
   setPosterImage: (value: string) => void;
   posterImage: string;
 }
 
-export default function ImageSelector(props: ImageSelectorProps) {
+function ImageSelector(props: ImageSelectorProps) {
   return (
     <ImageUploading
       value={[]}
@@ -54,3 +55,5 @@ export default function ImageSelector(props: ImageSelectorProps) {
     </ImageUploading>
   );
 }
+
+export default memo(ImageSelector);
