@@ -113,7 +113,8 @@ export async function deleteMovieById(id: number): Promise<defaultResult> {
 
   try {
     if (movie.isSeries) {
-      deleteAllEpisodesFromMovieId(id);
+      await deleteAllEpisodesFromMovieId(id);
+      console.log(`Episodes from movie ${movie.title} deleted!`);
     }
 
     await movie.destroy();
@@ -247,6 +248,7 @@ export async function deleteEpisodeByPath(filePath: string) {
 
   try {
     await episode.destroy();
+    await rmAsync(episode.filePath);
     console.log(`Episode ${episode.title} deleted!`);
 
     const episodeList = await findAllEpisodesByMovieId(episode.movieId);
@@ -400,12 +402,32 @@ export async function getNumberOfSeasons(movieId: number) {
   }
 }
 
-export function deleteAllEpisodesFromMovieId(movieId: number) {
-  return Episode.destroy({
+export async function deleteAllEpisodesFromMovieId(movieId: number) {
+  const episodes = await Episode.findAll({
     where: {
       movieId,
     },
   });
+
+  if (episodes.length === 0) {
+    console.log(`Episodes from movie ${movieId} not found`);
+    return;
+  }
+
+  try {
+    episodes.forEach(async (episode) => {
+      await rmAsync(episode.filePath);
+    });
+    await Episode.destroy({
+      where: {
+        movieId,
+      },
+    });
+
+    console.log(`Episodes from movie ${movieId} deleted!`);
+  } catch (error) {
+    console.error(`Error deleting episodes: ${error}`);
+  }
 }
 
 export function countMovies() {
