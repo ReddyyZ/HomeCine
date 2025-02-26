@@ -19,6 +19,15 @@ export type addMovieProps = {
   originalName?: string;
 };
 
+export type CreateMovieProps = {
+  title: string;
+  year?: number;
+  overview?: string;
+  posterUrl?: string;
+  isSeries: boolean;
+  genreIds: number[];
+};
+
 type defaultResult = {
   success?: boolean;
   errorCode?: number;

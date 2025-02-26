@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   addMovie,
   addMovieProps,
+  CreateMovieProps,
   deleteEpisodeById,
   deleteMovieById,
   findAllEpisodesByMovieId,
@@ -13,6 +14,7 @@ import {
   getNumberOfSeasons,
   updateMovieById,
 } from "../functions/MovieFuncs";
+import path from "path";
 
 export async function getMovies(req: Request, res: Response) {
   const movies = await findAllMovies();
@@ -141,13 +143,22 @@ export async function deleteMultipleEpisodes(req: Request, res: Response) {
 }
 
 export async function createMovie(req: Request, res: Response) {
-  const props: addMovieProps = req.body;
+  const props: CreateMovieProps = req.body as CreateMovieProps;
   if (!props) {
     res.status(400).json({ error: "Missing props" });
     return;
   }
 
-  const result = await addMovie(props);
+  const filePath = path.join(__dirname, "../../media/movies", props.title);
 
-  res.status(result ? 200 : 500).json(result);
+  const result = await addMovie({
+    ...props,
+    filePath,
+  });
+
+  if (result) {
+    res.status(201).json(result);
+  } else {
+    res.status(500).json({ error: "Error creating movie" });
+  }
 }
