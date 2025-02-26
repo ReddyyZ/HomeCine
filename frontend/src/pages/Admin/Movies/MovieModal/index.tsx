@@ -424,7 +424,7 @@ function MovieModal({
                   itemsContainerClassName="w-full"
                 />
               </div>
-              <div className="max-w-160">
+              <div className="mb-4 max-w-160">
                 <List type={"search"}>
                   {filterEpisodesFromSeason(currentSeason).map((item) => (
                     <EpisodeItem episode={item} onDelete={onDeleteEpisode} />
