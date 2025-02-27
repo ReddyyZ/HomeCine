@@ -186,6 +186,11 @@ function MovieModal({
   };
 
   const filterFiles = (filesToFilter: FileList, callback: FilterCallback) => {
+    const isCreatingMovie = !edit && !isSeries;
+    if (isCreatingMovie && (files.length >= 1 || filesToFilter.length > 1)) {
+      return callback(filesToFilter, false, "Only one video allowed");
+    }
+
     const allowedTypes = ["video/mp4", "video/quicktime"];
     for (let i = 0; i < files.length; i++) {
       if (!allowedTypes.includes(files[i].type)) {
@@ -265,7 +270,7 @@ function MovieModal({
     loadEpisodes();
   };
 
-  const createNewMovie = async () => {
+  const createNewSeries = async () => {
     const result = await createMovie(user, {
       title,
       year: Number(year),
@@ -283,6 +288,34 @@ function MovieModal({
     return result.data as Movie;
   };
 
+  const createNewMovie = async () => {
+    if (files.length === 0) return;
+
+    const onUploadProgress = (progress: number) => {
+      setUploadProgress(progress);
+    };
+
+    const movieMetadata = {
+      [files[0].name]: {
+        title,
+        year: Number(year),
+        overview,
+        posterUrl: posterImage,
+        genreIds: selectedGenres,
+      },
+    };
+
+    const res = await uploadVideos(
+      user,
+      movieMetadata,
+      files,
+      onUploadProgress,
+    );
+    if (res.data?.error) {
+      return alert(res.data.error);
+    }
+  };
+
   const saveChanges = async () => {
     if (loading) return;
 
@@ -292,14 +325,16 @@ function MovieModal({
       await deleteRemovedEpisodes();
       await uploadEpisodes(movie.id);
     } else {
-      const createMovieResult = await createNewMovie();
-      if (!createMovieResult) {
-        setLoading(false);
-        return;
-      }
-
       if (isSeries) {
+        const createMovieResult = await createNewSeries();
+        if (!createMovieResult) {
+          setLoading(false);
+          return;
+        }
+
         await uploadEpisodes(createMovieResult.id);
+      } else {
+        await createNewMovie();
       }
 
       onDismiss();
@@ -405,34 +440,56 @@ function MovieModal({
           </div>
           {(isSeries || movie?.isSeries) && (
             <div>
-              <p className="mb-2 text-lg font-semibold">Episode list</p>
-              {/* TODO: episode list */}
-              <div className="w-full max-w-60">
-                <DropdownMenu
-                  items={[...Array(seasons).keys()].map((i) => ({
-                    id: i + 1,
-                    value: `Season ${i + 1}`,
-                  }))}
-                  onSelect={(item) => {
-                    setCurrentSeason(item.id);
-                  }}
-                  select
-                  currentItem={currentSeason}
-                  containerStyle={{
-                    marginBottom: 24,
-                  }}
-                  itemsContainerClassName="w-full"
-                />
-              </div>
-              <div className="mb-4 max-w-160">
-                <List type={"search"}>
-                  {filterEpisodesFromSeason(currentSeason).map((item) => (
-                    <EpisodeItem episode={item} onDelete={onDeleteEpisode} />
-                  ))}
-                </List>
-              </div>
+              {seasons > 1 && (
+                <div>
+                  <p className="mb-2 text-lg font-semibold">Episode list</p>
+                  {/* TODO: episode list */}
+                  <div className="w-full max-w-60">
+                    <DropdownMenu
+                      items={[...Array(seasons).keys()].map((i) => ({
+                        id: i + 1,
+                        value: `Season ${i + 1}`,
+                      }))}
+                      onSelect={(item) => {
+                        setCurrentSeason(item.id);
+                      }}
+                      select
+                      currentItem={currentSeason}
+                      containerStyle={{
+                        marginBottom: 24,
+                      }}
+                      itemsContainerClassName="w-full"
+                    />
+                  </div>
+                  <div className="mb-4 max-w-160">
+                    <List type={"search"}>
+                      {filterEpisodesFromSeason(currentSeason).map((item) => (
+                        <EpisodeItem
+                          episode={item}
+                          onDelete={onDeleteEpisode}
+                        />
+                      ))}
+                    </List>
+                  </div>
+                </div>
+              )}
               <UploadRoot>
                 <p className="text-lg font-semibold">Upload new episodes</p>
+                <UploadList
+                  filesMetadata={videosMetadata}
+                  files={files}
+                  setFileMetadata={setVideosMetadata}
+                  onRemove={handleFileRemove}
+                  isSeries
+                />
+                <UploadField onUpload={onUpload} filter={filterFiles} />
+              </UploadRoot>
+            </div>
+          )}
+          {!isSeries && !edit && (
+            <div className="flex w-full flex-col gap-4">
+              <label className="text-lg font-semibold">Upload Video</label>
+              <UploadRoot>
                 <UploadList
                   filesMetadata={videosMetadata}
                   files={files}
