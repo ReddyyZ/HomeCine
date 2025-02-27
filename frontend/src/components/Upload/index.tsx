@@ -13,6 +13,7 @@ interface UploadListProps {
   filesMetadata: Record<string, VideoMetadata>;
   setFileMetadata: (metadata: Record<string, VideoMetadata>) => void;
   onRemove: (index: number) => void;
+  isSeries?: boolean;
 }
 
 export function UploadList(props: UploadListProps) {
@@ -23,7 +24,7 @@ export function UploadList(props: UploadListProps) {
     });
   };
 
-  return (
+  return props.isSeries ? (
     <div className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-600 max-h-64 space-y-4 overflow-y-auto p-1">
       {props.files.map((file, index) => {
         return (
@@ -34,6 +35,22 @@ export function UploadList(props: UploadListProps) {
             onMetadataChange={(metadata) => handleFileMetadata(file, metadata)}
             onRemove={() => props.onRemove(index)}
           />
+        );
+      })}
+    </div>
+  ) : (
+    <div className="scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-600 max-h-64 space-y-4 overflow-y-auto p-1">
+      {props.files.map((file, index) => {
+        return (
+          <div key={file.name} className="relative rounded-sm bg-gray-500 p-4">
+            <button
+              onClick={() => props.onRemove(index)}
+              className="absolute right-4 cursor-pointer transition-opacity duration-200 hover:opacity-70"
+            >
+              <IoTrash size={20} />
+            </button>
+            <p className="mb-1 text-sm font-semibold">{file.name}</p>
+          </div>
         );
       })}
     </div>
