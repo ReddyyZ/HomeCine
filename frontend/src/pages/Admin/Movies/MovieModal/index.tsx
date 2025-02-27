@@ -451,7 +451,7 @@ function MovieModal({
           </div>
           {(isSeries || movie?.isSeries) && (
             <div>
-              {seasons > 1 && (
+              {episodes.length && (
                 <div>
                   <p className="mb-2 text-lg font-semibold">Episode list</p>
                   {/* TODO: episode list */}
@@ -474,12 +474,14 @@ function MovieModal({
                   </div>
                   <div className="mb-4 max-w-160">
                     <List type={"search"}>
-                      {filterEpisodesFromSeason(currentSeason).map((item) => (
-                        <EpisodeItem
-                          episode={item}
-                          onDelete={onDeleteEpisode}
-                        />
-                      ))}
+                      {filterEpisodesFromSeason(currentSeason)
+                        .sort((a, b) => a.episodeNumber - b.episodeNumber)
+                        .map((item) => (
+                          <EpisodeItem
+                            episode={item}
+                            onDelete={onDeleteEpisode}
+                          />
+                        ))}
                     </List>
                   </div>
                 </div>
