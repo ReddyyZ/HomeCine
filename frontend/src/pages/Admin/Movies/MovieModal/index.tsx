@@ -359,7 +359,18 @@ function MovieModal({
 
   return (
     <>
-      {loading && <LoadingView />}
+      {loading && (
+        <LoadingView>
+          {uploadProgress ? (
+            <div className="flex flex-col items-center justify-center">
+              <p className="text-lg font-semibold">Uploading...</p>
+              <p>{uploadProgress}%</p>
+            </div>
+          ) : (
+            <p className="text-lg font-semibold">Loading...</p>
+          )}
+        </LoadingView>
+      )}
       <HeaderBtns
         onDismiss={onDismiss}
         hasChanged={hasChanged}
