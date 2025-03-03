@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { addEpisode, addMovie, findMovieById } from "../functions/MovieFuncs";
+import {
+  addEpisode,
+  addMovie,
+  addMovieProps,
+  findMovieById,
+} from "../functions/MovieFuncs";
 import path from "path";
 import { getThumbnail } from "../services/ffmpeg";
 
@@ -125,15 +130,24 @@ export async function uploadFile(req: Request, res: Response) {
         "movies",
         `${title}${path.extname(file.originalname)}`,
       );
-      const movie = await addMovie({
+
+      const movieData: addMovieProps = {
         title,
         filePath: moviePath,
         isSeries: false,
         overview,
         year,
-        posterUrl,
+        posterUrl:
+          posterUrl && posterUrl?.length > 0
+            ? posterUrl
+            : await getThumbnail({
+                filePath: moviePath,
+                movieTitle: title,
+              }),
         genreIds: genreIds ? genreIds : [],
-      });
+      };
+
+      const movie = await addMovie(movieData);
 
       if (!movie) {
         console.error(`Error adding movie: ${title}`);
@@ -143,11 +157,6 @@ export async function uploadFile(req: Request, res: Response) {
       console.log(`Movie added: [${movie.id}]${movie.title}`);
     }
   });
-
-  // if (isSeries && (!season || !episodeNumber)) {
-  //   res.status(400).json({ error: "Missing season or episodeNumber or episodeTitle" });
-  //   return;
-  // }
 
   if (req.files) {
     res.json({ success: true, files: req.files });
