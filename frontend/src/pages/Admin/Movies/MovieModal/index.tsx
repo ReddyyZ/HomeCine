@@ -82,6 +82,7 @@ function MovieModal({
   const [videosMetadata, setVideosMetadata] = useState<
     Record<string, VideoMetadata>
   >({});
+  const [titleInputError, setTitleInputError] = useState(false);
 
   const getGenresNames = () => {
     return selectedGenres
@@ -345,10 +346,17 @@ function MovieModal({
 
     setLoading(true);
 
-    console.log(videosMetadata);
-    if (checkIfInputIsEmpty()) {
+    if (isSeries || movie?.isSeries) {
+      if (checkIfInputIsEmpty()) {
+        setLoading(false);
+        return;
+      }
+    }
+
+    if (!title) {
+      setTitleInputError(true);
       setLoading(false);
-      return;
+      return alert("Title is missing!");
     }
 
     if (edit) {
@@ -372,6 +380,7 @@ function MovieModal({
     }
     onReload();
     setLoading(false);
+    setTitleInputError(false);
     // onDismiss();
   };
 
@@ -427,6 +436,7 @@ function MovieModal({
                   placeholder="Title"
                   value={title}
                   onChangeText={setTitle}
+                  error={titleInputError}
                 />
               </div>
               <div className="flex w-32 flex-col gap-1">
