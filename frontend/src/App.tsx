@@ -55,7 +55,7 @@ function App() {
       {!checkUser() ? (
         AuthRoutes()
       ) : (
-        <Routes>
+        <>
           <Route path="/" element={<Home />} />
           <Route path="/movie/:movieId" element={<MoviePage />} />
           <Route path="/movie/:movieId/watch" element={<Watch />} />
@@ -64,7 +64,7 @@ function App() {
             element={<Watch />}
           />
           <Route path="*" element={<h1>Not Found</h1>} />
-        </Routes>
+        </>
       )}
       {checkAdmin() ? (
         <Route path="/admin" element={<Admin />}>
