@@ -1,4 +1,4 @@
-import { ClassAttributes, BaseHTMLAttributes, JSX } from "react";
+import { JSX } from "react";
 import { GoCheckCircle, GoAlert, GoInfo, GoXCircle } from "react-icons/go";
 
 interface AlertProps {
@@ -32,7 +32,7 @@ export default function Alert({ type, color, children, style }: AlertProps) {
         width: "100%",
         ...style,
       }}
-      className="p-4 rounded-md"
+      className="rounded-md p-4"
     >
       <div className="flex items-center" style={{ color: selectedColor }}>
         {type === "success" && <GoCheckCircle fill={selectedColor} size={24} />}
