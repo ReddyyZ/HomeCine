@@ -4,6 +4,7 @@ import fs from "fs";
 import { promisify } from "util";
 import { getVideoDuration } from "../services/ffmpeg";
 import { GenreList } from "../constants";
+import path from "path";
 
 const rmAsync = promisify(fs.rm);
 
@@ -95,6 +96,20 @@ export async function deleteMovieByPath(filePath: string) {
 
   try {
     await movie.destroy();
+
+    await rmAsync(movie.filePath, {
+      recursive: true,
+      force: true,
+    });
+
+    const thumbnailFilepath = path.join(
+      __dirname,
+      `../../media/thumbnails/${movie.originalTitle}.png`,
+    );
+
+    try {
+      await rmAsync(thumbnailFilepath);
+    } catch (err) {}
     console.log(`Movie ${movie.title} deleted!`);
   } catch (error) {
     console.error(`Error deleting movie: ${error}`);
@@ -122,6 +137,15 @@ export async function deleteMovieById(id: number): Promise<defaultResult> {
       recursive: true,
       force: true,
     });
+
+    const thumbnailFilepath = path.join(
+      __dirname,
+      `../../media/thumbnails/${movie.originalTitle}.png`,
+    );
+
+    try {
+      await rmAsync(thumbnailFilepath);
+    } catch (err) {}
 
     console.log(`Movie ${movie.title} deleted!`);
     return {
@@ -249,6 +273,16 @@ export async function deleteEpisodeByPath(filePath: string) {
   try {
     await episode.destroy();
     await rmAsync(episode.filePath);
+
+    const thumbnailFilepath = path.join(
+      __dirname,
+      `../../media/thumbnails/${episode.movieId}-${episode.title}.png`,
+    );
+
+    try {
+      await rmAsync(thumbnailFilepath);
+    } catch (err) {}
+
     console.log(`Episode ${episode.title} deleted!`);
 
     const episodeList = await findAllEpisodesByMovieId(episode.movieId);
@@ -278,6 +312,15 @@ export async function deleteEpisodeById(id: number): Promise<defaultResult> {
   try {
     await episode.destroy();
     await rmAsync(episode.filePath);
+
+    const thumbnailFilepath = path.join(
+      __dirname,
+      `../../media/thumbnails/${episode.movieId}-${episode.title}.png`,
+    );
+
+    try {
+      await rmAsync(thumbnailFilepath);
+    } catch (err) {}
 
     console.log(`Episode ${episode.title} deleted!`);
     return {
@@ -417,6 +460,15 @@ export async function deleteAllEpisodesFromMovieId(movieId: number) {
   try {
     episodes.forEach(async (episode) => {
       await rmAsync(episode.filePath);
+
+      const thumbnailFilepath = path.join(
+        __dirname,
+        `../../media/thumbnails/${movieId}-${episode.title}.png`,
+      );
+
+      try {
+        await rmAsync(thumbnailFilepath);
+      } catch (err) {}
     });
     await Episode.destroy({
       where: {
