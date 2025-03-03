@@ -56,7 +56,10 @@ export default function Sidebar({ items, onLogout }: SideBarProps) {
           <ul className="flex w-full flex-col gap-3">
             {items.map(SidebarBtn)}
           </ul>
-          <button className="mt-auto flex cursor-pointer items-center gap-3 p-2 transition-opacity duration-200 hover:opacity-70">
+          <button
+            onClick={onLogout}
+            className="mt-auto flex cursor-pointer items-center gap-3 p-2 transition-opacity duration-200 hover:opacity-70"
+          >
             <Icons.IoExit size={24} />
             Logout
           </button>

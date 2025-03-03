@@ -84,7 +84,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logoutAdmin = () => {
     localStorage.removeItem("admin");
-    window.location.reload();
+    window.location.href = "/admin";
   };
 
   const value = {
