@@ -172,6 +172,11 @@ function MovieModal({
 
   const handleFileRemove = (index: number) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setVideosMetadata((prevMetadata) => {
+      const newMetadata = { ...prevMetadata };
+      delete newMetadata[Object.keys(newMetadata)[index]];
+      return newMetadata;
+    });
   };
 
   const onUpload = (
@@ -267,7 +272,7 @@ function MovieModal({
 
     setFiles([]);
     setVideosMetadata({});
-    loadEpisodes();
+    await loadEpisodes();
   };
 
   const createNewSeries = async () => {
@@ -316,10 +321,36 @@ function MovieModal({
     }
   };
 
+  const checkIfInputIsEmpty = () => {
+    const isMissingMetadata = Object.keys(videosMetadata).some((video) => {
+      const videoMetadata = videosMetadata[video];
+
+      if (
+        !videoMetadata.episodeNumber ||
+        !videoMetadata.season ||
+        !videoMetadata.episodeTitle
+      ) {
+        return true;
+      }
+    });
+
+    if (isMissingMetadata) {
+      alert("Missing metadata in one or more episodes");
+      return true;
+    }
+  };
+
   const saveChanges = async () => {
     if (loading) return;
 
     setLoading(true);
+
+    console.log(videosMetadata);
+    if (checkIfInputIsEmpty()) {
+      setLoading(false);
+      return;
+    }
+
     if (edit) {
       await updateMovieMetadata();
       await deleteRemovedEpisodes();
@@ -379,7 +410,6 @@ function MovieModal({
       />
       <div className="flex flex-col gap-4 p-4 md:flex-row">
         <div className="flex max-w-72 flex-col">
-          {/* TODO: show actual image and image input */}
           <ImageSelector
             posterImage={posterImage}
             setPosterImage={setPosterImage}
@@ -388,7 +418,6 @@ function MovieModal({
         <div className="flex w-full flex-col gap-6">
           <div className="flex w-full flex-col gap-4">
             <div className="flex gap-4">
-              {/* TODO: title and year input */}
               <div className="flex w-full flex-col gap-1">
                 <label htmlFor="title" className="text-lg font-semibold">
                   Movie Title
@@ -412,7 +441,6 @@ function MovieModal({
                 />
               </div>
             </div>
-            {/* TODO: overview input */}
             <div className="flex w-full flex-col gap-1">
               <label htmlFor="overview" className="text-lg font-semibold">
                 Overview
@@ -451,10 +479,9 @@ function MovieModal({
           </div>
           {(isSeries || movie?.isSeries) && (
             <div>
-              {episodes.length && (
+              {episodes.length > 0 && (
                 <div>
                   <p className="mb-2 text-lg font-semibold">Episode list</p>
-                  {/* TODO: episode list */}
                   <div className="w-full max-w-60">
                     <DropdownMenu
                       items={[...Array(seasons).keys()].map((i) => ({
