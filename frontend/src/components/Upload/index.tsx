@@ -65,6 +65,12 @@ interface UploadItemProps {
 }
 
 function UploadItem(props: UploadItemProps) {
+  const [inputValues, setInputValues] = useState({
+    episodeTitle: props.metadata?.episodeTitle ?? "",
+    season: props.metadata?.season ?? "",
+    episodeNumber: props.metadata?.episodeNumber ?? "",
+  });
+
   return (
     <div className="relative rounded-sm bg-gray-500 p-4">
       <button
@@ -79,17 +85,18 @@ function UploadItem(props: UploadItemProps) {
         <div className="basis-full">
           <label>Episode title</label>
           <Input
-            value={
-              props.metadata?.episodeTitle
-                ? String(props.metadata?.episodeTitle)
-                : ""
-            }
+            value={inputValues.episodeTitle}
             onChangeText={(value) => {
+              setInputValues((prev) => ({
+                ...prev,
+                episodeTitle: value,
+              }));
               props.onMetadataChange({
                 ...props.metadata,
                 episodeTitle: value,
               });
             }}
+            error={inputValues.episodeTitle.length === 0}
           />
         </div>
         {/* season */}
@@ -97,32 +104,36 @@ function UploadItem(props: UploadItemProps) {
           <div className="grow">
             <label>Season</label>
             <Input
-              value={
-                props.metadata?.season ? String(props.metadata?.season) : ""
-              }
+              value={String(inputValues.season)}
               onChangeText={(value) => {
+                setInputValues((prev) => ({
+                  ...prev,
+                  season: value,
+                }));
                 props.onMetadataChange({
                   ...props.metadata,
                   season: Number(value),
                 });
               }}
+              error={String(inputValues.season).length === 0}
             />
           </div>
           {/* episode Number */}
           <div>
             <label htmlFor="">Episode number</label>
             <Input
-              value={
-                props.metadata?.episodeNumber
-                  ? String(props.metadata?.episodeNumber)
-                  : ""
-              }
+              value={String(inputValues.episodeNumber)}
               onChangeText={(value) => {
+                setInputValues((prev) => ({
+                  ...prev,
+                  episodeNumber: value,
+                }));
                 props.onMetadataChange({
                   ...props.metadata,
                   episodeNumber: Number(value),
                 });
               }}
+              error={String(inputValues.episodeNumber).length === 0}
             />
           </div>
         </div>
