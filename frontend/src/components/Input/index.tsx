@@ -1,6 +1,5 @@
 import { InputHTMLAttributes, useState, useEffect, useRef, memo } from "react";
 import colors from "../../constants/colors";
-import "./styles.css";
 import { IoSearch, IoEye, IoEyeOff } from "react-icons/io5";
 import { IconBaseProps } from "react-icons";
 import { twMerge } from "tailwind-merge";
