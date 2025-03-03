@@ -210,7 +210,7 @@ function MovieModal({
   const updateMovieMetadata = async () => {
     const res = await updateMovie(user, String(movie.id), {
       title,
-      year: Number(year),
+      year: year.length > 0 ? Number(year) : undefined,
       overview,
       posterUrl: posterImage,
       genres: JSON.stringify(getGenresNames()),
@@ -279,7 +279,7 @@ function MovieModal({
   const createNewSeries = async () => {
     const result = await createMovie(user, {
       title,
-      year: Number(year),
+      year: year.length > 0 ? Number(year) : undefined,
       overview,
       posterUrl: posterImage,
       genreIds: selectedGenres,
@@ -304,7 +304,7 @@ function MovieModal({
     const movieMetadata = {
       [files[0].name]: {
         title,
-        year: Number(year),
+        year: year.length > 0 ? Number(year) : undefined,
         overview,
         posterUrl: posterImage,
         genreIds: selectedGenres,
