@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, useState, useEffect, useRef } from "react";
+import { InputHTMLAttributes, useState, useEffect, useRef, memo } from "react";
 import colors from "../../constants/colors";
 import "./styles.css";
 import { IoSearch, IoEye, IoEyeOff } from "react-icons/io5";
@@ -11,6 +11,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type?: "text" | "password" | "email" | "search";
   onSearch?: (value: string) => void;
   multipleLine?: boolean;
+  error?: boolean;
 }
 
 interface PasswordInputIcon extends IconBaseProps {
@@ -23,17 +24,15 @@ interface SearchIconProps extends IconBaseProps {
   disabled?: boolean;
 }
 
-const PasswordInputIcon = ({
-  visible,
-  setVisible,
-  ...props
-}: PasswordInputIcon) => {
-  return (
-    <button disabled={props.disabled} onClick={() => setVisible(!visible)}>
-      {visible ? <IoEye {...props} /> : <IoEyeOff {...props} />}
-    </button>
-  );
-};
+const PasswordInputIcon = memo(
+  ({ visible, setVisible, ...props }: PasswordInputIcon) => {
+    return (
+      <button disabled={props.disabled} onClick={() => setVisible(!visible)}>
+        {visible ? <IoEye {...props} /> : <IoEyeOff {...props} />}
+      </button>
+    );
+  },
+);
 
 export default function Input({
   type,
@@ -41,19 +40,20 @@ export default function Input({
   value,
   onSearch,
   multipleLine,
+  error,
   ...props
 }: InputProps) {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const PasswordIcon = (props: IconBaseProps) => (
+  const PasswordIcon = memo((props: IconBaseProps) => (
     <PasswordInputIcon
       visible={isPasswordVisible}
       setVisible={(visible) => setPasswordVisible(visible)}
       {...props}
     />
-  );
-  const SearchIcon = (props: SearchIconProps) => (
+  ));
+  const SearchIcon = memo((props: SearchIconProps) => (
     <button
       disabled={props.disabled}
       onClick={() => onSearch && onSearch(value)}
@@ -62,7 +62,7 @@ export default function Input({
     >
       <IoSearch {...props} />
     </button>
-  );
+  ));
 
   const Icon =
     type === "search"
@@ -87,7 +87,11 @@ export default function Input({
         backgroundColor: colors.cardBg,
         color: colors.text,
       }}
-      className={twMerge(`input`, props.className)}
+      className={twMerge(
+        "flex w-full rounded-sm border border-gray-300 text-base placeholder-gray-200 transition-colors duration-200 focus-within:border-gray-200",
+        error ? "border-error focus-within:border-error" : "",
+        props.className,
+      )}
     >
       {!multipleLine ? (
         <>
@@ -107,6 +111,7 @@ export default function Input({
                   : "text"
             }
             onChange={(e) => onChangeText(e.target.value)}
+            className="w-full rounded-sm p-3"
             {...props}
           />
           {Icon && (
