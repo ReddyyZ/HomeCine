@@ -120,7 +120,11 @@ export async function uploadFile(req: Request, res: Response) {
 
       console.log(`Episode added: [${episode.id}]${episode.title}`);
     } else {
-      const moviePath = path.join(mediaPath, "movies", title);
+      const moviePath = path.join(
+        mediaPath,
+        "movies",
+        `${title}${path.extname(file.originalname)}`,
+      );
       const movie = await addMovie({
         title,
         filePath: moviePath,
