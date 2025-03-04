@@ -148,7 +148,7 @@ function MovieModal({
     if (!edit) return;
 
     const title = movie?.title ?? "";
-    const year = String(movie?.year);
+    const year = movie.year ? String(movie.year) : "";
     const overview = movie?.overview ?? "";
     const posterUrl = movie?.posterUrl ?? "";
     const genres = movie ? JSON.parse(movie.genres) : [];
