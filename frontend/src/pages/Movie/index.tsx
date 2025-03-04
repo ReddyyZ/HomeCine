@@ -58,15 +58,11 @@ export default function MoviePage() {
   const [episodeList, setEpisodeList] = useState<Episode[]>([] as Episode[]);
   const [loading, setLoading] = useState(false);
 
-  if (!movieId) {
-    return navigate("/");
-  }
-
   const fetchMovieDetails = async () => {
     if (!auth.user) {
       return auth.logout();
     }
-    if (loading) {
+    if (loading || !movieId) {
       return;
     }
 
@@ -106,6 +102,9 @@ export default function MoviePage() {
     if (!auth.user) {
       return auth.logout();
     }
+    if (!movieId) {
+      return;
+    }
 
     try {
       const episodes = await getEpisodesFromSeason(
@@ -136,6 +135,9 @@ export default function MoviePage() {
       if (!auth.user) {
         return auth.logout();
       }
+      if (!movieId) {
+        return;
+      }
 
       const progress = await getMovieProgress(auth.user, movieId);
       if (progress.data?.error) {
@@ -164,7 +166,6 @@ export default function MoviePage() {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     fetchEpisodes();
-    console.log("episode fetched");
   }, [currentSeason]);
 
   return (

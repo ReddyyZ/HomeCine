@@ -9,8 +9,6 @@ const CinemaCamera = (
   <svg
     {...props}
     xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xml:space="preserve"
     version="1.1"
     viewBox="0 0 752.72 649.29"
     x="0px"

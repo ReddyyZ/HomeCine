@@ -1,9 +1,9 @@
-import { JSX, useEffect } from "react";
+import { useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 
 type ModalProps = {
   visible: boolean;
-  children: (() => JSX.Element) | JSX.Element;
+  children: React.ReactNode;
   onDismiss: () => void;
   containerClassName?: string;
   containerStyle?: React.CSSProperties;
@@ -25,7 +25,7 @@ export default function Modal({
   modalClassName,
 }: ModalProps) {
   useEffect(() => {
-    const detectESCKey = (e) => {
+    const detectESCKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onDismiss();
       }

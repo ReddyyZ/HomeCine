@@ -209,6 +209,8 @@ function MovieModal({
   };
 
   const updateMovieMetadata = async () => {
+    if (!movie) return;
+
     const res = await updateMovie(user, String(movie.id), {
       title,
       year: year.length > 0 ? Number(year) : undefined,
@@ -230,7 +232,7 @@ function MovieModal({
 
   const deleteRemovedEpisodes = async () => {
     const deletedEpisodes = getDeletedEpisodes();
-    if (deletedEpisodes.length === 0) return;
+    if (deletedEpisodes.length === 0 || !movie) return;
 
     const res = await deleteEpisodes(
       user,

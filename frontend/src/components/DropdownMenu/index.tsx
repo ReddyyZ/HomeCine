@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { IoCaretDown, IoCaretUp, IoCheckmark } from "react-icons/io5";
 import { twMerge } from "tailwind-merge";
 
-type DropdownMenuItemProps = {
+export type DropdownMenuItemProps = {
   id: number;
   value: string;
 };

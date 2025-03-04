@@ -5,7 +5,6 @@ import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import colors from "../../../constants/colors";
 import { useAuth } from "../../../contexts/AuthProvider";
-import { Link } from "react-router-dom";
 import Alert from "../../../components/Alert";
 import LoadingView from "../../../components/LoadingView";
 

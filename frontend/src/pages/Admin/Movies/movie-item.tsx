@@ -1,6 +1,8 @@
 import { memo } from "react";
 import { IoEllipsisVertical } from "react-icons/io5";
-import DropdownMenu from "../../../components/DropdownMenu";
+import DropdownMenu, {
+  DropdownMenuItemProps,
+} from "../../../components/DropdownMenu";
 import TextWithReadMore from "../../../components/TextWithReadMore";
 import { formatVideoDuration } from "../../../utils";
 import { Movie } from "../../../types/movies";
@@ -11,7 +13,7 @@ function MovieItem({
   onSelect,
 }: {
   movie: Movie;
-  onSelect: (item) => void;
+  onSelect: (item: DropdownMenuItemProps) => void;
 }) {
   return (
     <div className="bg-cardBg flex w-full justify-between gap-1 rounded-md">

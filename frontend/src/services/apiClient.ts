@@ -1,5 +1,5 @@
 import { AxiosProgressEvent } from "axios";
-import { AddMovieProps, Movie, VideoMetadata } from "../types/movies";
+import { AddMovieProps, VideoMetadata } from "../types/movies";
 import apiClient from "./axios";
 
 export type LoginProps = {
