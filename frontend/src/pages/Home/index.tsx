@@ -4,36 +4,13 @@ import Logo from "../../components/Logo";
 import { Movie } from "../../types/movies";
 import { useAuth } from "../../contexts/AuthProvider";
 import { getMovies } from "../../services/apiClient";
-import { IoPlayCircle, IoArrowBack } from "react-icons/io5";
+import { IoArrowBack } from "react-icons/io5";
 import "./styles.css";
 import colors from "../../constants/colors";
 import List from "../../components/List";
 import LoadingIndicator from "../../components/LoadingIndicator";
-import { Link } from "react-router-dom";
-import Image from "../../components/Image";
 import { removeAccents } from "../../utils";
-
-function MovieCard(movie: Movie) {
-  return (
-    <Link
-      onClick={() => {
-        window.scrollTo(0, 0);
-      }}
-      to={`/movie/${movie.id}`}
-      className="movieCard fadein aspect-[9/13] h-72 flex-none"
-      key={movie.id}
-    >
-      <Image
-        src={movie.posterUrl}
-        alt={movie.title}
-        className="h-full w-full"
-      />
-      <div className="movieHover">
-        <IoPlayCircle size={36} color={colors.text} />
-      </div>
-    </Link>
-  );
-}
+import MovieCard from "./movie-card";
 
 export default function Home() {
   const [search, setSearch] = useState("");
