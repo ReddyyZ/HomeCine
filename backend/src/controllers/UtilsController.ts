@@ -5,6 +5,7 @@ import {
   countSeries,
 } from "../functions/MovieFuncs";
 import { countUsers } from "../functions/UserFuncs";
+import { searchMovie } from "../services/tmdb";
 
 export async function getCounts(req: Request, res: Response) {
   const { get } = req.query;
@@ -54,4 +55,20 @@ export async function getCounts(req: Request, res: Response) {
       users,
     });
   }
+}
+
+export async function searchMovieOnTMDB(req: Request, res: Response) {
+  const { query, isSeries, lang } = req.query;
+  if (!query) {
+    res.status(400).json({ message: "Missing query" });
+    return;
+  }
+
+  const response = await searchMovie(
+    query as string,
+    isSeries === "true",
+    (lang as string) ?? "en-US",
+  );
+
+  res.json(response);
 }
