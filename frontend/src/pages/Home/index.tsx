@@ -20,7 +20,7 @@ function MovieCard(movie: Movie) {
         window.scrollTo(0, 0);
       }}
       to={`/movie/${movie.id}`}
-      className="movieCard fadein h-80 w-56 flex-none"
+      className="movieCard fadein aspect-[9/13] h-72 flex-none"
       key={movie.id}
     >
       <Image
