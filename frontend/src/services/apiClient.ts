@@ -213,3 +213,19 @@ export function createMovie(admin: string, data: AddMovieProps) {
     },
   });
 }
+
+export function searchMovieOnTMDB(
+  admin: string,
+  query: string,
+  isSeries?: boolean,
+  lang?: string,
+) {
+  return apiClient.get(
+    `/search-movie?token=${admin}&query=${query}&isSeries=${!!isSeries}${lang ? `&lang=${lang}` : ""}`,
+    {
+      headers: {
+        adminToken: admin,
+      },
+    },
+  );
+}

@@ -5,6 +5,7 @@ import {
   deleteEpisodes,
   getAllEpisodesFromMovie,
   getSeasonNumber,
+  searchMovieOnTMDB,
   updateMovie,
   uploadVideos,
 } from "../../../../services/apiClient";
@@ -384,6 +385,44 @@ function MovieModal({
     // onDismiss();
   };
 
+  const getInfoFromTMDB = async () => {
+    if (!title || loading) return;
+
+    setLoading(true);
+
+    const res = await searchMovieOnTMDB(
+      user,
+      title,
+      isSeries || movie?.isSeries,
+    );
+    if (res.data?.error) {
+      return alert(res.data.error);
+    }
+
+    const movieData = res.data[0];
+    if (!movieData) {
+      return alert("Movie not found on TMDB");
+    }
+
+    setTitle(movieData.title ? movieData.title : (movieData.name ?? ""));
+    setYear(
+      movieData.first_air_date
+        ? String(new Date(movieData.first_air_date).getUTCFullYear())
+        : "",
+    );
+    setOverview(movieData.overview ?? "");
+    setPosterImage(
+      movieData.poster_path
+        ? `https://image.tmdb.org/t/p/original/${movieData.poster_path}`
+        : "",
+    );
+    setSelectedGenres(
+      movieData.genre_ids ? getGenresIdsByGenresNames(movieData.genre_ids) : [],
+    );
+
+    setLoading(false);
+  };
+
   useEffect(() => {
     setModalClassName("p-2 transition-all duration-200 relative");
     loadInputs();
@@ -438,6 +477,13 @@ function MovieModal({
                   onChangeText={setTitle}
                   error={titleInputError}
                 />
+                <button
+                  onClick={getInfoFromTMDB}
+                  className="text-secondary! w-fit cursor-pointer p-1 text-sm transition-opacity duration-200 hover:opacity-70 disabled:cursor-auto disabled:opacity-70"
+                  disabled={!(title.length > 0)}
+                >
+                  Get movie info from TMDB
+                </button>
               </div>
               <div className="flex w-32 flex-col gap-1">
                 <label htmlFor="year" className="text-lg font-semibold">
