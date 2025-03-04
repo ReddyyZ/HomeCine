@@ -404,6 +404,8 @@ function MovieModal({
       return alert("Movie not found on TMDB");
     }
 
+    console.log(movieData);
+
     setTitle(movieData.title ? movieData.title : (movieData.name ?? ""));
     setYear(
       movieData.first_air_date
@@ -416,9 +418,7 @@ function MovieModal({
         ? `https://image.tmdb.org/t/p/original/${movieData.poster_path}`
         : "",
     );
-    setSelectedGenres(
-      movieData.genre_ids ? getGenresIdsByGenresNames(movieData.genre_ids) : [],
-    );
+    setSelectedGenres(movieData.genre_ids ?? []);
 
     setLoading(false);
   };
