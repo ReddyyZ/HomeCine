@@ -1,0 +1,38 @@
+services:
+  backend:
+    build: ./backend
+    container_name: media-server-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - TMDB_API_KEY=f7463dd8d37778c3304b4d87adb200ad
+      - JWT_PRIVATE_KEY=MySecureKey
+      - THUMBNAILS_PATH=media/thumbnails/
+      - ADMIN_USER=admin
+      - ADMIN_PASSWORD=admin
+
+  frontend:
+    build: ./frontend
+    container_name: media-server-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=production
+      - BASE_URL=http://backend:3000
+    depends_on:
+      - backend
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
