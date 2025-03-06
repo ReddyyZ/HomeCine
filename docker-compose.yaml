@@ -15,12 +15,11 @@ services:
       - THUMBNAILS_PATH=media/thumbnails/
       - ADMIN_USER=admin
       - ADMIN_PASSWORD=admin
-
   frontend:
     build: ./frontend
     container_name: media-server-frontend
     ports:
-      - "5173:5173"
+      - "80:80"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -29,10 +28,3 @@ services:
       - BASE_URL=http://backend:3000
     depends_on:
       - backend
-  nginx:
-    build: ./nginx
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-      - frontend
