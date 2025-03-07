@@ -5,10 +5,11 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./backend:/app
+      - ./backend/media:/app/media
+      - ./backend/database.sqlite:/app/database.sqlite
       - /app/node_modules
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - PORT=3000
       - TMDB_API_KEY=f7463dd8d37778c3304b4d87adb200ad
       - JWT_PRIVATE_KEY=MySecureKey
