@@ -32,7 +32,7 @@ export function getThumbnail({
   episodeTitle,
   movieTitle,
 }: getThumbnailProps): Promise<string> {
-  const output = `http://localhost:8080/media/${episodeTitle ? `${movieId}-${episodeTitle}` : movieTitle}.png`;
+  const output = `/api/media/${episodeTitle ? `${movieId}-${episodeTitle}` : movieTitle}.png`;
 
   return new Promise((resolve, reject) => {
     ffmpeg(filePath)
