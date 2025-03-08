@@ -1,7 +1,9 @@
 import ffmpeg from "fluent-ffmpeg";
+import ffmpegPath from "@ffmpeg-installer/ffmpeg";
 import ffprobe from "ffprobe-static";
 import path from "path";
 ffmpeg.setFfprobePath(ffprobe.path);
+ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 export function getVideoDuration(filePath: string): Promise<number> {
   return new Promise((resolve, reject) => {
@@ -30,7 +32,7 @@ export function getThumbnail({
   episodeTitle,
   movieTitle,
 }: getThumbnailProps): Promise<string> {
-  const output = `http://localhost:8080/media/${episodeTitle ? `${movieId}-${episodeTitle}` : movieTitle}.png`;
+  const output = `/api/media/${episodeTitle ? `${movieId}-${episodeTitle}` : movieTitle}.png`;
 
   return new Promise((resolve, reject) => {
     ffmpeg(filePath)
