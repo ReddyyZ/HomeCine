@@ -2,16 +2,15 @@ services:
   backend:
     build:
       context: ./backend
-      target: production
+      target: development
     container_name: media-server-backend
     ports:
       - "3000:3000"
     volumes:
-      - ./backend/media:/app/media
-      - ./backend/database.sqlite:/app/database.sqlite
+      - ./backend:/app
       - /app/node_modules
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - PORT=3000
       - TMDB_API_KEY=f7463dd8d37778c3304b4d87adb200ad
       - JWT_PRIVATE_KEY=MySecureKey
@@ -21,15 +20,24 @@ services:
   frontend:
     build:
       context: ./frontend
-      target: production
+      target: development
     container_name: media-server-frontend
-    ports:
-      - "80:80"
     volumes:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - BASE_URL=http://backend:3000
     depends_on:
+      - backend
+  reverse-proxy:
+    image: nginx:alpine
+    container_name: media-server-nginx
+    volumes:
+      - ./nginx.development.conf:/etc/nginx/nginx.conf
+    ports:
+      - "5173:80"
+      - "3001:3001"
+    depends_on:
+      - frontend
       - backend

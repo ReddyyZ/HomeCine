@@ -1,7 +1,11 @@
-FROM node:22.14.0-alpine AS builder
+FROM node:22.14.0-alpine AS base
 
 RUN corepack enable
 RUN corepack install -g pnpm
+
+RUN apk update \
+    && apk add ffmpeg \
+    && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 
@@ -11,33 +15,37 @@ RUN pnpm install
 
 COPY . .
 
+FROM base AS development
+
+EXPOSE 3000
+
+CMD ["pnpm", "dev"]
+
+FROM base AS builder
+
 RUN pnpm build
 
-RUN apk update \
-    && apk add ffmpeg \
-    && rm -rf /var/cache/apk/*
+FROM base AS production
 
-# FROM node:22.14.0-alpine
+ENV GROUPNAME=appgroup
+ENV USER=appuser
 
-# ENV GROUPNAME=appgroup
-# ENV USER=appuser
+RUN addgroup "$GROUPNAME" && \
+    adduser \
+    --disabled-password \
+    --gecos "" \
+    --ingroup "$GROUPNAME" \
+    --no-create-home \
+    $USER
 
-# RUN addgroup "$GROUPNAME" && \
-#     adduser \
-#     --disabled-password \
-#     --gecos "" \
-#     --ingroup "$GROUPNAME" \
-#     --no-create-home \
-#     $USER
+COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/node_modules /app/node_modules
+COPY --from=builder /app/package.json /app/package.json
+COPY --from=builder /app/pnpm-lock.yaml /app/pnpm-lock.yaml
 
-# COPY --from=builder --chown=$USER:$GROUPNAME /app/dist /app/dist
-# COPY --from=builder --chown=$USER:$GROUPNAME /app/node_modules /app/node_modules
-# COPY --from=builder --chown=$USER:$GROUPNAME /app/package.json /app/package.json
-# COPY --from=builder --chown=$USER:$GROUPNAME /app/pnpm-lock.yaml /app/pnpm-lock.yaml
+USER $USER
 
-# USER $USER
-
-# WORKDIR /app
+WORKDIR /app
 
 EXPOSE 3000
 
