@@ -18,6 +18,10 @@ EXPOSE 5173
 
 CMD ["pnpm", "dev", "--host"]
 
+FROM base as builder
+
+RUN pnpm build
+
 FROM nginx:alpine AS production
 COPY nginx.conf /etc/nginx/nginx.conf
 
