@@ -14,7 +14,13 @@ RUN addgroup "$GROUPNAME" && \
     --gecos "" \
     --ingroup "$GROUPNAME" \
     $USER
+
+RUN corepack enable
+
+USER $USER
     
+RUN corepack install -g pnpm
+
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
@@ -23,14 +29,10 @@ RUN pnpm install
 
 COPY . .
 
+USER root
+
 RUN chown -R $USER:$GROUPNAME /app/database.sqlite
 RUN chown -R $USER:$GROUPNAME /media/
-
-RUN corepack enable
-
-USER $USER
-    
-RUN corepack install -g pnpm
 
 FROM base AS development
 
