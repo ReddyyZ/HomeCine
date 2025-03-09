@@ -29,6 +29,9 @@ RUN pnpm install
 
 COPY . .
 
+RUN chown -R $USER:$GROUPNAME /app/database.sqlite
+RUN chown -R $USER:$GROUPNAME /media/
+
 FROM base AS development
 
 EXPOSE 3000
