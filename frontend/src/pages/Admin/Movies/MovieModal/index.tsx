@@ -199,10 +199,8 @@ function MovieModal({
     }
 
     const allowedTypes = ["video/mp4", "video/quicktime"];
-    for (let i = 0; i < files.length; i++) {
-      if (!allowedTypes.includes(files[i].type)) {
-        return callback(filesToFilter, false, "File type not allowed");
-      }
+    if (Array.from(filesToFilter).some((file: File) => !allowedTypes.includes(file.type))) {
+      return callback(filesToFilter, false, "File type not allowed");
     }
 
     return callback(filesToFilter, true);
