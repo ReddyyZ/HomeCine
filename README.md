@@ -1,5 +1,7 @@
 # :movie_camera: HomeCine - Media Server
 
+![HomeCine project mockup](./homecine-mockup.jpg)
+
 ## :pushpin: About the project
 
 HomeCine is a web application where you can upload and serve movies and series.
