@@ -23,6 +23,20 @@ HomeCine is a web application where you can upload and serve movies and series.
 
 ## :rocket: Running the project
 
+Change the following enviroment variables on docker-compose.yaml and docker-compose.development.yaml
+
+```
+enviroment:
+  ...
+  - TMDB_API_KEY=MY_TMDB_API_KEY
+  - JWT_PRIVATE_KEY=MySecretKey
+  ...
+  - ADMIN_USER=admin
+  - ADMIN_PASSWORD=admin
+```
+
+[How to get TMDB API key](https://developer.themoviedb.org/docs/getting-started)
+
 #### Development
 
 ```sh
