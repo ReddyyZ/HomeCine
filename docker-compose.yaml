@@ -13,8 +13,8 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - TMDB_API_KEY=f7463dd8d37778c3304b4d87adb200ad
-      - JWT_PRIVATE_KEY=MySecureKey
+      - TMDB_API_KEY=MY_TMDB_API_KEY
+      - JWT_PRIVATE_KEY=MySecretKey
       - THUMBNAILS_PATH=media/thumbnails/
       - ADMIN_USER=admin
       - ADMIN_PASSWORD=admin
