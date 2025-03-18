@@ -40,7 +40,7 @@ enviroment:
 #### Development
 
 ```sh
-docker compose -f nginx.development.conf up -d --build
+docker compose -f docker-compose.development.yaml up -d --build
 ```
 
 #### Production
