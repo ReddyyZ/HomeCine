@@ -4,7 +4,7 @@
 
 ## :pushpin: About the project
 
-HomeCine is a web application where you can upload and serve movies and series.
+HomeCine is a streaming platform where you can upload and serve movies and series.
 
 ## :rocket: Features
 
